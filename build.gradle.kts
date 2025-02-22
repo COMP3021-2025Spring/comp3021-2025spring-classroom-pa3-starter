@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("application")
 }
 
 group = "hk.ust.cse.comp3021"
@@ -19,4 +20,11 @@ tasks.test {
     testLogging {
         events("passed")
     }
+}
+
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+    standardOutput = System.out
+    errorOutput = System.err
+    mainClass = "hk.ust.cse.comp3021.Main"
 }

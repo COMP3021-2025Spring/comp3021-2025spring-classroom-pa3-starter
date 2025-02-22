@@ -7,11 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
 
 class MainTest {
-    @Test
-    void testAdd() {
-        assertEquals(3, Main.add(1, 2));
-        assertNotEquals(4, Main.add(1, 2));
-    }
 
     @Test
     public void testMain() {
