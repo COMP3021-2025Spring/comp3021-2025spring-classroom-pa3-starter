@@ -13,6 +13,9 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    implementation("org.json:json:20240303")
+    implementation("org.reflections:reflections:0.10.2")
+    implementation("org.slf4j:slf4j-simple:2.0.16")
 }
 
 tasks.test {
