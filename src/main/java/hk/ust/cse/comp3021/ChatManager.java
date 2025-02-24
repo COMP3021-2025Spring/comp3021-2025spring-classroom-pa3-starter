@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class ChatManager {
     /**
-     * The shell prompt
+     * The shell prompt for the ChatManager repl
      */
     private static final String shellPrompt = "ChatManager> ";
 
@@ -37,7 +37,8 @@ public class ChatManager {
      */
     private static final Map<String, String> menus = new LinkedHashMap<>() {
         {
-            put("chat", "start a chat session");
+            put("chat", "start a new chat session");
+            put("list", "list previous sessions");
             put("load", "load from a previous session");
             put("help", "show this help message");
             put("exit", "exit the program");
@@ -51,7 +52,7 @@ public class ChatManager {
         System.out.println("Available commands:");
         for (Map.Entry<String, String> entry : menus.entrySet()) {
             System.out.print("- ");
-            Utils.printGreen(entry.getKey());
+            Utils.printInfo(entry.getKey());
             System.out.println(": " + entry.getValue());
         }
     }
@@ -77,7 +78,7 @@ public class ChatManager {
                 sb.append(modelName).append(" ");
             }
         } catch (ReflectiveOperationException e) {
-            Utils.printlnRed(e.getMessage());
+            Utils.printlnError(e.getMessage());
         }
         return sb.toString();
     }
@@ -103,12 +104,12 @@ public class ChatManager {
             for (Class<? extends ChatClient> subType : getSubClasses()) {
                 String modelName = subType.getField("modelName").get(null).toString();
                 if (modelName.equals(clientName)) {
-                    System.out.println("Creating " + clientName + " client");
+                    System.out.println("Creating " + clientName + " client...");
                     return subType.getDeclaredConstructor().newInstance();
                 }
             }
         } catch (ReflectiveOperationException e) {
-            Utils.printlnRed(e.getMessage());
+            Utils.printlnError(e.getMessage());
         }
         throw new InvalidClientNameException("Invalid client name: " + clientName);
     }
@@ -117,33 +118,36 @@ public class ChatManager {
      * Top-level Read-Eval-Print Loop
      */
     public static void repl() {
-        Utils.printlnGreen(banner + "Welcome to LLM ChatManager!");
+        Utils.printlnInfo(banner + "Welcome to LLM ChatManager!");
         printHelp();
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            Utils.printGreen(shellPrompt);
-            switch (scanner.next()) {
+            Utils.printInfo(shellPrompt);
+            switch (scanner.nextLine()) {
                 case "chat":
                     System.out.println("Available LLM Chat Clients: " + getChatClients() + ", select your LLM client: ");
-                    Utils.printGreen(shellPrompt);
+                    Utils.printInfo(shellPrompt);
                     try {
                         ChatClient chatClient = getChatClient(scanner.next());
                         chatClient.repl();
-                        System.out.println("Chat session ended!");
                     } catch (InvalidClientNameException e) {
-                        Utils.printlnRed(e.getMessage());
+                        Utils.printlnError(e.getMessage());
+                        scanner.nextLine();
                     }
                     break;
                 case "load":
-                    Utils.printlnRed("Not implemented yet");
+                    Utils.printlnError("Not implemented yet");
                     break;
                 case "help":
                     printHelp();
                     break;
                 case "exit":
                     return;
+                    // ignore empty lines
+                case "":
+                    break;
                 default:
-                    Utils.printlnRed("Invalid command");
+                    Utils.printlnError("Invalid command");
             }
         }
     }

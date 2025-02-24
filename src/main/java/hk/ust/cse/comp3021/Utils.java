@@ -18,7 +18,7 @@ public class Utils {
      * Print the content in green
      * @param content the content to print
      */
-    public static void printGreen(String content) {
+    public static void printInfo(String content) {
         System.out.print(ansi().fg(GREEN).a(content).reset());
     }
 
@@ -26,7 +26,7 @@ public class Utils {
      * Print the content in green and add a new line
      * @param content the content to print
      */
-    public static void printlnGreen(String content) {
+    public static void printlnInfo(String content) {
         System.out.println(ansi().fg(GREEN).a(content).reset());
     }
 
@@ -34,7 +34,7 @@ public class Utils {
      * Print the content in red and add a new line
      * @param content the content to print
      */
-    public static void printlnRed(String content) {
+    public static void printlnError(String content) {
         System.out.println(ansi().fg(RED).a(content).reset());
     }
 

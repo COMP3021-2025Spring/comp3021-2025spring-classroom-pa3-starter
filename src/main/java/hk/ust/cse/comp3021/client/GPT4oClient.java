@@ -28,6 +28,11 @@ public class GPT4oClient extends ChatClient {
     public static final String modelName = "GPT-4o";
 
     /**
+     * The maximum tokens
+     */
+    static final int maxTokens = 8192;
+
+    /**
      * The API URL
      */
     static final String apiURL = "https://hkust.azure-api.net/openai/deployments/gpt-4o/chat/completions?api-version=2024-06-01";
@@ -35,6 +40,11 @@ public class GPT4oClient extends ChatClient {
     @Override
     protected String getClientName() {
         return modelName;
+    }
+
+    @Override
+    protected int getClientMaxTokens() {
+        return maxTokens;
     }
 
     @Override
@@ -50,7 +60,7 @@ public class GPT4oClient extends ChatClient {
             messages.addMessage("user", prompt);
 
             try (OutputStream os = conn.getOutputStream()) {
-                byte[] input = messages.toString().getBytes(StandardCharsets.UTF_8);
+                byte[] input = messages.toPostData().getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
 
@@ -61,11 +71,13 @@ public class GPT4oClient extends ChatClient {
                 responseBuilder.append(responseLine.trim());
             }
 
-            JSONObject response = new JSONObject(responseBuilder.toString());
+            JSONObject responseJSON = new JSONObject(responseBuilder.toString());
+            String response = responseJSON.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
+            messages.addMessage("assistant", response);
 
-            return response.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
+            return response;
         } catch (Exception e) {
-            Utils.printlnRed("Query error: " + e.getMessage());
+            Utils.printlnError("Query error: " + e.getMessage());
             return "";
         }
     }
