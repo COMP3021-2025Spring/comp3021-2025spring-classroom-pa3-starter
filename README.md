@@ -11,12 +11,16 @@ In PA1, you need to implement two tasks:
 
 We will provide public test cases for you to verify the correctness of your implementations. However, passing all the public test cases does not mean that you can obtain the full mark for the PA. We also have many additional test cases as the hidden ones, which are different from the ones we provided in the skeleton.
 
-| Item                                             | Ratio | Notes                                                                   |
-| ------------------------------------------------ |-------|-------------------------------------------------------------------------|
-| Having at least three commits on different days  | 5%    | You should commit three times during different days in your repository  |
-| Code style                                       | 5%    | You get 5% by default, and every 5 warnings from CheckStyle deducts 1%. |
-| Public test cases (Task 1 + Task 2 + Bonus Task) | 40%   | (# of passing tests / # of provided tests) * 30%                        |
-| Hidden test cases (Task 1 + Task 2 + Bonus Task) | 50%   | (# of passing tests / # of provided tests) * 50%                        |
+| Item                                             | Ratio | Notes                                                                              |
+|--------------------------------------------------|-------|------------------------------------------------------------------------------------|
+| Having at least three commits on different days  | 5%    | You should commit three times during different days in your repository             |
+| Code style                                       | 5%    | You get 5% by default, and every 5 warnings from CheckStyle deducts 1%.            |
+| Task 1 Public test cases                         | 15%   | Based on the Result of GitHub Classroom (# of passing tests / # of provided tests) |
+| Task 1 Private test cases                        | 15%   | Based on TA evaluation (# of passing tests / # of provided tests)                  |
+| Task 1 Bonus                                     | 5%    | Based on TA evaluation                                                             |
+| Task 2 Public test cases                         | 30%   | Based on the Result of GitHub Classroom (# of passing tests / # of provided tests) |
+| Task 2 Private test cases                        | 30%   | Based on TA evaluation (# of passing tests / # of provided tests)                  |
+| Task 2 Bonus                                     | 5%    | Based on TA evaluation                                                             |
 
 ## Project Structure
 
