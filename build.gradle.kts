@@ -16,6 +16,7 @@ dependencies {
     implementation("org.json:json:20240303")
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.slf4j:slf4j-simple:2.0.16")
+    implementation("org.fusesource.jansi:jansi:2.4.0")
 }
 
 tasks.test {

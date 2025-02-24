@@ -6,12 +6,10 @@
 
 package hk.ust.cse.comp3021;
 
-import hk.ust.cse.comp3021.client.GPT4oClient;
 import org.reflections.Reflections;
 
 import javax.annotation.Nonnull;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 /**
  * ChatManager class
@@ -23,13 +21,36 @@ public class ChatManager {
     private static final String shellPrompt = "ChatManager> ";
 
     /**
+     * The banner, generated from: <a href="https://patorjk.com/software/taag/#p=display&f=Ogre&t=LLM%20ChatManager">...</a>
+     */
+    private static final String banner = """
+               __    __             ___ _           _                                           \s
+              / /   / /   /\\/\\     / __\\ |__   __ _| |_  /\\/\\   __ _ _ __   __ _  __ _  ___ _ __\s
+             / /   / /   /    \\   / /  | '_ \\ / _` | __|/    \\ / _` | '_ \\ / _` |/ _` |/ _ \\ '__|
+            / /___/ /___/ /\\/\\ \\ / /___| | | | (_| | |_/ /\\/\\ \\ (_| | | | | (_| | (_| |  __/ |  \s
+            \\____/\\____/\\/    \\/ \\____/|_| |_|\\__,_|\\__\\/    \\/\\__,_|_| |_|\\__,_|\\__, |\\___|_|  \s
+                                                                                 |___/          \s
+            """;
+
+    private static final Map<String, String> menus = new LinkedHashMap<>() {
+        {
+            put("chat", "start a chat session");
+            put("load", "load from a previous session");
+            put("help", "show this help message");
+            put("exit", "exit the program");
+        }
+    };
+
+    /**
      * Print the help message
      */
     private static void printHelp() {
         System.out.println("Available commands:");
-        System.out.println("1. chat: start a chat session");
-        System.out.println("2. help: show this help message");
-        System.out.println("3. exit: exit the program");
+        for (Map.Entry<String, String> entry : menus.entrySet()) {
+            System.out.print("- ");
+            Utils.printGreen(entry.getKey());
+            System.out.println(": " + entry.getValue());
+        }
     }
 
     /**
@@ -52,11 +73,16 @@ public class ChatManager {
                 String modelName = subType.getField("modelName").get(null).toString();
                 sb.append(modelName).append(" ");
             }
-            sb.append(System.lineSeparator());
         } catch (ReflectiveOperationException e) {
             System.err.println(e.getMessage());
         }
         return sb.toString();
+    }
+
+    static class InvalidClientNameException extends Exception {
+        public InvalidClientNameException(String message) {
+            super(message);
+        }
     }
 
     /**
@@ -66,7 +92,7 @@ public class ChatManager {
      * @return the chat client instance
      */
     @Nonnull
-    public static ChatClient getChatClient(String clientName) {
+    public static ChatClient getChatClient(String clientName) throws InvalidClientNameException {
         try {
             for (Class<? extends ChatClient> subType : getSubClasses()) {
                 String modelName = subType.getField("modelName").get(null).toString();
@@ -78,38 +104,40 @@ public class ChatManager {
         } catch (ReflectiveOperationException e) {
             System.err.println(e.getMessage());
         }
-
-        System.out.println("Wrong client name, use gpt-4o as default");
-        return new GPT4oClient();
+        throw new InvalidClientNameException("Invalid client name: " + clientName);
     }
 
     /**
      * Top-level Read-Eval-Print Loop
      */
     public static void repl() {
-        System.out.println("Welcome to LLM ChatManager!");
+        Utils.printlnGreen(banner + "Welcome to LLM ChatManager!");
         printHelp();
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.print(shellPrompt);
+            Utils.printGreen(shellPrompt);
             switch (scanner.next()) {
-                case "1":
                 case "chat":
-                    System.out.print("Available LLM Chat Clients: " + getChatClients());
-                    System.out.print(shellPrompt + "Select your LLM client: ");
-                    ChatClient chatClient = getChatClient(scanner.next());
-                    chatClient.repl();
-                    System.out.println("Chat session ended!");
+                    System.out.println("Available LLM Chat Clients: " + getChatClients() + ", select your LLM client: ");
+                    Utils.printGreen(shellPrompt);
+                    try {
+                        ChatClient chatClient = getChatClient(scanner.next());
+                        chatClient.repl();
+                        System.out.println("Chat session ended!");
+                    } catch (InvalidClientNameException e) {
+                        Utils.printlnRed(e.getMessage());
+                    }
                     break;
-                case "2":
+                case "load":
+                    Utils.printlnRed("Not implemented yet");
+                    break;
                 case "help":
                     printHelp();
                     break;
-                case "3":
                 case "exit":
                     return;
                 default:
-                    System.out.println("Invalid command");
+                    Utils.printlnRed("Invalid command");
             }
         }
     }

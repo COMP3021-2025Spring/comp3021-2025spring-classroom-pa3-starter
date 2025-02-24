@@ -66,15 +66,16 @@ public abstract class ChatClient {
      * Default constructor of ChatClient
      */
     public ChatClient() {
-        if (Files.exists(Path.of(String.format("keys/%s.txt", getClientName())))) {
-            System.out.println("Default API key loaded");
+        String apiKeyFile = String.format("keys/%s.txt", getClientName());
+        if (Files.exists(Path.of(apiKeyFile))) {
+            System.out.println("Default API key loaded from: " + apiKeyFile);
             readAndSetKey(String.format("keys/%s.txt", getClientName()));
             return;
         }
 
         System.out.println("Specify the file path of the API key: ");
         try {
-            String apiKeyFile = new Scanner(System.in).next();
+            apiKeyFile = new Scanner(System.in).next();
             readAndSetKey(apiKeyFile);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -86,10 +87,11 @@ public abstract class ChatClient {
      * Chatting Read-Eval-Print Loop
      */
     public void repl() {
-        System.out.println("Welcome to " + getClientName() + " ChatClient! (type 'exit' to exit)");
+        Utils.printGreen("Welcome to " + getClientName() + " ChatClient!");
+        System.out.println(" (type 'exit' to exit)");
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.print(getClientName() + "> ");
+            Utils.printGreen(getClientName() + "> ");
             String input = scanner.nextLine();
             if (input.equals("exit")) {
                 break;

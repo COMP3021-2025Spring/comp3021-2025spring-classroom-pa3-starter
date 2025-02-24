@@ -18,10 +18,9 @@ class ChatManagerTest {
     }
 
     @Test
-    void getChatClient() {
+    void getChatClient() throws ChatManager.InvalidClientNameException {
         ChatClient client = ChatManager.getChatClient("GPT-4o");
         assertEquals("GPT-4o", client.getClientName());
-        client = ChatManager.getChatClient("NOT-A-VALID-CLIENT");
-        assertEquals("GPT-4o", client.getClientName());
+        assertThrows(ChatManager.InvalidClientNameException.class, () -> ChatManager.getChatClient("a fake name"));
     }
 }
