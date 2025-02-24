@@ -90,12 +90,14 @@ public abstract class ChatClient {
      *
      * @param apiKeyFile the file path of the API key
      */
-    void readAndSetKey(String apiKeyFile) {
+    boolean readAndSetKey(String apiKeyFile) {
         try {
             String apiKey = Files.readString(Path.of(apiKeyFile));
             setApiKey(apiKey);
+            return true;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Utils.printlnError("Failed to read the API key: " + e.getMessage());
+            return false;
         }
     }
 
@@ -105,18 +107,18 @@ public abstract class ChatClient {
     public ChatClient() {
         timeCreated = Utils.getCurrentTime();
         String apiKeyFile = String.format("keys/%s.txt", getClientName());
-        if (Files.exists(Path.of(apiKeyFile))) {
-            System.out.println("Default API key loaded from: " + apiKeyFile);
-            readAndSetKey(String.format("keys/%s.txt", getClientName()));
-            return;
-        }
 
-        System.out.println("Specify the file path of the API key: ");
-        try {
-            apiKeyFile = new Scanner(System.in).next();
-            readAndSetKey(apiKeyFile);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (Files.exists(Path.of(apiKeyFile)) && readAndSetKey(apiKeyFile)) {
+            System.out.println("Default API key loaded from: " + apiKeyFile);
+        } else {
+            while (true) {
+                System.out.println("Specify the file path of the API key: ");
+                apiKeyFile = new Scanner(System.in).next();
+                if (readAndSetKey(apiKeyFile)) {
+                    System.out.println("API key loaded from: " + apiKeyFile);
+                    break;
+                }
+            }
         }
 
         messages.addMessage("system", systemPrompt);
@@ -250,7 +252,7 @@ public abstract class ChatClient {
             Files.writeString(Path.of(clientFileName), clientJson.toString());
             System.out.println("Session saved to " + clientFileName);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Utils.printlnError("Failed to save the session: " + e.getMessage());
         }
     }
 
