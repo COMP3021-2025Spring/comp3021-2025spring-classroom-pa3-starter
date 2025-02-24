@@ -7,6 +7,9 @@
 package hk.ust.cse.comp3021;
 
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static org.fusesource.jansi.Ansi.Color.*;
 import static org.fusesource.jansi.Ansi.*;
 
@@ -43,6 +46,8 @@ public class Utils {
      * @return the current time
      */
     public static String getCurrentTime() {
-        return String.valueOf(System.currentTimeMillis());
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+        return now.format(formatter);
     }
 }

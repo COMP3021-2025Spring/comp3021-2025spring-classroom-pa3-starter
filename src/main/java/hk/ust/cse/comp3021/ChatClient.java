@@ -155,6 +155,7 @@ public abstract class ChatClient {
                     break;
                 case "exit":
                     System.out.println("Session " + getClientUID() + " ended");
+                    saveClient();
                     return;
                 default:
                     Utils.printInfo(getClientName() + "> ");
@@ -206,7 +207,7 @@ public abstract class ChatClient {
          *
          * @return the JSON string
          */
-        public String toPostData() {
+        public JSONObject toJSON() {
             JSONObject postData = new JSONObject();
             JSONArray messageList = new JSONArray();
             for (Message message : this.messageList) {
@@ -216,7 +217,7 @@ public abstract class ChatClient {
                 messageList.put(messageJson);
             }
             postData.put("messages", messageList);
-            return postData.toString();
+            return postData;
         }
 
         @Override
@@ -242,11 +243,12 @@ public abstract class ChatClient {
      * Save the client to a JSON file
      */
     void saveClient() {
-        JSONObject clientJson = toJson();
+        JSONObject clientJson = toJSON();
         String clientUID = getClientUID();
-        String clientFileName = String.format("clients/%s.json", clientUID);
+        String clientFileName = String.format("sessions/%s.json", clientUID);
         try {
             Files.writeString(Path.of(clientFileName), clientJson.toString());
+            System.out.println("Session saved to " + clientFileName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -259,9 +261,23 @@ public abstract class ChatClient {
     abstract public String query(String prompt);
 
     /**
-     * Convert the ChatClient instance to JSON
+     * Serialize the ChatClient instance to JSON
      *
      * @return the JSON object
      */
-    abstract public JSONObject toJson();
+    public JSONObject toJSON() {
+        JSONObject json = new JSONObject();
+        json.put("clientName", getClientName());
+        json.put("apiKey", apiKey);
+        json.put("timeCreated", timeCreated);
+        return json;
+    }
+
+    /**
+     * Deserialize the ChatClient instance from JSON
+     *
+     * @param json the JSON object
+     * @return the ChatClient instance
+     */
+    abstract public ChatClient fromJSON(JSONObject json);
 }

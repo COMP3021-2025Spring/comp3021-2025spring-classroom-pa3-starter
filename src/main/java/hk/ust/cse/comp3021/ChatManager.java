@@ -9,7 +9,12 @@ package hk.ust.cse.comp3021;
 import org.reflections.Reflections;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * ChatManager class
@@ -74,7 +79,7 @@ public class ChatManager {
         StringBuilder sb = new StringBuilder();
         try {
             for (Class<? extends ChatClient> subType : getSubClasses()) {
-                String modelName = subType.getField("modelName").get(null).toString();
+                String modelName = subType.getField("clientName").get(null).toString();
                 sb.append(modelName).append(" ");
             }
         } catch (ReflectiveOperationException e) {
@@ -102,7 +107,7 @@ public class ChatManager {
     public static ChatClient getChatClient(String clientName) throws InvalidClientNameException {
         try {
             for (Class<? extends ChatClient> subType : getSubClasses()) {
-                String modelName = subType.getField("modelName").get(null).toString();
+                String modelName = subType.getField("clientName").get(null).toString();
                 if (modelName.equals(clientName)) {
                     System.out.println("Creating " + clientName + " client...");
                     return subType.getDeclaredConstructor().newInstance();
@@ -112,6 +117,19 @@ public class ChatManager {
             Utils.printlnError(e.getMessage());
         }
         throw new InvalidClientNameException("Invalid client name: " + clientName);
+    }
+
+    /**
+     * List all the previously stored sessions
+     */
+    public static void listSessions() {
+        try (Stream<Path> paths = Files.walk(Paths.get("sessions"))) {
+            paths.filter(Files::isRegularFile)
+                    .map(Path::getFileName)
+                    .forEach(System.out::println);
+        } catch (IOException e) {
+            Utils.printlnError("Error listing sessions: " + e.getMessage());
+        }
     }
 
     /**
@@ -132,8 +150,11 @@ public class ChatManager {
                         chatClient.repl();
                     } catch (InvalidClientNameException e) {
                         Utils.printlnError(e.getMessage());
-                        scanner.nextLine();
                     }
+                    scanner.nextLine();
+                    break;
+                case "list":
+                    listSessions();
                     break;
                 case "load":
                     Utils.printlnError("Not implemented yet");

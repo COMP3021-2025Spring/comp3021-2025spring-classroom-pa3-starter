@@ -25,7 +25,7 @@ public class GPT4oClient extends ChatClient {
     /**
      * The model name, accessed at top-level repl statically
      */
-    public static final String modelName = "GPT-4o";
+    public static final String clientName = "GPT-4o";
 
     /**
      * The maximum tokens
@@ -39,7 +39,7 @@ public class GPT4oClient extends ChatClient {
 
     @Override
     protected String getClientName() {
-        return modelName;
+        return clientName;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class GPT4oClient extends ChatClient {
             messages.addMessage("user", prompt);
 
             try (OutputStream os = conn.getOutputStream()) {
-                byte[] input = messages.toPostData().getBytes(StandardCharsets.UTF_8);
+                byte[] input = messages.toJSON().toString().getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
 
@@ -83,7 +83,15 @@ public class GPT4oClient extends ChatClient {
     }
 
     @Override
-    public JSONObject toJson() {
-        throw new UnsupportedOperationException("not implemented");
+    public JSONObject toJSON() {
+        JSONObject json = super.toJSON();
+        json.put("maxTokens", maxTokens);
+        json.put("apiURL", apiURL);
+        return json;
+    }
+
+    @Override
+    public ChatClient fromJSON(JSONObject json) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 }
