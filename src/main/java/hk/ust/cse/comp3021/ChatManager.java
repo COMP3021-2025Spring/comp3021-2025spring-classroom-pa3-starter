@@ -75,17 +75,16 @@ public class ChatManager {
     /**
      * Show names of all available chat clients
      */
-    public static String getChatClients() {
-        StringBuilder sb = new StringBuilder();
+    public static String getChatClientNames() {
+        List<String> clientNames = new ArrayList<>();
         try {
             for (Class<? extends ChatClient> subType : getSubClasses()) {
-                String modelName = subType.getField("clientName").get(null).toString();
-                sb.append(modelName).append(" ");
+                clientNames.add(subType.getField("clientName").get(null).toString());
             }
         } catch (ReflectiveOperationException e) {
             Utils.printlnError(e.getMessage());
         }
-        return sb.toString();
+        return String.join(" | ", clientNames);
     }
 
     /**
@@ -143,7 +142,7 @@ public class ChatManager {
             Utils.printInfo(shellPrompt);
             switch (scanner.nextLine()) {
                 case "chat":
-                    System.out.println("Available LLM Chat Clients: " + getChatClients() + ", select your LLM client: ");
+                    System.out.println("Available LLM Chat Clients: " + getChatClientNames() + ", select your LLM client: ");
                     Utils.printInfo(shellPrompt);
                     try {
                         ChatClient chatClient = getChatClient(scanner.next());
