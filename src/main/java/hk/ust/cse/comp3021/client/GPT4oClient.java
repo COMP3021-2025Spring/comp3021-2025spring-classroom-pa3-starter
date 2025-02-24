@@ -7,6 +7,7 @@
 package hk.ust.cse.comp3021.client;
 
 import hk.ust.cse.comp3021.ChatClient;
+import hk.ust.cse.comp3021.Utils;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -30,13 +31,6 @@ public class GPT4oClient extends ChatClient {
      * The API URL
      */
     static final String apiURL = "https://hkust.azure-api.net/openai/deployments/gpt-4o/chat/completions?api-version=2024-06-01";
-
-    /**
-     * Default constructor
-     */
-    public GPT4oClient() {
-        super();
-    }
 
     @Override
     protected String getClientName() {
@@ -71,8 +65,13 @@ public class GPT4oClient extends ChatClient {
 
             return response.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
         } catch (Exception e) {
-            System.err.println("Query error: " + e.getMessage());
-            return "error";
+            Utils.printlnRed("Query error: " + e.getMessage());
+            return "";
         }
+    }
+
+    @Override
+    public JSONObject toJson() {
+        throw new UnsupportedOperationException("not implemented");
     }
 }

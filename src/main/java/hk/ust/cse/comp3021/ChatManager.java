@@ -32,6 +32,9 @@ public class ChatManager {
                                                                                  |___/          \s
             """;
 
+    /**
+     * The menu, a map of command and description
+     */
     private static final Map<String, String> menus = new LinkedHashMap<>() {
         {
             put("chat", "start a chat session");
@@ -74,12 +77,15 @@ public class ChatManager {
                 sb.append(modelName).append(" ");
             }
         } catch (ReflectiveOperationException e) {
-            System.err.println(e.getMessage());
+            Utils.printlnRed(e.getMessage());
         }
         return sb.toString();
     }
 
-    static class InvalidClientNameException extends Exception {
+    /**
+     * Invalid client name exception
+     */
+    public static class InvalidClientNameException extends Exception {
         public InvalidClientNameException(String message) {
             super(message);
         }
@@ -102,7 +108,7 @@ public class ChatManager {
                 }
             }
         } catch (ReflectiveOperationException e) {
-            System.err.println(e.getMessage());
+            Utils.printlnRed(e.getMessage());
         }
         throw new InvalidClientNameException("Invalid client name: " + clientName);
     }

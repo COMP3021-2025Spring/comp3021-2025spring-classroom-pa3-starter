@@ -6,6 +6,8 @@
 
 package hk.ust.cse.comp3021;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +28,11 @@ public abstract class ChatClient {
      * The API key
      */
     protected String apiKey;
+
+    /**
+     * The time created
+     */
+    protected final String timeCreated;
 
     /**
      * The messages to save all conversation history
@@ -66,6 +73,7 @@ public abstract class ChatClient {
      * Default constructor of ChatClient
      */
     public ChatClient() {
+        timeCreated = Utils.getCurrentTime();
         String apiKeyFile = String.format("keys/%s.txt", getClientName());
         if (Files.exists(Path.of(apiKeyFile))) {
             System.out.println("Default API key loaded from: " + apiKeyFile);
@@ -94,6 +102,7 @@ public abstract class ChatClient {
             Utils.printGreen(getClientName() + "> ");
             String input = scanner.nextLine();
             if (input.equals("exit")) {
+                System.out.println("Session " + getClientUID() + " ended");
                 break;
             }
             // start chat
@@ -102,7 +111,7 @@ public abstract class ChatClient {
     }
 
     /**
-     * Message class
+     * Message class, consisting of role and content
      */
     protected static class Message {
         String role;
@@ -152,10 +161,37 @@ public abstract class ChatClient {
         }
     }
 
+    /**
+     * Get the client UID for indexing
+     * @return the client UID
+     */
+    String getClientUID() {
+        return getClientName() + "-" + timeCreated;
+    }
+
+    /**
+     * Save the client to a JSON file
+     */
+    void saveClient() {
+        JSONObject clientJson = toJson();
+        String clientUID = getClientUID();
+        String clientFileName = String.format("clients/%s.json", clientUID);
+        try {
+            Files.writeString(Path.of(clientFileName), clientJson.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * @param prompt the prompt to send to the LLM model
      * @return the response from the LLM model
      */
     abstract public String query(String prompt);
+
+    /**
+     * Convert the ChatClient instance to JSON
+     * @return the JSON object
+     */
+    abstract public JSONObject toJson();
 }
