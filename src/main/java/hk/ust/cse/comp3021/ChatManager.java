@@ -6,6 +6,10 @@
 
 package hk.ust.cse.comp3021;
 
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 import org.reflections.Reflections;
 
 import javax.annotation.Nonnull;
@@ -23,7 +27,7 @@ public class ChatManager {
     /**
      * The shell prompt for the ChatManager repl
      */
-    private static final String shellPrompt = "ChatManager> ";
+    private static final String replPrompt = Utils.toInfo("ChatManager> ");
 
     /**
      * The banner, generated from: <a href="https://patorjk.com/software/taag/#p=display&f=Ogre&t=LLM%20ChatManager">...</a>
@@ -137,37 +141,41 @@ public class ChatManager {
     public static void repl() {
         Utils.printlnInfo(banner + "Welcome to LLM ChatManager!");
         printHelp();
-        Scanner scanner = new Scanner(System.in);
+        LineReader reader = LineReaderBuilder.builder().build();
         while (true) {
-            Utils.printInfo(shellPrompt);
-            switch (scanner.nextLine()) {
-                case "chat":
-                    System.out.println("Available LLM Chat Clients: " + getChatClientNames() + ", select your LLM client: ");
-                    Utils.printInfo(shellPrompt);
-                    try {
-                        ChatClient chatClient = getChatClient(scanner.next());
-                        chatClient.repl();
-                    } catch (InvalidClientNameException e) {
-                        Utils.printlnError(e.getMessage());
-                    }
-                    scanner.nextLine();
-                    break;
-                case "list":
-                    listSessions();
-                    break;
-                case "load":
-                    Utils.printlnError("Not implemented yet");
-                    break;
-                case "help":
-                    printHelp();
-                    break;
-                case "exit":
-                    return;
-                    // ignore empty lines
-                case "":
-                    break;
-                default:
-                    Utils.printlnError("Invalid command");
+            try {
+                String line = reader.readLine(replPrompt);
+                switch (line) {
+                    case "chat":
+                        System.out.println("Available LLM Chat Clients: " + getChatClientNames() + ", select your LLM client: ");
+                        String clientName = reader.readLine(replPrompt);
+                        try {
+                            ChatClient chatClient = getChatClient(clientName);
+                            chatClient.repl();
+                            System.out.println("Session " + chatClient.getClientUID() + " ended");
+                            chatClient.saveClient();
+                        } catch (InvalidClientNameException e) {
+                            Utils.printlnError(e.getMessage());
+                        }
+                        break;
+                    case "list":
+                        listSessions();
+                        break;
+                    case "load":
+                        Utils.printlnError("Not implemented yet");
+                        break;
+                    case "help":
+                        printHelp();
+                        break;
+                    case "exit":
+                        throw new EndOfFileException();
+                    case "":
+                        break;
+                    default:
+                        Utils.printlnError("Invalid command");
+                }
+            } catch (UserInterruptException | EndOfFileException e) {
+                return;
             }
         }
     }

@@ -6,6 +6,10 @@
 
 package hk.ust.cse.comp3021;
 
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,7 +30,7 @@ public abstract class ChatClient {
     /**
      * The shell prompt for the ChatClient repl
      */
-    protected String shellPrompt = "ChatClient> ";
+    protected String replPrompt = Utils.toInfo("ChatClient> ");
 
     /**
      * The API key
@@ -50,6 +54,11 @@ public abstract class ChatClient {
      */
     protected abstract String getClientName();
 
+    /**
+     * Get the maximum tokens allowed for the ChatClient
+     *
+     * @return the maximum tokens allowed
+     */
     protected abstract int getClientMaxTokens();
 
     /**
@@ -130,38 +139,40 @@ public abstract class ChatClient {
     public void repl() {
         Utils.printlnInfo("Welcome to " + getClientName() + " ChatClient!");
         printHelp();
-        Scanner scanner = new Scanner(System.in);
+        LineReader lineReader = LineReaderBuilder.builder().build();
         while (true) {
-            Utils.printInfo(shellPrompt);
-            String input = scanner.nextLine();
-            switch (input) {
-                case "file":
-                    System.out.print("Specify the file path: ");
-                    String filePath = scanner.nextLine();
-                    try {
-                        String content = Files.readString(Path.of(filePath)).trim();
-                        if (content.length() >= getClientMaxTokens()) {
-                            Utils.printlnError("The file content is too long, we only support up to " + getClientMaxTokens() + " tokens.");
-                            break;
+            try {
+                String line = lineReader.readLine(replPrompt);
+                switch (line) {
+                    case "file":
+                        String filePath = lineReader.readLine("Specify the file path: ");
+                        try {
+                            String content = Files.readString(Path.of(filePath)).trim();
+                            if (content.length() >= getClientMaxTokens()) {
+                                Utils.printlnError("The file content is too long, we only support up to " + getClientMaxTokens() + " tokens.");
+                                break;
+                            }
+                            System.out.println(query(content));
+                        } catch (IOException e) {
+                            Utils.printlnError(e.getMessage());
                         }
-                        System.out.println(query(content));
-                    } catch (IOException e) {
-                        Utils.printlnError(e.getMessage());
-                    }
-                    break;
-                case "history":
-                    System.out.println(messages);
-                    break;
-                case "help":
-                    printHelp();
-                    break;
-                case "exit":
-                    System.out.println("Session " + getClientUID() + " ended");
-                    saveClient();
-                    return;
-                default:
-                    Utils.printInfo(getClientName() + "> ");
-                    System.out.println(query(input));
+                        break;
+                    case "history":
+                        System.out.println(messages);
+                        break;
+                    case "help":
+                        printHelp();
+                        break;
+                    case "exit":
+                        throw new EndOfFileException();
+                    case "":
+                        break;
+                    default:
+                        Utils.printInfo(getClientName() + "> ");
+                        System.out.println(query(line));
+                }
+            } catch (UserInterruptException | EndOfFileException e) {
+                return;
             }
         }
     }

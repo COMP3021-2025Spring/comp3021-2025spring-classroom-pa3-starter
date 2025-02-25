@@ -20,6 +20,15 @@ public class Utils {
     /**
      * Print the content in green
      * @param content the content to print
+     * @return escaped content
+     */
+    public static String toInfo(String content) {
+        return ansi().fg(GREEN).a(content).reset().toString();
+    }
+
+    /**
+     * Print the content in green
+     * @param content the content to print
      */
     public static void printInfo(String content) {
         System.out.print(ansi().fg(GREEN).a(content).reset());
