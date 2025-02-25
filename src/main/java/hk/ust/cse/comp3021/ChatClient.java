@@ -30,7 +30,7 @@ public abstract class ChatClient {
     /**
      * The shell prompt for the ChatClient repl
      */
-    protected String replPrompt = Utils.toInfo("ChatClient> ");
+    protected String replPrompt = "ChatClient> ";
 
     /**
      * The API key
@@ -142,10 +142,11 @@ public abstract class ChatClient {
         LineReader lineReader = LineReaderBuilder.builder().build();
         while (true) {
             try {
-                String line = lineReader.readLine(replPrompt);
+                Utils.printInfo(replPrompt);
+                String line = lineReader.readLine();
                 switch (line) {
                     case "file":
-                        String filePath = lineReader.readLine("Specify the file path: ");
+                        String filePath = lineReader.readLine("specify the file path: ");
                         try {
                             String content = Files.readString(Path.of(filePath)).trim();
                             if (content.length() >= getClientMaxTokens()) {

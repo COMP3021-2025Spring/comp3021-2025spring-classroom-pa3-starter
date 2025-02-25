@@ -10,6 +10,8 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 import org.reflections.Reflections;
 
 import javax.annotation.Nonnull;
@@ -18,6 +20,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 
 /**
@@ -27,12 +31,12 @@ public class ChatManager {
     /**
      * The shell prompt for the ChatManager repl
      */
-    private static final String replPrompt = Utils.toInfo("ChatManager> ");
+    static final String replPrompt = Utils.toInfo("ChatManager> ");
 
     /**
      * The banner, generated from: <a href="https://patorjk.com/software/taag/#p=display&f=Ogre&t=LLM%20ChatManager">...</a>
      */
-    private static final String banner = """
+    static final String banner = """
                __    __             ___ _           _                                           \s
               / /   / /   /\\/\\     / __\\ |__   __ _| |_  /\\/\\   __ _ _ __   __ _  __ _  ___ _ __\s
              / /   / /   /    \\   / /  | '_ \\ / _` | __|/    \\ / _` | '_ \\ / _` |/ _` |/ _ \\ '__|
@@ -44,7 +48,7 @@ public class ChatManager {
     /**
      * The menu, a map of command and description
      */
-    private static final Map<String, String> menus = new LinkedHashMap<>() {
+    static final Map<String, String> menus = new LinkedHashMap<>() {
         {
             put("chat", "start a new chat session");
             put("list", "list previous sessions");
@@ -53,6 +57,24 @@ public class ChatManager {
             put("exit", "exit the program");
         }
     };
+
+    static {
+        Logger.getLogger("org.jline").setLevel(Level.OFF);
+        Logger.getLogger("org.reflections").setLevel(Level.OFF);
+    }
+
+    /**
+     * Initialize the terminal for jline
+     */
+    static final Terminal terminal;
+
+    static {
+        try {
+            terminal = TerminalBuilder.builder().jansi(true).system(true).build();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Print the help message
@@ -141,14 +163,16 @@ public class ChatManager {
     public static void repl() {
         Utils.printlnInfo(banner + "Welcome to LLM ChatManager!");
         printHelp();
-        LineReader reader = LineReaderBuilder.builder().build();
+        LineReader reader = LineReaderBuilder.builder().terminal(terminal).build();
+
         while (true) {
             try {
-                String line = reader.readLine(replPrompt);
+                Utils.printInfo(replPrompt);
+                String line = reader.readLine();
                 switch (line) {
                     case "chat":
-                        System.out.println("Available LLM Chat Clients: " + getChatClientNames() + ", select your LLM client: ");
-                        String clientName = reader.readLine(replPrompt);
+                        System.out.println("Available LLM Chat Clients: " + getChatClientNames());
+                        String clientName = reader.readLine("select your LLM client: ");
                         try {
                             ChatClient chatClient = getChatClient(clientName);
                             chatClient.repl();
