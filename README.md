@@ -32,6 +32,8 @@ To run/test the application, you need to get an API key from the LLM service pro
 - (Bonus) Deepseek: https://platform.deepseek.com/api_keys
 - (Bonus) Grok: https://docs.x.ai/docs/overview
 
+To pass the test when using GitHub Action, you can either hardcode your API key in the code when creating new `ChatClient` instance or write a script (for example: `echo xxx > keys/GPT-4o.txt`) to be called before each `setup-command: ''` in [GitHub Actions Workflow](./.github/workflows/classroom.yml).
+
 ### Demo
 
 It's recommended to run and test with IntelliJ IDEA and OpenJDK 17. The project is written as a command line Read-Eval-Print loop, you can run the application with the following command (or IDE-integrated application runner) to play with it:
@@ -81,7 +83,7 @@ We use JUnit5 test to validate the correctness of individual methods that you ne
 
 :warning: Please check regularly for any updates from the skeleton repo. :warning:
 
-:warning: Do not modify the project structure :warning:
+:warning: Do not modify the project structure! :warning:
 
 The project structure is as follows:
 
