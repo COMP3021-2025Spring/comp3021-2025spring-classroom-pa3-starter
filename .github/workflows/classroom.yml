@@ -36,7 +36,7 @@ jobs:
       uses: classroom-resources/autograding-command-grader@v1
       with:
         test-name: replChatClient
-        setup-command: ''
+        setup-command: 'mkdir -p keys; echo 2b96784446414a689a1103212ee13fba > keys/GPT-4o.txt'
         command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.replChatClient"
         timeout: 20
         max-score: 3
@@ -45,7 +45,7 @@ jobs:
       uses: classroom-resources/autograding-command-grader@v1
       with:
         test-name: replChatClientConversation1
-        setup-command: ''
+        setup-command: 'mkdir -p keys; echo 2b96784446414a689a1103212ee13fba > keys/GPT-4o.txt'
         command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.replChatClientConversation1"
         timeout: 30
         max-score: 3
@@ -54,7 +54,7 @@ jobs:
       uses: classroom-resources/autograding-command-grader@v1
       with:
         test-name: replChatClientConversation2
-        setup-command: ''
+        setup-command: 'mkdir -p keys; echo 2b96784446414a689a1103212ee13fba > keys/GPT-4o.txt'
         command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.replChatClientConversation2"
         timeout: 30
         max-score: 3
