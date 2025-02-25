@@ -22,8 +22,17 @@ We will provide public test cases for you to verify the correctness of your impl
 | Task 2 Private test cases                        | 30%   | Based on TA evaluation (# of passing tests / # of provided tests)                  |
 | Task 2 Bonus                                     | 5%    | Based on TA evaluation                                                             |
 
+## Test
 
-## Local Test
+### Generate an API Key
+
+To run/test the application, you need to get an API key from the LLM service provider. Below we list some useful platforms for you to get the API key:
+
+- (Recommended) GPT-4o: https://itso.hkust.edu.hk/services/it-infrastructure/azure-openai-api-service 
+- (Bonus) Deepseek: https://platform.deepseek.com/api_keys
+- (Bonus) Grok: https://docs.x.ai/docs/overview
+
+### Demo
 
 It's recommended to run and test with IntelliJ IDEA and OpenJDK 17. The project is written as a command line Read-Eval-Print loop, you can run the application with the following command (or IDE-integrated application runner) to play with it:
 
@@ -50,7 +59,7 @@ We use JUnit5 test to validate the correctness of individual methods that you ne
 ./gradlew test --tests "hk.ust.cse.comp3021.Task1Test"
 ```
 
-| Test Name                   | Score | Related Methods                                              |
+| Test Name                   | Score | Related Methods/Classes                                      |
 |-----------------------------|-------|--------------------------------------------------------------|
 | showChatClients             | 3%    | `ChatManager.showChatClients`                                |
 | getChatClient               | 3%    | `ChatManager.getChatClient` and `InvalidClientNameException` |
@@ -58,6 +67,7 @@ We use JUnit5 test to validate the correctness of individual methods that you ne
 | replChatClientConversation1 | 3%    | `GPT4oClient`                                                |
 | replChatClientConversation2 | 3%    | `GPT4oClient`                                                |
 | Private Test Cases          | 15%   | The file upload feature in `ChatClient.repl`                 |
+| Bonus Test Cases            | 5%    | Implement another ChatClient than `GPT4oClient`              |
 
 ### Task2 (Not released)
 
@@ -68,6 +78,8 @@ We use JUnit5 test to validate the correctness of individual methods that you ne
 ## Project Structure
 
 :warning: Please check regularly for any updates from the skeleton repo. :warning:
+
+:warning: Do not modify the project structure :warning:
 
 The project structure is as follows:
 
