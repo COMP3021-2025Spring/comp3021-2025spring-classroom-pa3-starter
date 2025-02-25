@@ -1,0 +1,70 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: showChatClients
+      id: showchatclients
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: showChatClients
+        setup-command: ''
+        command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.showChatClients"
+        timeout: 10
+        max-score: 3
+    - name: getChatClient
+      id: getchatclient
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: getChatClient
+        setup-command: ''
+        command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.getChatClient"
+        timeout: 10
+        max-score: 3
+    - name: replChatClient
+      id: replchatclient
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: replChatClient
+        setup-command: ''
+        command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.replChatClient"
+        timeout: 20
+        max-score: 3
+    - name: replChatClientConversation1
+      id: replchatclientconversation1
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: replChatClientConversation1
+        setup-command: ''
+        command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.replChatClientConversation1"
+        timeout: 30
+        max-score: 3
+    - name: replChatClientConversation2
+      id: replchatclientconversation2
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: replChatClientConversation2
+        setup-command: ''
+        command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.replChatClientConversation2"
+        timeout: 30
+        max-score: 3
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        SHOWCHATCLIENTS_RESULTS: "${{steps.showchatclients.outputs.result}}"
+        GETCHATCLIENT_RESULTS: "${{steps.getchatclient.outputs.result}}"
+        REPLCHATCLIENT_RESULTS: "${{steps.replchatclient.outputs.result}}"
+        REPLCHATCLIENTCONVERSATION1_RESULTS: "${{steps.replchatclientconversation1.outputs.result}}"
+        REPLCHATCLIENTCONVERSATION2_RESULTS: "${{steps.replchatclientconversation2.outputs.result}}"
+      with:
+        runners: showchatclients,getchatclient,replchatclient,replchatclientconversation1,replchatclientconversation2
