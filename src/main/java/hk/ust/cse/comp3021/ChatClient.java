@@ -101,7 +101,7 @@ public abstract class ChatClient {
      */
     boolean readAndSetKey(String apiKeyFile) {
         try {
-            String apiKey = Files.readString(Path.of(apiKeyFile));
+            String apiKey = Files.readString(Path.of(apiKeyFile)).trim();
             setApiKey(apiKey);
             return true;
         } catch (IOException e) {
