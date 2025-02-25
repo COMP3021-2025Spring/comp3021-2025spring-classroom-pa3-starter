@@ -1,6 +1,7 @@
 plugins {
-    id("java")
-    id("application")
+    java
+    application
+    checkstyle
 }
 
 group = "hk.ust.cse.comp3021"
@@ -24,7 +25,10 @@ tasks.test {
     useJUnitPlatform()
     testLogging {
         events("passed")
+        showStandardStreams = true
     }
+    // parallel request may be banned by the server
+    maxParallelForks = 1
 }
 
 tasks.named<JavaExec>("run") {

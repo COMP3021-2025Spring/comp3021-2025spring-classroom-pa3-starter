@@ -50,6 +50,8 @@ We use JUnit5 test to validate the correctness of individual methods that you ne
 ```bash
 # run all public tests
 ./gradlew test
+# check coding style
+./gradlew checkstyleMain
 ```
 
 ### Task1

@@ -150,7 +150,7 @@ public abstract class ChatClient {
                         try {
                             String content = Files.readString(Path.of(filePath)).trim();
                             if (content.length() >= getClientMaxTokens()) {
-                                Utils.printlnError("The file content is too long, we only support up to " + getClientMaxTokens() + " tokens.");
+                                Utils.printlnError("The file content has exceed maximum (" + getClientMaxTokens() + ") tokens.");
                                 break;
                             }
                             System.out.println(query(content));
@@ -275,7 +275,7 @@ public abstract class ChatClient {
      * @param prompt the prompt to send to the LLM model
      * @return the response from the LLM model
      */
-    abstract public String query(String prompt);
+    public abstract String query(String prompt);
 
     /**
      * Serialize the ChatClient instance to JSON
@@ -296,5 +296,5 @@ public abstract class ChatClient {
      * @param json the JSON object
      * @return the ChatClient instance
      */
-    abstract public ChatClient fromJSON(JSONObject json);
+    public abstract ChatClient fromJSON(JSONObject json);
 }
