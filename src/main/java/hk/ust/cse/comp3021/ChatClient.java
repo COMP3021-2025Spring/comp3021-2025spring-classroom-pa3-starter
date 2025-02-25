@@ -64,7 +64,7 @@ public abstract class ChatClient {
     /**
      * The menu, a map of command and description
      */
-    private static final Map<String, String> menus = new LinkedHashMap<>() {
+    static final Map<String, String> menus = new LinkedHashMap<>() {
         {
             put("file", "upload a file");
             put("history", "show the conversation history");
@@ -76,7 +76,7 @@ public abstract class ChatClient {
     /**
      * Print the help message
      */
-    private static void printHelp() {
+    static void printHelp() {
         System.out.println("Available commands:");
         for (Map.Entry<String, String> entry : menus.entrySet()) {
             System.out.print("- ");
@@ -250,7 +250,7 @@ public abstract class ChatClient {
      * @return the client UID
      */
     String getClientUID() {
-        return getClientName() + "-" + timeCreated;
+        return getClientName() + "_" + timeCreated;
     }
 
     /**

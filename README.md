@@ -28,13 +28,30 @@ We will provide public test cases for you to verify the correctness of your impl
 
 ## Local Test
 
-It's recommended to test with IntelliJ IDEA and OpenJDK 17.
+It's recommended to run and test with IntelliJ IDEA and OpenJDK 17. The project is written as a command line Read-Eval-Print loop, you can run the application with the following command (or IDE-integrated application runner) to play with it:
 
 ```bash
-# run all tests
+./gradlew run
+```
+
+We use JUnit5 test to validate the correctness of individual methods that you need to implement, the specific test commands and their corresponding task is given below
+
+```bash
+# run all public tests
 ./gradlew test
-# run specified test, change "xxx" to your test function
-./gradlew test --tests "hk.ust.cse.comp3021.xxx"
+
+# run Task1 public tests
+./gradlew test --tests "hk.ust.cse.comp3021.Task1Test"
+# run each Task1 public test, each counts for 3% 
+./gradlew test --tests "hk.ust.cse.comp3021.Task1Test.showChatClients"
+./gradlew test --tests "hk.ust.cse.comp3021.Task1Test.getChatClient"
+./gradlew test --tests "hk.ust.cse.comp3021.Task1Test.replChatClient"
+./gradlew test --tests "hk.ust.cse.comp3021.Task1Test.replChatClientConversation1" 
+./gradlew test --tests "hk.ust.cse.comp3021.Task1Test.replChatClientConversation2" 
+
+# run Task2 public tests
+./gradlew test --tests "hk.ust.cse.comp3021.Task1Test"
+
 ```
 
 ## Submission Policy

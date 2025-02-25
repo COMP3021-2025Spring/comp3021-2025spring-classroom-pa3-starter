@@ -105,7 +105,11 @@ public class ChatManager {
         List<String> clientNames = new ArrayList<>();
         try {
             for (Class<? extends ChatClient> subType : getSubClasses()) {
-                clientNames.add(subType.getField("clientName").get(null).toString());
+                String clientName = subType.getField("clientName").get(null).toString();
+                if (clientName.contains("_"))
+                    Utils.printlnError("Invalid client name " + clientName + ", ignored");
+                else
+                    clientNames.add(clientName);
             }
         } catch (ReflectiveOperationException e) {
             Utils.printlnError(e.getMessage());
