@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GPT4oMiniClientTest {
     @Test
-    void getModelName() {
-        assertEquals("GPT-4o-mini", new GPT4oClient().getClientName());
+    void getClientName() {
+        assertEquals("GPT-4o-mini", new GPT4oMiniClient().getClientName());
     }
 
     @Test

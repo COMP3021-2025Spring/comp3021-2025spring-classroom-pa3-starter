@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GPT4oClientTest {
 
     @Test
-    void getModelName() {
+    void getClientName() {
         assertEquals("GPT-4o", new GPT4oClient().getClientName());
     }
 

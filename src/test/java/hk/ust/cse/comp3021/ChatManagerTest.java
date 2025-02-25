@@ -14,7 +14,7 @@ class ChatManagerTest {
 
     @Test
     void showChatClients() {
-        assertEquals("GPT-4o", ChatManager.getChatClientNames().trim());
+        assertEquals("GPT-4o-mini | GPT-4o", ChatManager.getChatClientNames());
     }
 
     @Test
