@@ -58,17 +58,13 @@ public class ChatManager {
         }
     };
 
-    static {
-        Logger.getLogger("org.jline").setLevel(Level.OFF);
-        Logger.getLogger("org.reflections").setLevel(Level.OFF);
-    }
-
     /**
      * Initialize the terminal for jline
      */
     static final Terminal terminal;
 
     static {
+        Logger.getLogger("org.jline").setLevel(Level.OFF);
         try {
             terminal = TerminalBuilder.builder().jansi(true).system(true).build();
         } catch (IOException e) {
