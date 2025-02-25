@@ -261,6 +261,9 @@ public abstract class ChatClient {
         String clientUID = getClientUID();
         String clientFileName = String.format("sessions/%s.json", clientUID);
         try {
+            if (!Files.exists(Path.of("sessions"))) {
+                Files.createDirectory(Path.of("sessions"));
+            }
             Files.writeString(Path.of(clientFileName), clientJson.toString());
             System.out.println("Session saved to " + clientFileName);
         } catch (IOException e) {
