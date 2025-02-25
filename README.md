@@ -7,7 +7,7 @@ Recently the LLM (Large Language Model) has become amazingly powerful and popula
 In PA1, you need to implement two tasks:
 
 - Task 1: Implement the `ChatManager` class, `ChatClient` class and `ChatSession` class
-- Task 2: Implement the presistence functionalities in the `ChatManager` class
+- Task 2: Implement the persistence functionalities in the `ChatManager` class
 
 We will provide public test cases for you to verify the correctness of your implementations. However, passing all the public test cases does not mean that you can obtain the full mark for the PA. We also have many additional test cases as the hidden ones, which are different from the ones we provided in the skeleton.
 
