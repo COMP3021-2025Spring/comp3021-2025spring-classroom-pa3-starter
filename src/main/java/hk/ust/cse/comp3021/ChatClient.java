@@ -61,6 +61,18 @@ public abstract class ChatClient {
      */
     protected abstract int getClientMaxTokens();
 
+    // create the session directory if not exists
+    static {
+        try {
+            Path sessions = Path.of("sessions");
+            if (!Files.exists(sessions)) {
+                Files.createDirectory(sessions);
+            }
+        } catch (IOException e) {
+            Utils.printlnError("Failed to create the session directory: " + e.getMessage());
+        }
+    }
+
     /**
      * The menu, a map of command and description
      */
@@ -253,6 +265,7 @@ public abstract class ChatClient {
         return getClientName() + "_" + timeCreated;
     }
 
+
     /**
      * Save the client to a JSON file
      */
@@ -261,9 +274,6 @@ public abstract class ChatClient {
         String clientUID = getClientUID();
         String clientFileName = String.format("sessions/%s.json", clientUID);
         try {
-            if (!Files.exists(Path.of("sessions"))) {
-                Files.createDirectory(Path.of("sessions"));
-            }
             Files.writeString(Path.of(clientFileName), clientJson.toString());
             System.out.println("Session saved to " + clientFileName);
         } catch (IOException e) {

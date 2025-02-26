@@ -63,6 +63,7 @@ public class ChatManager {
      */
     static final Terminal terminal;
 
+    // disable the logger and initialize the terminal
     static {
         Logger.getLogger("org.jline").setLevel(Level.OFF);
         try {
