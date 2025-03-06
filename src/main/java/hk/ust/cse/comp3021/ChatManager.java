@@ -6,12 +6,11 @@
 
 package hk.ust.cse.comp3021;
 
-import org.jline.reader.EndOfFileException;
-import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.UserInterruptException;
+import org.jline.reader.*;
+import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.json.JSONObject;
 import org.reflections.Reflections;
 
 import javax.annotation.Nonnull;
@@ -34,7 +33,8 @@ public class ChatManager {
     static final String replPrompt = Utils.toInfo("ChatManager> ");
 
     /**
-     * The banner, generated from: <a href="https://patorjk.com/software/taag/#p=display&f=Ogre&t=LLM%20ChatManager">...</a>
+     * The banner, generated from:
+     * <a href="https://patorjk.com/software/taag/#p=display&f=Ogre&t=LLM%20ChatManager">...</a>
      */
     static final String banner = """
                __    __             ___ _           _                                           \s
@@ -51,7 +51,11 @@ public class ChatManager {
     static final Map<String, String> menus = new LinkedHashMap<>() {
         {
             put("chat", "start a new chat session");
-            put("list", "list previous sessions");
+            put("tag", "tag the specified session");
+            put("untag", "untag the specified session");
+            put("description", "set a description to the specified session");
+            put("list", "list available chat clients");
+            put("history", "show previous sessions");
             put("load", "load from a previous session");
             put("help", "show this help message");
             put("exit", "exit the program");
@@ -72,6 +76,23 @@ public class ChatManager {
             throw new RuntimeException(e);
         }
     }
+
+    // create the session directory if not exists
+    static {
+        try {
+            Path sessions = Path.of("sessions");
+            if (!Files.exists(sessions)) {
+                Files.createDirectory(sessions);
+            }
+        } catch (IOException e) {
+            Utils.printlnError("Failed to create the session directory: " + e.getMessage());
+        }
+    }
+
+    /**
+     * The completer for the ChatManager repl
+     */
+    static final Completer completer = new StringsCompleter(menus.keySet());
 
     /**
      * Print the help message
@@ -146,13 +167,70 @@ public class ChatManager {
     }
 
     /**
+     * Print the session information
+     *
+     * @param filePath the file path of the session
+     */
+    static void printSession(Path filePath) {
+        try {
+            JSONObject session = new JSONObject(Files.readString(filePath));
+            String clientUID = filePath.getFileName().getFileName().toString().replace(".json", "");
+            String tags = session.getJSONArray("tags").join(", ");
+            String description = session.getString("description");
+            System.out.printf("Session: %-40s Tags: %-40s Description: %s %n", clientUID, tags, description);
+        } catch (IOException e) {
+            Utils.printlnError("Error reading session: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Add tags to the session
+     *
+     * @param clientUID the client UID
+     * @param tags       the tags to add
+     */
+    static void addTags(String clientUID, String[] tags) {
+        JSONObject session = Utils.parseJSON(clientUID);
+        for (String tag : tags) {
+            session.getJSONArray("tags").put(tag.trim());
+        }
+        Utils.writeJSON(session, clientUID);
+    }
+
+    /**
+     * Remove a tag from the session
+     * @param clientUID the client UID
+     * @param tag the tag to remove
+     */
+    static void removeTag(String clientUID, String tag) {
+        JSONObject session = Utils.parseJSON(clientUID);
+        for (int i = 0; i < session.getJSONArray("tags").length(); i++) {
+            if (session.getJSONArray("tags").getString(i).equals(tag)) {
+                session.getJSONArray("tags").remove(i);
+                break;
+            }
+        }
+        Utils.writeJSON(session, clientUID);
+    }
+
+    /**
+     * Add a description to the session
+     * @param clientUID the client UID
+     * @param description the description to add
+     */
+    static void setDescription(String clientUID, String description) {
+        Path filePath = Paths.get("sessions", clientUID + ".json");
+        JSONObject session = Utils.parseJSON(filePath.toString());
+        session.put("description", description.trim());
+        Utils.writeJSON(session, filePath.toString());
+    }
+
+    /**
      * List all the previously stored sessions
      */
     public static void listSessions() {
         try (Stream<Path> paths = Files.walk(Paths.get("sessions"))) {
-            paths.filter(Files::isRegularFile)
-                    .map(Path::getFileName)
-                    .forEach(System.out::println);
+            paths.filter(Files::isRegularFile).forEach(ChatManager::printSession);
         } catch (IOException e) {
             Utils.printlnError("Error listing sessions: " + e.getMessage());
         }
@@ -164,16 +242,21 @@ public class ChatManager {
     public static void repl() {
         Utils.printlnInfo(banner + "Welcome to LLM ChatManager!");
         printHelp();
-        LineReader reader = LineReaderBuilder.builder().terminal(terminal).build();
+        LineReader lineReader = LineReaderBuilder.builder().completer(completer).terminal(terminal).build();
 
         while (true) {
             try {
                 Utils.printInfo(replPrompt);
-                String line = reader.readLine();
-                switch (line) {
-                    case "chat":
+                String[] tokens = lineReader.readLine().split(" ");
+                String command = tokens[0];
+                String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+                switch (command) {
+                    case "list":
                         System.out.println("Available LLM Chat Clients: " + getChatClientNames());
-                        String clientName = reader.readLine("select your LLM client: ");
+                        break;
+                    case "chat":
+                        // default client name is GPT-4o for testing
+                        String clientName = args.length == 0 ? "GPT-4o" : args[0];
                         try {
                             ChatClient chatClient = getChatClient(clientName);
                             chatClient.repl();
@@ -183,7 +266,28 @@ public class ChatManager {
                             Utils.printlnError(e.getMessage());
                         }
                         break;
-                    case "list":
+                    case "tag":
+                        if (args.length < 2) {
+                            Utils.printlnError("Usage: tag [session] [tag1] [tag2] ...");
+                            break;
+                        }
+                        addTags(args[0], Arrays.copyOfRange(args, 1, args.length));
+                        break;
+                    case "untag":
+                        if (args.length != 2) {
+                            Utils.printlnError("Usage: untag [session] [tag]");
+                            break;
+                        }
+                        removeTag(args[0], args[1]);
+                        break;
+                    case "description":
+                        if (args.length < 2) {
+                            Utils.printlnError("Usage: description [session] [description]");
+                            break;
+                        }
+                        setDescription(args[0], String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+                        break;
+                    case "history":
                         listSessions();
                         break;
                     case "load":

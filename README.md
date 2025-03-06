@@ -2,12 +2,24 @@
 
 Recently the LLM (Large Language Model) has become amazingly powerful and popular in the world. Several companies have deployed their LLM chat services, such as ChatGPT from OpenAI. In this programming assignment, you are going to implement a simple local chat manager (the `ChatManager` class) that can interact with different LLM chat clients (the `ChatClient` class) and persist chat sessions.
 
+## Change Log
+
+- PA0: Initial release, implement the basic functionalities of `ChatManager` and `ChatClient` and `GPT4oClient` class, design Task1 test cases
+- PA1: 
+  - `ChatManager`: refine REPL, add history and list command
+  - `ChatClient`: add persistence functionalities, add tag and description, add token statistics in Message
+  - Add annotations for guiding persistence
+  - Add Task2 test cases
+- PA2: 
+  - `ChatManager`: add several statistics commands
+  - Add PA2 test cases
+
 ## Grading
 
 In PA1, you need to implement two tasks, detailed implementation can be searched with "TODO" in the codebase.
 
 - Task 1: Implement some methods in `ChatManager` class and `ChatClient` class, implement the all things in the `GPT4oChatClient` class.
-- Task 2: Implement the persistence functionalities in the `ChatManager` class
+- Task 2: Implement the persistence functionalities in the `ChatManager` class and `ChatClient` class.
 
 We will provide public test cases for you to verify the correctness of your implementations. However, passing all the public test cases does not mean that you can obtain the full mark for the PA. We also have many additional test cases as the hidden ones, which are different from the ones we provided in the skeleton.
 
@@ -92,6 +104,7 @@ The project structure is as follows:
   - `Message` and `Messages` are used for storing chat messages.
 - `GPT4oClient` is a concrete class that extends `ChatClient`, `query()` is used for interacting with the API service.
 - `Utils` contains some utility functions.
+- The project use [org.json](http://stleary.github.io/JSON-java/index.html) as the low-level JSON library for serialization and deserialization.
 
 ```mermaid
 classDiagram

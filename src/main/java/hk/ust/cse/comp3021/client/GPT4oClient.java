@@ -11,6 +11,7 @@ import hk.ust.cse.comp3021.Utils;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -50,36 +51,50 @@ public class GPT4oClient extends ChatClient {
     @Override
     public String query(String prompt) {
         try {
-            URL url = new URL(apiURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("api-key", apiKey);
-            conn.setDoOutput(true);
+            HttpURLConnection conn = getHttpURLConnection();
 
             messages.addMessage("user", prompt);
+            JSONObject responseJSON = sendPOSTRequest(conn);
 
-            try (OutputStream os = conn.getOutputStream()) {
-                byte[] input = messages.toJSON().toString().getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
+            // the returned prompt token is actually the total prompt tokens
+            int promptTokens = responseJSON.getJSONObject("usage").getInt("prompt_tokens");
+            messages.getLastMessage().setTokens(promptTokens - totalPromptTokens - totalCompletionTokens);
+            totalPromptTokens = promptTokens;
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-            StringBuilder responseBuilder = new StringBuilder();
-            String responseLine;
-            while ((responseLine = br.readLine()) != null) {
-                responseBuilder.append(responseLine.trim());
-            }
-
-            JSONObject responseJSON = new JSONObject(responseBuilder.toString());
             String response = responseJSON.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
-            messages.addMessage("assistant", response);
+            int completionTokens = responseJSON.getJSONObject("usage").getInt("completion_tokens");
+            messages.addMessage("assistant", response, completionTokens);
+            totalCompletionTokens += completionTokens;
 
             return response;
         } catch (Exception e) {
             Utils.printlnError("Query error: " + e.getMessage());
             return "";
         }
+    }
+
+    HttpURLConnection getHttpURLConnection() throws IOException {
+        URL url = new URL(apiURL);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("api-key", apiKey);
+        conn.setDoOutput(true);
+        return conn;
+    }
+
+    JSONObject sendPOSTRequest(HttpURLConnection conn) throws IOException {
+        try (OutputStream os = conn.getOutputStream()) {
+            byte[] input = getPOSTData().toString().getBytes(StandardCharsets.UTF_8);
+            os.write(input, 0, input.length);
+        }
+        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        StringBuilder responseBuilder = new StringBuilder();
+        String responseLine;
+        while ((responseLine = br.readLine()) != null) {
+            responseBuilder.append(responseLine.trim());
+        }
+        return new JSONObject(responseBuilder.toString());
     }
 
     @Override

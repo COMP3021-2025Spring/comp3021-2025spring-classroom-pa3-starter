@@ -38,66 +38,6 @@ public abstract class ChatClient {
     protected String apiKey;
 
     /**
-     * The time created
-     */
-    protected final String timeCreated;
-
-    /**
-     * The messages to save all conversation history
-     */
-    protected Messages messages = new Messages();
-
-    /**
-     * Get the name of the ChatClient
-     *
-     * @return the name of the ChatClient
-     */
-    protected abstract String getClientName();
-
-    /**
-     * Get the maximum tokens allowed for the ChatClient
-     *
-     * @return the maximum tokens allowed
-     */
-    protected abstract int getClientMaxTokens();
-
-    // create the session directory if not exists
-    static {
-        try {
-            Path sessions = Path.of("sessions");
-            if (!Files.exists(sessions)) {
-                Files.createDirectory(sessions);
-            }
-        } catch (IOException e) {
-            Utils.printlnError("Failed to create the session directory: " + e.getMessage());
-        }
-    }
-
-    /**
-     * The menu, a map of command and description
-     */
-    static final Map<String, String> menus = new LinkedHashMap<>() {
-        {
-            put("file", "upload a file");
-            put("history", "show the conversation history");
-            put("help", "show this help message");
-            put("exit", "exit the program");
-        }
-    };
-
-    /**
-     * Print the help message
-     */
-    static void printHelp() {
-        System.out.println("Available commands:");
-        for (Map.Entry<String, String> entry : menus.entrySet()) {
-            System.out.print("- ");
-            Utils.printInfo(entry.getKey());
-            System.out.println(": " + entry.getValue());
-        }
-    }
-
-    /**
      * Set the API key
      *
      * @param apiKey the API key
@@ -123,72 +63,9 @@ public abstract class ChatClient {
     }
 
     /**
-     * Default constructor of ChatClient
+     * The time created
      */
-    public ChatClient() {
-        timeCreated = Utils.getCurrentTime();
-        String apiKeyFile = String.format("keys/%s.txt", getClientName());
-
-        if (Files.exists(Path.of(apiKeyFile)) && readAndSetKey(apiKeyFile)) {
-            System.out.println("Default API key loaded from: " + apiKeyFile);
-        } else {
-            while (true) {
-                System.out.println("Specify the file path of the API key: ");
-                apiKeyFile = new Scanner(System.in).next();
-                if (readAndSetKey(apiKeyFile)) {
-                    System.out.println("API key loaded from: " + apiKeyFile);
-                    break;
-                }
-            }
-        }
-
-        messages.addMessage("system", systemPrompt);
-    }
-
-    /**
-     * Chatting Read-Eval-Print Loop
-     */
-    public void repl() {
-        Utils.printlnInfo("Welcome to " + getClientName() + " ChatClient!");
-        printHelp();
-        LineReader lineReader = LineReaderBuilder.builder().build();
-        while (true) {
-            try {
-                Utils.printInfo(replPrompt);
-                String line = lineReader.readLine();
-                switch (line) {
-                    case "file":
-                        String filePath = lineReader.readLine("specify the file path: ");
-                        try {
-                            String content = Files.readString(Path.of(filePath)).trim();
-                            if (content.length() >= getClientMaxTokens()) {
-                                Utils.printlnError("The file content has exceed maximum (" + getClientMaxTokens() + ") tokens.");
-                                break;
-                            }
-                            System.out.println(query(content));
-                        } catch (IOException e) {
-                            Utils.printlnError(e.getMessage());
-                        }
-                        break;
-                    case "history":
-                        System.out.println(messages);
-                        break;
-                    case "help":
-                        printHelp();
-                        break;
-                    case "exit":
-                        throw new EndOfFileException();
-                    case "":
-                        break;
-                    default:
-                        Utils.printInfo(getClientName() + "> ");
-                        System.out.println(query(line));
-                }
-            } catch (UserInterruptException | EndOfFileException e) {
-                return;
-            }
-        }
-    }
+    protected final long timeCreated;
 
     /**
      * Message class, consisting of role and content
@@ -196,6 +73,7 @@ public abstract class ChatClient {
     protected static class Message {
         String role;
         String content;
+        int tokens;
 
         /**
          * Constructor of Message
@@ -206,6 +84,16 @@ public abstract class ChatClient {
         public Message(String role, String content) {
             this.role = role;
             this.content = content;
+        }
+
+        public Message(String role, String content, int tokens) {
+            this.role = role;
+            this.content = content;
+            this.tokens = tokens;
+        }
+
+        public void setTokens(int tokens) {
+            this.tokens = tokens;
         }
     }
 
@@ -228,13 +116,20 @@ public abstract class ChatClient {
             messageList.add(new Message(role, content));
         }
 
+        public void addMessage(String role, String content, int tokens) {
+            messageList.add(new Message(role, content, tokens));
+        }
+
+        public Message getLastMessage() {
+            return messageList.get(messageList.size() - 1);
+        }
+
         /**
          * Convert the messages to JSON format used in POST request
          *
          * @return the JSON string
          */
-        public JSONObject toJSON() {
-            JSONObject postData = new JSONObject();
+        public JSONArray toPOSTData() {
             JSONArray messageList = new JSONArray();
             for (Message message : this.messageList) {
                 JSONObject messageJson = new JSONObject();
@@ -242,8 +137,24 @@ public abstract class ChatClient {
                 messageJson.put("content", message.content);
                 messageList.put(messageJson);
             }
-            postData.put("messages", messageList);
-            return postData;
+            return messageList;
+        }
+
+        /**
+         * Convert the messages to JSON format used in persistence
+         *
+         * @return the JSON string
+         */
+        public JSONArray toJSON() {
+            JSONArray messageList = new JSONArray();
+            for (Message message : this.messageList) {
+                JSONObject messageJson = new JSONObject();
+                messageJson.put("role", message.role);
+                messageJson.put("content", message.content);
+                messageJson.put("tokens", message.tokens);
+                messageList.put(messageJson);
+            }
+            return messageList;
         }
 
         @Override
@@ -257,28 +168,232 @@ public abstract class ChatClient {
     }
 
     /**
+     * The total prompt tokens queried by the ChatClient
+     */
+    protected int totalPromptTokens;
+
+    /**
+     * The total completion tokens queried by the ChatClient
+     */
+    protected int totalCompletionTokens;
+
+    /**
+     * The temperature of the ChatClient
+     */
+    protected int temperature = 1;
+
+    /**
+     * The messages to save all conversation history
+     */
+    protected Messages messages = new Messages();
+
+    /**
+     * The tags for filtering ChatClient
+     */
+    protected HashSet<String> tags = new HashSet<>();
+
+    /**
+     * The description of the ChatClient
+     */
+    protected String description = "";
+
+    /**
+     * Add a tag to the ChatClient
+     *
+     * @param tags the tag to add
+     */
+    public void addTags(String[] tags) {
+        this.tags.addAll(List.of(tags));
+    }
+
+    /**
+     * Remove a tag from the ChatClient
+     *
+     * @param tag the tag to remove
+     */
+    public void removeTag(String tag) {
+        tags.remove(tag);
+    }
+
+    /**
+     * Get the description of the ChatClient
+     *
+     * @param description the description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Get the name of the ChatClient
+     *
+     * @return the name of the ChatClient
+     */
+    protected abstract String getClientName();
+
+    /**
+     * Get the maximum tokens allowed for the ChatClient
+     *
+     * @return the maximum tokens allowed
+     */
+    protected abstract int getClientMaxTokens();
+
+    /**
+     * The menu, a map of command and description
+     */
+    static final Map<String, String> menus = new LinkedHashMap<>() {
+        {
+            put("file", "upload a file");
+            put("history", "show the conversation history");
+            put("tag", "tag current session");
+            put("untag", "untag current session");
+            put("description", "set a description to current session");
+            put("help", "show this help message");
+            put("exit", "exit the program");
+        }
+    };
+
+    /**
+     * Print the help message
+     */
+    static void printHelp() {
+        System.out.println("Available commands:");
+        for (Map.Entry<String, String> entry : menus.entrySet()) {
+            System.out.print("- ");
+            Utils.printInfo(entry.getKey());
+            System.out.println(": " + entry.getValue());
+        }
+    }
+
+    /**
+     * Default constructor of ChatClient
+     */
+    public ChatClient() {
+        timeCreated = Utils.getCurrentTime();
+        String apiKeyFile = String.format("keys/%s.txt", getClientName());
+
+        if (Files.exists(Path.of(apiKeyFile)) && readAndSetKey(apiKeyFile)) {
+            System.out.println("Default API key loaded from: " + apiKeyFile);
+        } else {
+            while (true) {
+                System.out.println("Specify the file path of the API key: ");
+                apiKeyFile = new Scanner(System.in).next();
+                if (readAndSetKey(apiKeyFile)) {
+                    System.out.println("API key loaded from: " + apiKeyFile);
+                    break;
+                }
+            }
+        }
+
+        // manually get the token number of system prompt
+        messages.addMessage("system", systemPrompt);
+    }
+
+    /**
+     * Get the POST data for the ChatClient
+     *
+     * @return the POST data in JSONObject
+     */
+    protected JSONObject getPOSTData() {
+        JSONObject postData = new JSONObject();
+        postData.put("temperature", temperature);
+        postData.put("messages", messages.toPOSTData());
+        return postData;
+    }
+
+    /**
+     * upload a file and query the content
+     *
+     * @param filePath the file path
+     */
+    void uploadFile(String filePath) {
+        try {
+            String content = Files.readString(Path.of(filePath)).trim();
+            if (content.length() >= getClientMaxTokens()) {
+                Utils.printlnError("The file content has exceed maximum (" + getClientMaxTokens() + ") tokens.");
+                return;
+            }
+            System.out.println(query(content));
+        } catch (IOException e) {
+            Utils.printlnError(e.getMessage());
+        }
+    }
+
+    /**
+     * Chatting Read-Eval-Print Loop
+     */
+    public void repl() {
+        Utils.printlnInfo("Welcome to " + getClientName() + " ChatClient!");
+        printHelp();
+        LineReader lineReader = LineReaderBuilder.builder().build();
+        while (true) {
+            try {
+                Utils.printInfo(replPrompt);
+                String line = lineReader.readLine();
+                String[] tokens = line.split(" ");
+                if (tokens.length == 0) {
+                    continue;
+                }
+                String command = tokens[0];
+                String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+                switch (command) {
+                    case "file":
+                        String filePath = (args.length == 0) ? lineReader.readLine("specify the file path: ") : args[0];
+                        uploadFile(filePath);
+                        break;
+                    case "history":
+                        System.out.println(messages);
+                        break;
+                    case "tag":
+                        addTags(args);
+                        break;
+                    case "untag":
+                        if (args.length != 1) {
+                            Utils.printlnError("Usage: tag [tag]");
+                            break;
+                        }
+                        removeTag(args[0]);
+                        break;
+                    case "description":
+                        if (args.length == 0) {
+                            Utils.printlnError("Usage: description [description]");
+                            break;
+                        }
+                        setDescription(String.join(" ", args));
+                        break;
+                    case "help":
+                        printHelp();
+                        break;
+                    case "exit":
+                        throw new EndOfFileException();
+                    case "":
+                        break;
+                    default:
+                        Utils.printInfo(getClientName() + "> ");
+                        System.out.println(query(line));
+                }
+            } catch (UserInterruptException | EndOfFileException e) {
+                return;
+            }
+        }
+    }
+
+
+    /**
      * Get the client UID for indexing
      *
      * @return the client UID
      */
     String getClientUID() {
-        return getClientName() + "_" + timeCreated;
+        return getClientName() + "_" + Utils.timeToFilename(timeCreated);
     }
-
 
     /**
      * Save the client to a JSON file
      */
     void saveClient() {
         JSONObject clientJson = toJSON();
-        String clientUID = getClientUID();
-        String clientFileName = String.format("sessions/%s.json", clientUID);
-        try {
-            Files.writeString(Path.of(clientFileName), clientJson.toString());
-            System.out.println("Session saved to " + clientFileName);
-        } catch (IOException e) {
-            Utils.printlnError("Failed to save the session: " + e.getMessage());
-        }
+        Utils.writeJSON(clientJson, getClientUID());
     }
 
     /**
@@ -296,7 +411,13 @@ public abstract class ChatClient {
         JSONObject json = new JSONObject();
         json.put("clientName", getClientName());
         json.put("apiKey", apiKey);
+        json.put("temperature", temperature);
         json.put("timeCreated", timeCreated);
+        json.put("tags", new JSONArray(tags));
+        json.put("description", description);
+        json.put("totalPromptTokens", totalPromptTokens);
+        json.put("totalCompletionTokens", totalCompletionTokens);
+        json.put("messages", messages.toJSON());
         return json;
     }
 
