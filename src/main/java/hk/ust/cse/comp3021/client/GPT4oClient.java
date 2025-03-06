@@ -58,8 +58,9 @@ public class GPT4oClient extends ChatClient {
 
             // the returned prompt token is actually the total prompt tokens
             int promptTokens = responseJSON.getJSONObject("usage").getInt("prompt_tokens");
-            messages.getLastMessage().setTokens(promptTokens - totalPromptTokens - totalCompletionTokens);
-            totalPromptTokens = promptTokens;
+            int currPromptTokens = promptTokens - totalPromptTokens - totalCompletionTokens;
+            messages.getLastMessage().setTokens(currPromptTokens);
+            totalPromptTokens += currPromptTokens;
 
             String response =
                     responseJSON.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");

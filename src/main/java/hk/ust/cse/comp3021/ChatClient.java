@@ -280,9 +280,11 @@ public abstract class ChatClient {
      * Default constructor of ChatClient
      */
     public ChatClient() {
+        // set the time created and last open
         timeCreated = Utils.getCurrentTime();
-        String apiKeyFile = String.format("keys/%s.txt", getClientName());
+        timeLastOpen = timeCreated;
 
+        String apiKeyFile = String.format("keys/%s.txt", getClientName());
         if (Files.exists(Path.of(apiKeyFile)) && readAndSetKey(apiKeyFile)) {
             System.out.println("Default API key loaded from: " + apiKeyFile);
         } else {
