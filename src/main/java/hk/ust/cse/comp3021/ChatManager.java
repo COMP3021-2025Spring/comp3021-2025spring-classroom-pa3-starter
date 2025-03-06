@@ -211,7 +211,8 @@ public class ChatManager {
             String description = session.getString("description");
             String timeLastOpened = Utils.timeToString(session.getLong("timeLastOpen"));
             String timeLastExit = Utils.timeToString(session.getLong("timeLastExit"));
-            System.out.printf("Session: %s Last Open: %s Last Exit: %s Tags: %-30s Description: %s %n", Utils.toInfo(clientUID), Utils.toInfo(timeLastOpened), Utils.toInfo(timeLastExit),
+            System.out.printf("Session: %s Last Open: %s Last Exit: %s Tags: %-30s Description: %s %n",
+                    Utils.toInfo(clientUID), Utils.toInfo(timeLastOpened), Utils.toInfo(timeLastExit),
                     Utils.toInfo(tags), Utils.toInfo(description));
         } catch (IOException | JSONException e) {
             Utils.printlnError("Error reading session: " + e.getMessage());
