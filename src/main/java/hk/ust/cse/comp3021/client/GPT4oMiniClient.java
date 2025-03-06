@@ -102,9 +102,4 @@ public class GPT4oMiniClient extends ChatClient {
         json.put("apiURL", apiURL);
         return json;
     }
-
-    @Override
-    public ChatClient fromJSON(JSONObject json) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
 }

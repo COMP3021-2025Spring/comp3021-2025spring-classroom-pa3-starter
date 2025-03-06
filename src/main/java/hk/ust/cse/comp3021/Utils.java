@@ -82,6 +82,16 @@ public class Utils {
     }
 
     /**
+     * Convert the time to a string
+     * @param time the epoch time to convert
+     * @return the string representation of the time
+     */
+    public static String timeToString(long time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.ofEpochSecond(time, 0, ZoneOffset.UTC).format(formatter);
+    }
+
+    /**
      * Parse a JSONObject from file given by the clientUID
      * @param clientUID the clientUID
      * @return the JSONObject
@@ -105,7 +115,6 @@ public class Utils {
         Path filePath = Paths.get("sessions", clientUID + ".json");
         try {
             Files.writeString(filePath, json.toString(2));
-            System.out.println("Session saved to " + filePath);
         } catch (IOException e) {
             Utils.printlnError("Failed to save the session: " + e.getMessage());
         }

@@ -8,18 +8,17 @@ package hk.ust.cse.comp3021.client;
 
 import hk.ust.cse.comp3021.ChatClient;
 import hk.ust.cse.comp3021.Utils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 /**
- * GPT4oClient class: <a href="https://itso.hkust.edu.hk/services/it-infrastructure/azure-openai-api-service">API reference</a>
+ * GPT4oClient class:
+ * <a href="https://itso.hkust.edu.hk/services/it-infrastructure/azure-openai-api-service">API reference</a>
  */
 public class GPT4oClient extends ChatClient {
 
@@ -36,7 +35,8 @@ public class GPT4oClient extends ChatClient {
     /**
      * The API URL
      */
-    static final String apiURL = "https://hkust.azure-api.net/openai/deployments/gpt-4o/chat/completions?api-version=2024-06-01";
+    static final String apiURL = "https://hkust.azure-api.net/openai/deployments/gpt-4o/chat/completions?api-version" +
+            "=2024-06-01";
 
     @Override
     protected String getClientName() {
@@ -61,7 +61,8 @@ public class GPT4oClient extends ChatClient {
             messages.getLastMessage().setTokens(promptTokens - totalPromptTokens - totalCompletionTokens);
             totalPromptTokens = promptTokens;
 
-            String response = responseJSON.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
+            String response =
+                    responseJSON.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
             int completionTokens = responseJSON.getJSONObject("usage").getInt("completion_tokens");
             messages.addMessage("assistant", response, completionTokens);
             totalCompletionTokens += completionTokens;
@@ -105,8 +106,23 @@ public class GPT4oClient extends ChatClient {
         return json;
     }
 
-    @Override
-    public ChatClient fromJSON(JSONObject json) {
-        throw new UnsupportedOperationException("Not implemented");
+    /**
+     * Default constructor
+     */
+    public GPT4oClient() {
+        super();
+    }
+
+    /**
+     * Constructor of ChatClient when deserializing from JSON
+     *
+     * @param session the JSON object
+     */
+    public GPT4oClient(JSONObject session) throws JSONException, IllegalArgumentException {
+        super(session);
+        // check the JSON's integrity
+        if (session.getInt("maxTokens") != maxTokens || !session.getString("apiURL").equals(apiURL)) {
+            throw new IllegalArgumentException("Invalid session parameters");
+        }
     }
 }

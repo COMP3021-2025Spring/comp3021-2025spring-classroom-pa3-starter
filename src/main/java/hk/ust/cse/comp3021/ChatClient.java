@@ -65,7 +65,17 @@ public abstract class ChatClient {
     /**
      * The time created
      */
-    protected final long timeCreated;
+    protected long timeCreated;
+
+    /**
+     * The time last opened
+     */
+    protected long timeLastOpen;
+
+    /**
+     * The time last exit
+     */
+    protected long timeLastExit;
 
     /**
      * Message class, consisting of role and content
@@ -161,7 +171,8 @@ public abstract class ChatClient {
         public String toString() {
             StringBuilder sb = new StringBuilder();
             for (Message message : messageList) {
-                sb.append(message.role).append(": ").append(message.content).append("\n");
+                String prompt = message.role.equals("user") ? " --> " : " <-- ";
+                sb.append(Utils.toInfo(message.role)).append(Utils.toInfo(prompt)).append(message.content).append("\n");
             }
             return sb.toString();
         }
@@ -247,7 +258,7 @@ public abstract class ChatClient {
             put("history", "show the conversation history");
             put("tag", "tag current session");
             put("untag", "untag current session");
-            put("description", "set a description to current session");
+            put("desc", "set a description to current session");
             put("help", "show this help message");
             put("exit", "exit the program");
         }
@@ -287,6 +298,31 @@ public abstract class ChatClient {
 
         // manually get the token number of system prompt
         messages.addMessage("system", systemPrompt);
+    }
+
+    /**
+     * Constructor of ChatClient when deserializing from JSON
+     *
+     * @param session the JSON object
+     */
+    public ChatClient(JSONObject session) {
+        apiKey = session.getString("apiKey");
+        temperature = session.getInt("temperature");
+        totalPromptTokens = session.getInt("totalPromptTokens");
+        totalCompletionTokens = session.getInt("totalCompletionTokens");
+        session.getJSONArray("tags").forEach(tag -> tags.add(tag.toString()));
+        tags = new HashSet<>(session.getJSONArray("tags").toList().stream().map(Object::toString).toList());
+        description = session.getString("description");
+        timeCreated = session.getInt("timeCreated");
+        timeLastExit = session.getInt("timeLastExit");
+        timeLastOpen = Utils.getCurrentTime();
+        messages = new Messages();
+        JSONArray messagesJson = session.getJSONArray("messages");
+        for (int i = 0; i < messagesJson.length(); i++) {
+            JSONObject messageJson = messagesJson.getJSONObject(i);
+            messages.addMessage(messageJson.getString("role"), messageJson.getString("content"), messageJson.getInt(
+                    "tokens"));
+        }
     }
 
     /**
@@ -354,7 +390,7 @@ public abstract class ChatClient {
                         }
                         removeTag(args[0]);
                         break;
-                    case "description":
+                    case "desc":
                         if (args.length == 0) {
                             Utils.printlnError("Usage: description [description]");
                             break;
@@ -413,6 +449,8 @@ public abstract class ChatClient {
         json.put("apiKey", apiKey);
         json.put("temperature", temperature);
         json.put("timeCreated", timeCreated);
+        json.put("timeLastOpen", timeLastOpen);
+        json.put("timeLastExit", Utils.getCurrentTime());
         json.put("tags", new JSONArray(tags));
         json.put("description", description);
         json.put("totalPromptTokens", totalPromptTokens);
@@ -420,12 +458,4 @@ public abstract class ChatClient {
         json.put("messages", messages.toJSON());
         return json;
     }
-
-    /**
-     * Deserialize the ChatClient instance from JSON
-     *
-     * @param json the JSON object
-     * @return the ChatClient instance
-     */
-    public abstract ChatClient fromJSON(JSONObject json);
 }
