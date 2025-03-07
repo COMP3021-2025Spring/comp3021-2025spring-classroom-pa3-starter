@@ -6,6 +6,7 @@
 
 package hk.ust.cse.comp3021;
 
+import hk.ust.cse.comp3021.annotation.*;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -14,6 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -21,20 +24,23 @@ import java.util.*;
 /**
  * Abstract class for ChatClient
  */
-public abstract class ChatClient {
+public abstract class ChatClient implements Serializable {
     /**
      * The system prompt
      */
+    @JsonIgnore
     protected String systemPrompt = "You are a helpful assistant.";
 
     /**
      * The shell prompt for the ChatClient repl
      */
+    @JsonIgnore
     protected String replPrompt = "ChatClient> ";
 
     /**
      * The API key
      */
+    @JsonSecret
     protected String apiKey;
 
     /**
@@ -63,18 +69,21 @@ public abstract class ChatClient {
     }
 
     /**
-     * The time created
+     * The time created, <a href="https://www.epochconverter.com/">...</a>
      */
+    @JsonRangeCheck(minLong = 1740787200, maxLong = 1748735999)
     protected long timeCreated;
 
     /**
-     * The time last opened
+     * The time last opened, <a href="https://www.epochconverter.com/">...</a>
      */
+    @JsonRangeCheck(minLong = 1740787200, maxLong = 1748735999)
     protected long timeLastOpen;
 
     /**
-     * The time last exit
+     * The time last exit, <a href="https://www.epochconverter.com/">...</a>
      */
+    @JsonRangeCheck(minLong = 1740787200, maxLong = 1748735999)
     protected long timeLastExit;
 
     /**
@@ -110,7 +119,7 @@ public abstract class ChatClient {
     /**
      * Messages consists of a list of {@link Message}
      */
-    protected static class Messages {
+    protected static class Messages implements Serializable {
         /**
          * List of {@link Message}
          */
@@ -155,7 +164,9 @@ public abstract class ChatClient {
          *
          * @return the JSON string
          */
-        public JSONArray toJSON() {
+        @Override
+        public JSONObject toJSON() {
+            JSONObject messagesJson = new JSONObject();
             JSONArray messageList = new JSONArray();
             for (Message message : this.messageList) {
                 JSONObject messageJson = new JSONObject();
@@ -164,7 +175,18 @@ public abstract class ChatClient {
                 messageJson.put("tokens", message.tokens);
                 messageList.put(messageJson);
             }
-            return messageList;
+            messagesJson.put("contents", messageList);
+            return messagesJson;
+        }
+
+        @Override
+        public void fromJSON(JSONObject jsonObject) {
+            JSONArray messagesJson = jsonObject.getJSONArray("contents");
+            for (int i = 0; i < messagesJson.length(); i++) {
+                JSONObject messageJson = messagesJson.getJSONObject(i);
+                addMessage(messageJson.getString("role"), messageJson.getString("content"), messageJson.getInt(
+                        "tokens"));
+            }
         }
 
         @Override
@@ -181,17 +203,20 @@ public abstract class ChatClient {
     /**
      * The total prompt tokens queried by the ChatClient
      */
+    @JsonRangeCheck(minLong = 0)
     protected int totalPromptTokens;
 
     /**
      * The total completion tokens queried by the ChatClient
      */
+    @JsonRangeCheck(minLong = 0)
     protected int totalCompletionTokens;
 
     /**
      * The temperature of the ChatClient
      */
-    protected int temperature = 1;
+    @JsonRangeCheck(minDouble = 0, maxDouble = 2)
+    protected double temperature = 1;
 
     /**
      * The messages to save all conversation history
@@ -201,11 +226,13 @@ public abstract class ChatClient {
     /**
      * The tags for filtering ChatClient
      */
+    @JsonFilter
     protected HashSet<String> tags = new HashSet<>();
 
     /**
      * The description of the ChatClient
      */
+    @JsonFilter
     protected String description = "";
 
     /**
@@ -252,6 +279,7 @@ public abstract class ChatClient {
     /**
      * The menu, a map of command and description
      */
+    @JsonIgnore
     static final Map<String, String> menus = new LinkedHashMap<>() {
         {
             put("file", "upload a file");
@@ -308,23 +336,7 @@ public abstract class ChatClient {
      * @param session the JSON object
      */
     public ChatClient(JSONObject session) {
-        apiKey = session.getString("apiKey");
-        temperature = session.getInt("temperature");
-        totalPromptTokens = session.getInt("totalPromptTokens");
-        totalCompletionTokens = session.getInt("totalCompletionTokens");
-        session.getJSONArray("tags").forEach(tag -> tags.add(tag.toString()));
-        tags = new HashSet<>(session.getJSONArray("tags").toList().stream().map(Object::toString).toList());
-        description = session.getString("description");
-        timeCreated = session.getInt("timeCreated");
-        timeLastExit = session.getInt("timeLastExit");
-        timeLastOpen = Utils.getCurrentTime();
-        messages = new Messages();
-        JSONArray messagesJson = session.getJSONArray("messages");
-        for (int i = 0; i < messagesJson.length(); i++) {
-            JSONObject messageJson = messagesJson.getJSONObject(i);
-            messages.addMessage(messageJson.getString("role"), messageJson.getString("content"), messageJson.getInt(
-                    "tokens"));
-        }
+        fromJSON(session);
     }
 
     /**
@@ -368,7 +380,7 @@ public abstract class ChatClient {
             try {
                 Utils.printInfo(replPrompt);
                 String line = lineReader.readLine();
-                String[] tokens = line.split(" ");
+                String[] tokens = line.split("\\s+");
                 if (tokens.length == 0) {
                     continue;
                 }
@@ -411,11 +423,11 @@ public abstract class ChatClient {
                         System.out.println(query(line));
                 }
             } catch (UserInterruptException | EndOfFileException e) {
+                timeLastExit = Utils.getCurrentTime();
                 return;
             }
         }
     }
-
 
     /**
      * Get the client UID for indexing
@@ -440,24 +452,148 @@ public abstract class ChatClient {
      */
     public abstract String query(String prompt);
 
+    static Field[] getAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        while (clazz != null) {
+            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            clazz = clazz.getSuperclass();
+        }
+        return fields.toArray(new Field[0]);
+    }
+
     /**
-     * Serialize the ChatClient instance to JSON
+     * Serialize the ChatClient instance to JSON, guided by the annotations
      *
      * @return the JSON object
      */
+    @Override
     public JSONObject toJSON() {
-        JSONObject json = new JSONObject();
-        json.put("clientName", getClientName());
-        json.put("apiKey", apiKey);
-        json.put("temperature", temperature);
-        json.put("timeCreated", timeCreated);
-        json.put("timeLastOpen", timeLastOpen);
-        json.put("timeLastExit", Utils.getCurrentTime());
-        json.put("tags", new JSONArray(tags));
-        json.put("description", description);
-        json.put("totalPromptTokens", totalPromptTokens);
-        json.put("totalCompletionTokens", totalCompletionTokens);
-        json.put("messages", messages.toJSON());
-        return json;
+        JSONObject jsonObject = new JSONObject();
+        // iterate though all fields of the derived ChatClient class
+        Field[] allFields = getAllFields(this.getClass());
+        for (var field : allFields) {
+            field.setAccessible(true);
+            try {
+                // parse annotations and perform their actions
+                Object fieldValue = field.get(this);
+                if (field.isAnnotationPresent(JsonIgnore.class)) {
+                    continue;
+                }
+                if (field.isAnnotationPresent(JsonSecret.class)) {
+                    JsonSecret secret = field.getAnnotation(JsonSecret.class);
+                    String key = secret.key();
+                    fieldValue = Utils.encrypt(fieldValue.toString(), key);
+                }
+                if (field.isAnnotationPresent(JsonFilter.class)) {
+                    if (fieldValue instanceof String fieldString) {
+                        for (String kw : field.getAnnotation(JsonFilter.class).kwList()) {
+                            fieldString = fieldString.replaceAll(kw, "*".repeat(kw.length()));
+                        }
+                        fieldValue = fieldString;
+                    } else if (fieldValue instanceof Collection<?> fieldCollection) {
+                        for (String kw : field.getAnnotation(JsonFilter.class).kwList()) {
+                            fieldCollection.remove(kw);
+                        }
+                    }
+                }
+                // range check is ignored when serializing
+
+                // start serializing the field
+                // if the field is of org.json supported type: int, long, double, String, Collection, etc
+                if (field.getType().isPrimitive() || field.getType().equals(String.class)
+                        || field.get(this) instanceof Collection<?>) {
+                    jsonObject.put(field.getName(), fieldValue);
+                } else if (fieldValue instanceof Serializable fieldSerializable) {
+                    // if the field is self-defined class, it must implement Serializable
+                    JSONObject fieldJson = fieldSerializable.toJSON();
+                    jsonObject.put(field.getName(), fieldJson);
+                } else {
+                    Utils.printlnError("Failed to serialize the field: " + field.getName());
+                }
+            } catch (IllegalAccessException e) {
+                Utils.printlnError("Failed to serialize the field: " + field.getName());
+            }
+        }
+        return jsonObject;
+    }
+
+    @Override
+    public void fromJSON(JSONObject jsonObject) {
+        // iterate though all fields of the derived ChatClient class
+        Field[] allFields = getAllFields(this.getClass());
+        for (var field : allFields) {
+            field.setAccessible(true);
+            try {
+                // parse annotations and perform their actions
+                if (field.isAnnotationPresent(JsonIgnore.class)) {
+                    continue;
+                }
+                String fieldName = field.getName();
+                Object fieldValue = switch (field.getType().getName()) {
+                    case "int" -> jsonObject.getInt(fieldName);
+                    case "long" -> jsonObject.getLong(fieldName);
+                    case "double" -> jsonObject.getDouble(fieldName);
+                    case "java.lang.String" -> jsonObject.getString(fieldName);
+                    default -> jsonObject.get(fieldName);
+                };
+                if (field.isAnnotationPresent(JsonSecret.class)) {
+                    JsonSecret secret = field.getAnnotation(JsonSecret.class);
+                    fieldValue = Utils.decrypt(fieldValue.toString(), secret.key());
+                }
+                if (field.isAnnotationPresent(JsonRangeCheck.class)) {
+                    if (field.getType().equals(int.class)) {
+                        int fieldInt = (int) fieldValue;
+                        if (fieldInt < field.getAnnotation(JsonRangeCheck.class).minInt()
+                                || fieldInt > field.getAnnotation(JsonRangeCheck.class).maxInt()) {
+                            Utils.printlnError("The field " + field.getName() + " is out of range.");
+                        }
+                    } else if (field.getType().equals(long.class)) {
+                        long fieldLong = (long) fieldValue;
+                        if (fieldLong < field.getAnnotation(JsonRangeCheck.class).minLong()
+                                || fieldLong > field.getAnnotation(JsonRangeCheck.class).maxLong()) {
+                            Utils.printlnError("The field " + field.getName() + " is out of range.");
+                        }
+                    } else if (field.getType().equals(double.class)) {
+                        double fieldDouble = (double) fieldValue;
+                        if (fieldDouble < field.getAnnotation(JsonRangeCheck.class).minDouble()
+                                || fieldDouble > field.getAnnotation(JsonRangeCheck.class).maxDouble()) {
+                            Utils.printlnError("The field " + field.getName() + " is out of range.");
+                        }
+                    } else {
+                        Utils.printlnError("Failed to deserialize the field: " + field.getName());
+                    }
+                }
+                if (field.isAnnotationPresent(JsonCheck.class)) {
+                    if (!fieldValue.equals(field.get(this))) {
+                        Utils.printlnError("The field " + field.getName() + " is not allowed to be changed.");
+                    }
+                }
+                // filter is ignored when deserializing
+
+                // start deserializing back to field
+                if (Modifier.isFinal(field.getModifiers())) {
+                    // ignore final fields
+                    continue;
+                } else if (field.getType().isPrimitive() || field.getType().equals(String.class)) {
+                    // if the field is of org.json supported type: int, long, double, String, Collection, etc
+                    field.set(this, fieldValue);
+                } else if (fieldValue instanceof JSONArray fieldJsonArray) {
+                    // if the field is of Collection type, which usually deserialized from JSONArray
+                    if (field.get(this) instanceof HashSet<?>) {
+                        field.set(this, new HashSet<>(fieldJsonArray.toList()));
+                    } else {
+                        Utils.printlnError("Failed to deserialize the field: " + field.getName());
+                    }
+                } else if (fieldValue instanceof JSONObject fieldJsonObject && field.get(this) instanceof Serializable fieldSerializable) {
+                    // if the field is self-defined class, it must implement Serializable, which usually deserialized
+                    // from JSONObject
+                    fieldSerializable.fromJSON(fieldJsonObject);
+                } else {
+                    Utils.printlnError("Failed to deserialize the field: " + field.getName());
+                }
+            } catch (IllegalAccessException e) {
+                Utils.printlnError("Failed to deserialize the field: " + field.getName());
+            }
+        }
     }
 }

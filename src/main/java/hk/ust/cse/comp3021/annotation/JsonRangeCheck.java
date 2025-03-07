@@ -7,20 +7,51 @@
 package hk.ust.cse.comp3021.annotation;
 
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * This annotation is used to mark fields that should within the range during serialization.
  * Any field annotated with {@link JsonRangeCheck} will checked with the min and max.
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface JsonRangeCheck {
     /**
-     * The minimum value of the field
-     * @return the minimum value of the field
+     * The minimum int value of the field
+     * @return the minimum int value of the field
      */
-    long min() default Long.MIN_VALUE;
+    int minInt() default Integer.MIN_VALUE;
 
     /**
-     * The maximum value of the field, equals to 2025-06-01 00:00:00
-     * @return the maximum value of the field
+     * The maximum int value of the field
+     * @return the maximum int value of the field
      */
-    long max() default Long.MAX_VALUE;
+    int maxInt() default Integer.MAX_VALUE;
+
+    /**
+     * The minimum long value of the field
+     * @return the minimum long value of the field
+     */
+    long minLong() default Long.MIN_VALUE;
+
+    /**
+     * The maximum long value of the field
+     * @return the maximum long value of the field
+     */
+    long maxLong() default Long.MAX_VALUE;
+
+    /**
+     * The minimum double value of the field
+     * @return the minimum double value of the field
+     */
+    double minDouble() default Double.MIN_VALUE;
+
+    /**
+     * The maximum double value of the field
+     * @return the maximum double value of the field
+     */
+    double maxDouble() default Double.MAX_VALUE;
 }

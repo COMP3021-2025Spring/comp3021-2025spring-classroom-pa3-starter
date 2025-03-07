@@ -12,16 +12,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used to mark fields that should be encrypted during serialization.
- * Any field annotated with {@link JsonSecret} will be encrypted.
+ * This annotation is used to check values does not change during deserialization.
+ * Any field annotated with {@link JsonFilter} will be checked against keywords.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface JsonSecret {
-    /**
-     * The secret key used to encrypt the field
-     *
-     * @return the secret key of the field
-     */
-    String key() default "comp3021";
+public @interface JsonCheck {
 }

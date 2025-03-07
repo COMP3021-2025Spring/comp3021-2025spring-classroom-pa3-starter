@@ -4,16 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="create the sessions directory if not exist using SIB">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="fix the bug in token statistics and add four annotations">
+      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Serializable.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/annotation/JsonCheck.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/annotation/JsonFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/annotation/JsonFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/annotation/JsonIgnore.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/annotation/JsonIgnore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/annotation/JsonRangeCheck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/annotation/JsonRangeCheck.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/annotation/JsonSecret.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/annotation/JsonSecret.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/client/GPT4oClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/client/GPT4oClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/client/GPT4oMiniClient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/hk/ust/cse/comp3021/client/GPT4oMiniClientTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/hk/ust/cse/comp3021/Task1Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/hk/ust/cse/comp3021/Task1Test.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,12 +53,17 @@
       <list>
         <option value="JUnit5 Test Class" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -70,38 +78,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Application.main.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build comp3021-2025spring-classroom-pa1-starter.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ChatManagerTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ChatManagerTest.getChatClient.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ChatManagerTest.showChatClients.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.GPT4oClientTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.GPT4oClientTest.getModelName.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.GPT4oClientTest.query.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.comp3021-2025spring-classroom-pa1-starter [:hk.ust.cse.comp3021.Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
-    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.main.executor": "Run",
+    "Gradle.Build comp3021-2025spring-classroom-pa1-starter.executor": "Run",
+    "Gradle.ChatManagerTest.executor": "Run",
+    "Gradle.ChatManagerTest.getChatClient.executor": "Run",
+    "Gradle.ChatManagerTest.showChatClients.executor": "Run",
+    "Gradle.GPT4oClientTest.executor": "Run",
+    "Gradle.GPT4oClientTest.getModelName.executor": "Run",
+    "Gradle.GPT4oClientTest.query.executor": "Run",
+    "Gradle.Task1Test.replChatClientConversation2.executor": "Debug",
+    "Gradle.comp3021-2025spring-classroom-pa1-starter [:hk.ust.cse.comp3021.Main.main()].executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "extract.method.default.visibility": "private",
+    "git-widget-placeholder": "dev",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.sourceCode.Java",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
@@ -111,7 +120,7 @@
       <recent name="hk.ust.cse.comp3021" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.main">
+  <component name="RunManager" selected="Gradle.Task1Test.replChatClientConversation2">
     <configuration name="main" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="corretto-17" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -217,7 +226,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="GPT4oClientTest.query" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Task1Test.replChatClientConversation2" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -230,7 +239,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;hk.ust.cse.comp3021.client.GPT4oClientTest.query&quot;" />
+            <option value="&quot;hk.ust.cse.comp3021.Task1Test.replChatClientConversation2&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -302,19 +311,19 @@
     </configuration>
     <list>
       <item itemvalue="Application.main" />
+      <item itemvalue="Gradle.Task1Test.replChatClientConversation2" />
       <item itemvalue="Gradle.ChatManagerTest" />
       <item itemvalue="Gradle.ChatManagerTest.getChatClient" />
       <item itemvalue="Gradle.ChatManagerTest.showChatClients" />
       <item itemvalue="Gradle.GPT4oClientTest" />
-      <item itemvalue="Gradle.GPT4oClientTest.query" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.Task1Test.replChatClientConversation2" />
         <item itemvalue="Gradle.ChatManagerTest.getChatClient" />
         <item itemvalue="Gradle.ChatManagerTest" />
         <item itemvalue="Gradle.GPT4oClientTest" />
         <item itemvalue="Gradle.ChatManagerTest.showChatClients" />
-        <item itemvalue="Gradle.GPT4oClientTest.query" />
       </list>
     </recent_temporary>
   </component>
@@ -339,6 +348,8 @@
       <workItem from="1740758090669" duration="20891000" />
       <workItem from="1741018100759" duration="608000" />
       <workItem from="1741018774134" duration="10212000" />
+      <workItem from="1741143181163" duration="34954000" />
+      <workItem from="1741280214221" duration="21648000" />
     </task>
     <task id="LOCAL-00001" summary="ChatManager Prototype">
       <option name="closed" value="true" />
@@ -532,7 +543,47 @@
       <option name="project" value="LOCAL" />
       <updated>1740581090038</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="implement the serialization function and refine the repl logic">
+      <option name="closed" value="true" />
+      <created>1741227214371</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1741227214371</updated>
+    </task>
+    <task id="LOCAL-00026" summary="implement the deserialize feature using constructor and refine repl output and logic">
+      <option name="closed" value="true" />
+      <created>1741247836446</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1741247836446</updated>
+    </task>
+    <task id="LOCAL-00027" summary="implement the deserialize feature using constructor and refine repl output and logic">
+      <option name="closed" value="true" />
+      <created>1741247930418</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1741247930418</updated>
+    </task>
+    <task id="LOCAL-00028" summary="reformat the code and remove useless GPT4oMiniClient.java and all self-used unit tests">
+      <option name="closed" value="true" />
+      <created>1741248067677</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1741248067677</updated>
+    </task>
+    <task id="LOCAL-00029" summary="fix the bug in token statistics and add four annotations">
+      <option name="closed" value="true" />
+      <created>1741262170446</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1741262170446</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -571,7 +622,18 @@
     <MESSAGE value="move api key link to README.md" />
     <MESSAGE value="add description to passing api key to GitHub Action" />
     <MESSAGE value="create the sessions directory if not exist using SIB" />
-    <option name="LAST_COMMIT_MESSAGE" value="create the sessions directory if not exist using SIB" />
+    <MESSAGE value="implement the serialization function and refine the repl logic" />
+    <MESSAGE value="implement the deserialize feature using constructor and refine repl output and logic" />
+    <MESSAGE value="reformat the code and remove useless GPT4oMiniClient.java and all self-used unit tests" />
+    <MESSAGE value="fix the bug in token statistics and add four annotations" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix the bug in token statistics and add four annotations" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="GradleRunConfiguration">
+        <watch expression="totalPromptTokens" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

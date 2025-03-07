@@ -131,7 +131,7 @@ public class ChatManager {
             for (Class<? extends ChatClient> subType : getSubClasses()) {
                 String clientName = subType.getField("clientName").get(null).toString();
                 if (clientName.contains("_"))
-                    Utils.printlnError("Invalid client name " + clientName + ", ignored");
+                    Utils.printlnError("Invalid client name: " + clientName + ", ignored");
                 else
                     clientNames.add(clientName);
             }
@@ -165,7 +165,7 @@ public class ChatManager {
                     return subType.getDeclaredConstructor().newInstance();
                 }
             }
-            throw new InvalidClientNameException("Invalid client name " + clientName);
+            throw new InvalidClientNameException("Invalid client name: " + clientName);
         } catch (ReflectiveOperationException | InvalidClientNameException e) {
             Utils.printlnError(e.getMessage());
             return null;
@@ -227,6 +227,9 @@ public class ChatManager {
      */
     static void addTags(String clientUID, String[] tags) {
         JSONObject session = Utils.parseJSON(clientUID);
+        if (Objects.isNull(session)) {
+            return;
+        }
         for (String tag : tags) {
             session.getJSONArray("tags").put(tag.trim());
         }
@@ -241,6 +244,9 @@ public class ChatManager {
      */
     static void removeTag(String clientUID, String tag) {
         JSONObject session = Utils.parseJSON(clientUID);
+        if (Objects.isNull(session)) {
+            return;
+        }
         for (int i = 0; i < session.getJSONArray("tags").length(); i++) {
             if (session.getJSONArray("tags").getString(i).equals(tag)) {
                 session.getJSONArray("tags").remove(i);
@@ -257,10 +263,12 @@ public class ChatManager {
      * @param description the description to add
      */
     static void setDescription(String clientUID, String description) {
-        Path filePath = Paths.get("sessions", clientUID + ".json");
-        JSONObject session = Utils.parseJSON(filePath.toString());
+        JSONObject session = Utils.parseJSON(clientUID);
+        if (Objects.isNull(session)) {
+            return;
+        }
         session.put("description", description.trim());
-        Utils.writeJSON(session, filePath.toString());
+        Utils.writeJSON(session, clientUID);
     }
 
     /**
@@ -285,7 +293,7 @@ public class ChatManager {
         while (true) {
             try {
                 Utils.printInfo(replPrompt);
-                String[] tokens = lineReader.readLine().split(" ");
+                String[] tokens = lineReader.readLine().split("\\s+");
                 String command = tokens[0];
                 String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (command) {
@@ -313,6 +321,7 @@ public class ChatManager {
                             break;
                         }
                         addTags(args[0], Arrays.copyOfRange(args, 1, args.length));
+                        listSessions();
                         break;
                     case "untag":
                         if (args.length != 2) {
@@ -320,6 +329,7 @@ public class ChatManager {
                             break;
                         }
                         removeTag(args[0], args[1]);
+                        listSessions();
                         break;
                     case "desc":
                         if (args.length < 2) {
@@ -327,6 +337,7 @@ public class ChatManager {
                             break;
                         }
                         setDescription(args[0], String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+                        listSessions();
                         break;
                     case "history":
                         listSessions();
@@ -338,6 +349,9 @@ public class ChatManager {
                         }
                         String clientUID = args[0];
                         JSONObject session = Utils.parseJSON(clientUID);
+                        if (Objects.isNull(session)) {
+                            break;
+                        }
                         chatClient = getChatClient(session);
                         if (chatClient == null) {
                             break;

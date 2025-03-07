@@ -69,16 +69,17 @@ public class Task1Test {
     }
 
     @BeforeEach
-    void setUp() throws ChatManager.InvalidClientNameException {
+    void setUp() {
         createDefaultKey();
         // you should implement at least the GPT-4o ChatClient
         chatClient = ChatManager.getChatClient("GPT-4o");
+        assert chatClient != null;
     }
 
     @Test
     void getChatClient() {
         // invalid client name
-        assertThrows(ChatManager.InvalidClientNameException.class, () -> ChatManager.getChatClient("a fake name"));
+        assertNull(ChatManager.getChatClient("a fake name"));
         assertEquals("GPT-4o", chatClient.getClientName());
         assertTrue(isValidFormat(chatClient.getClientUID()));
         assertTrue(chatClient.getClientMaxTokens() > 0);
