@@ -153,4 +153,13 @@ public class Utils {
     public static String decrypt(String text, String key) {
         return encrypt(text, key);
     }
+
+    /**
+     * Check if the API key for genai platform is valid
+     * @param apiKey the API key
+     * @return true if the API key is valid
+     */
+    public static boolean isValidApiKey(String apiKey) {
+        return apiKey.matches("^[a-zA-Z0-9]{32}$");
+    }
 }

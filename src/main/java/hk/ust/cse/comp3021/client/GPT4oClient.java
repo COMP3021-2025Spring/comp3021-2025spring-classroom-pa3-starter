@@ -9,7 +9,7 @@ package hk.ust.cse.comp3021.client;
 import hk.ust.cse.comp3021.ChatClient;
 import hk.ust.cse.comp3021.Utils;
 import hk.ust.cse.comp3021.annotation.JsonCheck;
-import org.json.JSONException;
+import hk.ust.cse.comp3021.exception.PersistenceException;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -115,7 +115,7 @@ public class GPT4oClient extends ChatClient implements Serializable {
      *
      * @param session the JSON object
      */
-    public GPT4oClient(JSONObject session) throws JSONException, IllegalArgumentException {
+    public GPT4oClient(JSONObject session) throws PersistenceException {
         super(session);
     }
 }

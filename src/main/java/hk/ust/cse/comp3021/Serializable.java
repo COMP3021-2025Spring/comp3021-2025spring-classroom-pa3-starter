@@ -6,9 +6,22 @@
 
 package hk.ust.cse.comp3021;
 
+import hk.ust.cse.comp3021.exception.PersistenceException;
 import org.json.JSONObject;
 
+/**
+ * Serializable interface
+ */
 public interface Serializable {
+    /**
+     * Convert the object to JSON
+     * @return the JSON object
+     */
     JSONObject toJSON();
-    void fromJSON(JSONObject jsonObject);
+
+    /**
+     * Convert the object from JSON
+     * @param jsonObject the JSON object
+     */
+    void fromJSON(JSONObject jsonObject) throws PersistenceException;
 }

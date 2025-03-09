@@ -6,6 +6,7 @@
 
 package hk.ust.cse.comp3021;
 
+import hk.ust.cse.comp3021.exception.InvalidClientNameException;
 import org.jline.reader.*;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
@@ -139,15 +140,6 @@ public class ChatManager {
             Utils.printlnError(e.getMessage());
         }
         return String.join(" | ", clientNames);
-    }
-
-    /**
-     * Invalid client name exception
-     */
-    public static class InvalidClientNameException extends Exception {
-        public InvalidClientNameException(String message) {
-            super(message);
-        }
     }
 
     /**
@@ -349,7 +341,7 @@ public class ChatManager {
                         }
                         String clientUID = args[0];
                         JSONObject session = Utils.parseJSON(clientUID);
-                        if (Objects.isNull(session)) {
+                        if (session == null) {
                             break;
                         }
                         chatClient = getChatClient(session);

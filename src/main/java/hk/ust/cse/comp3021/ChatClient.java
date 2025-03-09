@@ -7,6 +7,8 @@
 package hk.ust.cse.comp3021;
 
 import hk.ust.cse.comp3021.annotation.*;
+import hk.ust.cse.comp3021.client.GPT4oClient;
+import hk.ust.cse.comp3021.exception.*;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -87,129 +89,15 @@ public abstract class ChatClient implements Serializable {
     protected long timeLastExit;
 
     /**
-     * Message class, consisting of role and content
-     */
-    protected static class Message {
-        String role;
-        String content;
-        int tokens;
-
-        /**
-         * Constructor of Message
-         *
-         * @param role    role in LLM: system, user, assistant
-         * @param content content of the message
-         */
-        public Message(String role, String content) {
-            this.role = role;
-            this.content = content;
-        }
-
-        public Message(String role, String content, int tokens) {
-            this.role = role;
-            this.content = content;
-            this.tokens = tokens;
-        }
-
-        public void setTokens(int tokens) {
-            this.tokens = tokens;
-        }
-    }
-
-    /**
-     * Messages consists of a list of {@link Message}
-     */
-    protected static class Messages implements Serializable {
-        /**
-         * List of {@link Message}
-         */
-        List<Message> messageList = new ArrayList<>();
-
-        /**
-         * Add a {@link Message} to the list
-         *
-         * @param role    role in LLM: system, user, assistant
-         * @param content content of the message
-         */
-        public void addMessage(String role, String content) {
-            messageList.add(new Message(role, content));
-        }
-
-        public void addMessage(String role, String content, int tokens) {
-            messageList.add(new Message(role, content, tokens));
-        }
-
-        public Message getLastMessage() {
-            return messageList.get(messageList.size() - 1);
-        }
-
-        /**
-         * Convert the messages to JSON format used in POST request
-         *
-         * @return the JSON string
-         */
-        public JSONArray toPOSTData() {
-            JSONArray messageList = new JSONArray();
-            for (Message message : this.messageList) {
-                JSONObject messageJson = new JSONObject();
-                messageJson.put("role", message.role);
-                messageJson.put("content", message.content);
-                messageList.put(messageJson);
-            }
-            return messageList;
-        }
-
-        /**
-         * Convert the messages to JSON format used in persistence
-         *
-         * @return the JSON string
-         */
-        @Override
-        public JSONObject toJSON() {
-            JSONObject messagesJson = new JSONObject();
-            JSONArray messageList = new JSONArray();
-            for (Message message : this.messageList) {
-                JSONObject messageJson = new JSONObject();
-                messageJson.put("role", message.role);
-                messageJson.put("content", message.content);
-                messageJson.put("tokens", message.tokens);
-                messageList.put(messageJson);
-            }
-            messagesJson.put("contents", messageList);
-            return messagesJson;
-        }
-
-        @Override
-        public void fromJSON(JSONObject jsonObject) {
-            JSONArray messagesJson = jsonObject.getJSONArray("contents");
-            for (int i = 0; i < messagesJson.length(); i++) {
-                JSONObject messageJson = messagesJson.getJSONObject(i);
-                addMessage(messageJson.getString("role"), messageJson.getString("content"), messageJson.getInt(
-                        "tokens"));
-            }
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            for (Message message : messageList) {
-                String prompt = message.role.equals("user") ? " --> " : " <-- ";
-                sb.append(Utils.toInfo(message.role)).append(Utils.toInfo(prompt)).append(message.content).append("\n");
-            }
-            return sb.toString();
-        }
-    }
-
-    /**
      * The total prompt tokens queried by the ChatClient
      */
-    @JsonRangeCheck(minLong = 0)
+    @JsonRangeCheck(minInt = 0)
     protected int totalPromptTokens;
 
     /**
      * The total completion tokens queried by the ChatClient
      */
-    @JsonRangeCheck(minLong = 0)
+    @JsonRangeCheck(minInt = 0)
     protected int totalCompletionTokens;
 
     /**
@@ -335,7 +223,7 @@ public abstract class ChatClient implements Serializable {
      *
      * @param session the JSON object
      */
-    public ChatClient(JSONObject session) {
+    public ChatClient(JSONObject session) throws PersistenceException {
         fromJSON(session);
     }
 
@@ -423,7 +311,6 @@ public abstract class ChatClient implements Serializable {
                         System.out.println(query(line));
                 }
             } catch (UserInterruptException | EndOfFileException e) {
-                timeLastExit = Utils.getCurrentTime();
                 return;
             }
         }
@@ -442,6 +329,7 @@ public abstract class ChatClient implements Serializable {
      * Save the client to a JSON file
      */
     void saveClient() {
+        timeLastExit = Utils.getCurrentTime();
         JSONObject clientJson = toJSON();
         Utils.writeJSON(clientJson, getClientUID());
     }
@@ -452,7 +340,7 @@ public abstract class ChatClient implements Serializable {
      */
     public abstract String query(String prompt);
 
-    static Field[] getAllFields(Class<?> clazz) {
+    public static Field[] getAllFields(Class<?> clazz) {
         List<Field> fields = new ArrayList<>();
         while (clazz != null) {
             fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
@@ -471,7 +359,7 @@ public abstract class ChatClient implements Serializable {
         JSONObject jsonObject = new JSONObject();
         // iterate though all fields of the derived ChatClient class
         Field[] allFields = getAllFields(this.getClass());
-        for (var field : allFields) {
+        for (Field field : allFields) {
             field.setAccessible(true);
             try {
                 // parse annotations and perform their actions
@@ -496,7 +384,7 @@ public abstract class ChatClient implements Serializable {
                         }
                     }
                 }
-                // range check is ignored when serializing
+                // JsonRangeCheck and JsonCheck is ignored when serializing
 
                 // start serializing the field
                 // if the field is of org.json supported type: int, long, double, String, Collection, etc
@@ -511,17 +399,17 @@ public abstract class ChatClient implements Serializable {
                     Utils.printlnError("Failed to serialize the field: " + field.getName());
                 }
             } catch (IllegalAccessException e) {
-                Utils.printlnError("Failed to serialize the field: " + field.getName());
+                Utils.printlnError("Failed to serialize the field: " + field.getName() + e.getMessage());
             }
         }
         return jsonObject;
     }
 
     @Override
-    public void fromJSON(JSONObject jsonObject) {
+    public void fromJSON(JSONObject jsonObject) throws PersistenceException {
         // iterate though all fields of the derived ChatClient class
         Field[] allFields = getAllFields(this.getClass());
-        for (var field : allFields) {
+        for (Field field : allFields) {
             field.setAccessible(true);
             try {
                 // parse annotations and perform their actions
@@ -539,6 +427,10 @@ public abstract class ChatClient implements Serializable {
                 if (field.isAnnotationPresent(JsonSecret.class)) {
                     JsonSecret secret = field.getAnnotation(JsonSecret.class);
                     fieldValue = Utils.decrypt(fieldValue.toString(), secret.key());
+                    if (!Utils.isValidApiKey(fieldValue.toString())) {
+                        Utils.printlnError("The field " + field.getName() + " is not a valid API key.");
+                        throw new JsonSecretException("Field value: " + fieldValue);
+                    }
                 }
                 if (field.isAnnotationPresent(JsonRangeCheck.class)) {
                     if (field.getType().equals(int.class)) {
@@ -546,18 +438,21 @@ public abstract class ChatClient implements Serializable {
                         if (fieldInt < field.getAnnotation(JsonRangeCheck.class).minInt()
                                 || fieldInt > field.getAnnotation(JsonRangeCheck.class).maxInt()) {
                             Utils.printlnError("The field " + field.getName() + " is out of range.");
+                            throw new JsonRangeCheckException("Field value: " + fieldInt);
                         }
                     } else if (field.getType().equals(long.class)) {
                         long fieldLong = (long) fieldValue;
                         if (fieldLong < field.getAnnotation(JsonRangeCheck.class).minLong()
                                 || fieldLong > field.getAnnotation(JsonRangeCheck.class).maxLong()) {
                             Utils.printlnError("The field " + field.getName() + " is out of range.");
+                            throw new JsonRangeCheckException("Field value: " + fieldLong);
                         }
                     } else if (field.getType().equals(double.class)) {
                         double fieldDouble = (double) fieldValue;
                         if (fieldDouble < field.getAnnotation(JsonRangeCheck.class).minDouble()
                                 || fieldDouble > field.getAnnotation(JsonRangeCheck.class).maxDouble()) {
                             Utils.printlnError("The field " + field.getName() + " is out of range.");
+                            throw new JsonRangeCheckException("Field value: " + fieldDouble);
                         }
                     } else {
                         Utils.printlnError("Failed to deserialize the field: " + field.getName());
@@ -566,9 +461,26 @@ public abstract class ChatClient implements Serializable {
                 if (field.isAnnotationPresent(JsonCheck.class)) {
                     if (!fieldValue.equals(field.get(this))) {
                         Utils.printlnError("The field " + field.getName() + " is not allowed to be changed.");
+                        throw new JsonCheckException(fieldName);
                     }
                 }
-                // filter is ignored when deserializing
+                if (field.isAnnotationPresent(JsonFilter.class)) {
+                    if (fieldValue instanceof String fieldString) {
+                        for (String kw : field.getAnnotation(JsonFilter.class).kwList()) {
+                            if (fieldString.contains(kw)) {
+                                Utils.printlnError("The field " + field.getName() + " contains prohibited information.");
+                                throw new JsonFilterException(fieldName);
+                            }
+                        }
+                    } else if (fieldValue instanceof JSONArray fieldArray) {
+                        for (String kw : field.getAnnotation(JsonFilter.class).kwList()) {
+                            if (fieldArray.toList().contains(kw)) {
+                                Utils.printlnError("The field " + field.getName() + " contains prohibited information.");
+                                throw new JsonFilterException(fieldName);
+                            }
+                        }
+                    }
+                }
 
                 // start deserializing back to field
                 if (Modifier.isFinal(field.getModifiers())) {
@@ -595,5 +507,23 @@ public abstract class ChatClient implements Serializable {
                 Utils.printlnError("Failed to deserialize the field: " + field.getName());
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChatClient that = (ChatClient) o;
+        for (Field field : ChatClient.getAllFields(GPT4oClient.class)) {
+            field.setAccessible(true);
+            try {
+                if (!field.get(this).equals(field.get(that))) {
+                    return false;
+                }
+            } catch (IllegalAccessException e) {
+                Utils.printlnError(e.getMessage());
+            }
+        }
+        return true;
     }
 }
