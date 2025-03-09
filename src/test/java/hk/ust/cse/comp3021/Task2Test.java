@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -41,6 +42,14 @@ public class Task2Test {
 
     @BeforeAll
     static void setUp() {
+        try {
+            Path sessions = Path.of("sessions");
+            if (!Files.exists(sessions)) {
+                Files.createDirectory(sessions);
+            }
+        } catch (IOException e) {
+            Utils.printlnError("Failed to create the session directory: " + e.getMessage());
+        }
         resourceDir = new File("../src/test/resources");
         assertTrue(Files.exists(Path.of("keys/GPT-4o.txt")));
     }
