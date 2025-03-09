@@ -4,46 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="implement the Serializable interface for ChatClient and its inner classes, the serial/deserial process is guided by annotations&#10;&#10;add JsonCheck annotation&#10;&#10;refine the repl again">
-      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Message.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Messages.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/exception/InvalidClientNameException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/exception/JsonCheckException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/exception/JsonFilterException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/exception/JsonRangeCheckException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/exception/JsonSecretException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/exception/PersistenceException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/hk/ust/cse/comp3021/Task2Test.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonCheck1.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonCheck2.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonCheck3.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonFilter1.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonFilter2.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonIgnore.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonIgnore1.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonIgnore2.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonIgnore3.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonIgnore4.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonRangeCheck1.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonRangeCheck10.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonRangeCheck2.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonRangeCheck3.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonRangeCheck4.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonRangeCheck5.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonRangeCheck6.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonRangeCheck7.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonRangeCheck8.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonRangeCheck9.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonSecret1.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/JsonSecret2.json" afterDir="false" />
+    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="add description to passing api key to GitHub Action">
       <change beforePath="$PROJECT_DIR$/.github/workflows/classroom.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/classroom.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Serializable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Serializable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Utils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/client/GPT4oClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/client/GPT4oClient.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +42,6 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JUnit5 Test Class" />
-        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -87,10 +49,6 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="KubernetesApiPersistence">{}</component>
-  <component name="KubernetesApiProvider">{
-  &quot;isMigrated&quot;: true
-}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -108,26 +66,18 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Application.main.executor": "Run",
-    "Gradle.Build comp3021-2025spring-classroom-pa1-starter.executor": "Run",
     "Gradle.ChatManagerTest.executor": "Run",
     "Gradle.ChatManagerTest.getChatClient.executor": "Run",
     "Gradle.ChatManagerTest.showChatClients.executor": "Run",
     "Gradle.GPT4oClientTest.executor": "Run",
     "Gradle.GPT4oClientTest.getModelName.executor": "Run",
     "Gradle.GPT4oClientTest.query.executor": "Run",
-    "Gradle.Task1Test.replChatClientConversation2.executor": "Debug",
-    "Gradle.Task2Test.executor": "Debug",
-    "Gradle.Task2Test.jsonFilterDeserialization.executor": "Run",
-    "Gradle.Task2Test.jsonFilterSerialization.executor": "Debug",
-    "Gradle.Task2Test.jsonRangeCheckDeserialization.executor": "Debug",
-    "Gradle.comp3021-2025spring-classroom-pa1-starter [:hk.ust.cse.comp3021.Main.main()].executor": "Debug",
+    "Gradle.comp3021-2025spring-classroom-pa1-starter [:hk.ust.cse.comp3021.Main.main()].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
-    "extract.method.default.visibility": "private",
-    "git-widget-placeholder": "dev",
+    "git-widget-placeholder": "Rebasing dev",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -135,10 +85,10 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.sourceCode.Java",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -146,17 +96,14 @@
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
     </key>
-    <key name="MoveInnerDialog.RECENTS_KEY">
-      <recent name="hk.ust.cse.comp3021" />
-    </key>
     <key name="CreateTestDialog.RecentsKey">
       <recent name="hk.ust.cse.comp3021.client" />
       <recent name="hk.ust.cse.comp3021" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.Task2Test.jsonRangeCheckDeserialization">
+  <component name="RunManager" selected="Application.main">
     <configuration name="main" type="Application" factoryName="Application">
-      <option name="ALTERNATIVE_JRE_PATH" value="corretto-17" />
+      <option name="ALTERNATIVE_JRE_PATH" value="$PROJECT_DIR$/../../../../Program Files/Java/jdk-17" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="hk.ust.cse.comp3021.Main" />
       <module name="PA1.main" />
@@ -164,7 +111,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Task1Test" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="ChatManagerTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -177,7 +124,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;hk.ust.cse.comp3021.Task1Test.replChatClientConversation2&quot;" />
+            <option value="&quot;hk.ust.cse.comp3021.ChatManagerTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -188,7 +135,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="Task2Test" type="GradleRunConfiguration" factoryName="Gradle">
+    <configuration name="ChatManagerTest.getChatClient" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -201,7 +148,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;hk.ust.cse.comp3021.Task2Test&quot;" />
+            <option value="&quot;hk.ust.cse.comp3021.ChatManagerTest.getChatClient&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -212,7 +159,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="Task2Test.jsonFilterDeserialization" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="ChatManagerTest.showChatClients" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -225,7 +172,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;hk.ust.cse.comp3021.Task2Test.jsonFilterDeserialization&quot;" />
+            <option value="&quot;hk.ust.cse.comp3021.ChatManagerTest.showChatClients&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -236,7 +183,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="Task2Test.jsonFilterSerialization" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="GPT4oClientTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -249,7 +196,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;hk.ust.cse.comp3021.Task2Test.jsonFilterSerialization&quot;" />
+            <option value="&quot;hk.ust.cse.comp3021.client.GPT4oClientTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -260,7 +207,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="Task2Test.jsonRangeCheckDeserialization" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="GPT4oClientTest.query" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -273,7 +220,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;hk.ust.cse.comp3021.Task2Test.jsonRangeCheckDeserialization&quot;" />
+            <option value="&quot;hk.ust.cse.comp3021.client.GPT4oClientTest.query&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -345,26 +292,27 @@
     </configuration>
     <list>
       <item itemvalue="Application.main" />
-      <item itemvalue="Gradle.Task2Test" />
-      <item itemvalue="Gradle.Task2Test.jsonRangeCheckDeserialization" />
-      <item itemvalue="Gradle.Task2Test.jsonFilterDeserialization" />
-      <item itemvalue="Gradle.Task2Test.jsonFilterSerialization" />
-      <item itemvalue="Gradle.Task1Test" />
+      <item itemvalue="Gradle.ChatManagerTest" />
+      <item itemvalue="Gradle.ChatManagerTest.getChatClient" />
+      <item itemvalue="Gradle.ChatManagerTest.showChatClients" />
+      <item itemvalue="Gradle.GPT4oClientTest" />
+      <item itemvalue="Gradle.GPT4oClientTest.query" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.Task2Test.jsonRangeCheckDeserialization" />
-        <item itemvalue="Gradle.Task2Test.jsonFilterSerialization" />
-        <item itemvalue="Gradle.Task2Test.jsonFilterDeserialization" />
-        <item itemvalue="Gradle.Task1Test" />
+        <item itemvalue="Gradle.ChatManagerTest.getChatClient" />
+        <item itemvalue="Gradle.ChatManagerTest" />
+        <item itemvalue="Gradle.GPT4oClientTest" />
+        <item itemvalue="Gradle.ChatManagerTest.showChatClients" />
+        <item itemvalue="Gradle.GPT4oClientTest.query" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
+        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.23654.189" />
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-IU-243.23654.189" />
       </set>
     </attachedChunks>
   </component>
@@ -378,12 +326,6 @@
       <updated>1740215250957</updated>
       <workItem from="1740215252150" duration="53619000" />
       <workItem from="1740453315555" duration="20017000" />
-      <workItem from="1740758090669" duration="20891000" />
-      <workItem from="1741018100759" duration="608000" />
-      <workItem from="1741018774134" duration="10212000" />
-      <workItem from="1741143181163" duration="34954000" />
-      <workItem from="1741280214221" duration="39826000" />
-      <workItem from="1741489391405" duration="9995000" />
     </task>
     <task id="LOCAL-00001" summary="ChatManager Prototype">
       <option name="closed" value="true" />
@@ -569,80 +511,14 @@
       <option name="project" value="LOCAL" />
       <updated>1740491809121</updated>
     </task>
-    <task id="LOCAL-00024" summary="create the sessions directory if not exist using SIB">
-      <option name="closed" value="true" />
-      <created>1740581090038</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1740581090038</updated>
-    </task>
-    <task id="LOCAL-00025" summary="implement the serialization function and refine the repl logic">
-      <option name="closed" value="true" />
-      <created>1741227214371</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1741227214371</updated>
-    </task>
-    <task id="LOCAL-00026" summary="implement the deserialize feature using constructor and refine repl output and logic">
-      <option name="closed" value="true" />
-      <created>1741247836446</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1741247836446</updated>
-    </task>
-    <task id="LOCAL-00027" summary="implement the deserialize feature using constructor and refine repl output and logic">
-      <option name="closed" value="true" />
-      <created>1741247930418</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1741247930418</updated>
-    </task>
-    <task id="LOCAL-00028" summary="reformat the code and remove useless GPT4oMiniClient.java and all self-used unit tests">
-      <option name="closed" value="true" />
-      <created>1741248067677</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1741248067677</updated>
-    </task>
-    <task id="LOCAL-00029" summary="fix the bug in token statistics and add four annotations">
-      <option name="closed" value="true" />
-      <created>1741262170446</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1741262170446</updated>
-    </task>
-    <task id="LOCAL-00030" summary="implement the Serializable interface for ChatClient and its inner classes, the serial/deserial process is guided by annotations&#10;&#10;add JsonCheck annotation&#10;&#10;refine the repl again">
-      <option name="closed" value="true" />
-      <created>1741340123733</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1741340123733</updated>
-    </task>
-    <option name="localTasksCounter" value="31" />
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="VcsManagerConfiguration">
+    <MESSAGE value="ChatManager Prototype" />
     <MESSAGE value="add ANSI color and self-defined Exception" />
     <MESSAGE value="minor refine: (1) add timestamp (2) add abstract method toJson()" />
     <MESSAGE value="add file upload and some code refraction" />
@@ -662,28 +538,6 @@
     <MESSAGE value="add style checking" />
     <MESSAGE value="move api key link to README.md" />
     <MESSAGE value="add description to passing api key to GitHub Action" />
-    <MESSAGE value="create the sessions directory if not exist using SIB" />
-    <MESSAGE value="implement the serialization function and refine the repl logic" />
-    <MESSAGE value="implement the deserialize feature using constructor and refine repl output and logic" />
-    <MESSAGE value="reformat the code and remove useless GPT4oMiniClient.java and all self-used unit tests" />
-    <MESSAGE value="fix the bug in token statistics and add four annotations" />
-    <MESSAGE value="implement the Serializable interface for ChatClient and its inner classes, the serial/deserial process is guided by annotations&#10;&#10;add JsonCheck annotation&#10;&#10;refine the repl again" />
-    <option name="LAST_COMMIT_MESSAGE" value="implement the Serializable interface for ChatClient and its inner classes, the serial/deserial process is guided by annotations&#10;&#10;add JsonCheck annotation&#10;&#10;refine the repl again" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <condition expression="Objects.equals(field.getName(), &quot;totalPromptTokens&quot;)" language="JAVA" />
-          <url>file://$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatClient.java</url>
-          <line>426</line>
-          <option name="timeStamp" value="29" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
+    <option name="LAST_COMMIT_MESSAGE" value="add description to passing api key to GitHub Action" />
   </component>
 </project>

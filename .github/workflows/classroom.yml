@@ -1,7 +1,7 @@
 name: Autograding Tests
 'on':
-- push
-- repository_dispatch
+  - push
+  - repository_dispatch
 permissions:
   checks: write
   actions: read
@@ -11,60 +11,92 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor != 'github-classroom[bot]'
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: showChatClients
-      id: showchatclients
-      uses: classroom-resources/autograding-command-grader@v1
-      with:
-        test-name: showChatClients
-        setup-command: ''
-        command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.showChatClients"
-        timeout: 10
-        max-score: 3
-    - name: getChatClient
-      id: getchatclient
-      uses: classroom-resources/autograding-command-grader@v1
-      with:
-        test-name: getChatClient
-        setup-command: ''
-        command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.getChatClient"
-        timeout: 10
-        max-score: 3
-    - name: replChatClient
-      id: replchatclient
-      uses: classroom-resources/autograding-command-grader@v1
-      with:
-        test-name: replChatClient
-        setup-command: 'mkdir -p keys; echo 2b96784446414a689a1103212ee13fba > keys/GPT-4o.txt'
-        command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.replChatClient"
-        timeout: 20
-        max-score: 3
-    - name: replChatClientConversation1
-      id: replchatclientconversation1
-      uses: classroom-resources/autograding-command-grader@v1
-      with:
-        test-name: replChatClientConversation1
-        setup-command: 'mkdir -p keys; echo 2b96784446414a689a1103212ee13fba > keys/GPT-4o.txt'
-        command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.replChatClientConversation1"
-        timeout: 30
-        max-score: 3
-    - name: replChatClientConversation2
-      id: replchatclientconversation2
-      uses: classroom-resources/autograding-command-grader@v1
-      with:
-        test-name: replChatClientConversation2
-        setup-command: 'mkdir -p keys; echo 2b96784446414a689a1103212ee13fba > keys/GPT-4o.txt'
-        command: "./gradlew test --tests hk.ust.cse.comp3021.Task1Test.replChatClientConversation2"
-        timeout: 30
-        max-score: 3
-    - name: Autograding Reporter
-      uses: classroom-resources/autograding-grading-reporter@v1
-      env:
-        SHOWCHATCLIENTS_RESULTS: "${{steps.showchatclients.outputs.result}}"
-        GETCHATCLIENT_RESULTS: "${{steps.getchatclient.outputs.result}}"
-        REPLCHATCLIENT_RESULTS: "${{steps.replchatclient.outputs.result}}"
-        REPLCHATCLIENTCONVERSATION1_RESULTS: "${{steps.replchatclientconversation1.outputs.result}}"
-        REPLCHATCLIENTCONVERSATION2_RESULTS: "${{steps.replchatclientconversation2.outputs.result}}"
-      with:
-        runners: showchatclients,getchatclient,replchatclient,replchatclientconversation1,replchatclientconversation2
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Prepare API key
+        run: mkdir -p keys; echo 2b96784446414a689a1103212ee13fba > keys/GPT-4o.txt
+      - name: basic persistence
+        id: basic-persistence
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: basic persistence
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.Task2Test.*basic*"
+          timeout: 30
+          max-score: 9
+      - name: jsonCheckDeserialization
+        id: jsoncheckdeserialization
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: jsonCheckDeserialization
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.Task2Test.jsonCheckDeserialization"
+          timeout: 10
+          max-score: 3
+      - name: jsonFilterSerialization
+        id: jsonfilterserialization
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: jsonFilterSerialization
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.Task2Test.jsonFilterSerialization"
+          timeout: 10
+          max-score: 3
+      - name: jsonFilterDeserialization
+        id: jsonfilterdeserialization
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: jsonFilterDeserialization
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.Task2Test.jsonFilterDeserialization"
+          timeout: 10
+          max-score: 3
+      - name: jsonIgnoreSerialization
+        id: jsonignoreserialization
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: jsonIgnoreSerialization
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.Task2Test.jsonIgnoreSerialization"
+          timeout: 10
+          max-score: 3
+      - name: jsonIgnoreDeserialization
+        id: jsonignoredeserialization
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: jsonIgnoreDeserialization
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.Task2Test.jsonIgnoreDeserialization"
+          timeout: 10
+          max-score: 3
+      - name: jsonRangeCheckDeserialization
+        id: jsonrangecheckdeserialization
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: jsonRangeCheckDeserialization
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.Task2Test.jsonRangeCheckDeserialization"
+          timeout: 10
+          max-score: 3
+      - name: jsonSecretDeserialization
+        id: jsonsecretdeserialization
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: jsonSecretDeserialization
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.Task2Test.jsonSecretDeserialization"
+          timeout: 10
+          max-score: 3
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          BASIC-PERSISTENCE_RESULTS: "${{steps.basic-persistence.outputs.result}}"
+          JSONCHECKDESERIALIZATION_RESULTS: "${{steps.jsoncheckdeserialization.outputs.result}}"
+          JSONFILTERSERIALIZATION_RESULTS: "${{steps.jsonfilterserialization.outputs.result}}"
+          JSONFILTERDESERIALIZATION_RESULTS: "${{steps.jsonfilterdeserialization.outputs.result}}"
+          JSONIGNORESERIALIZATION_RESULTS: "${{steps.jsonignoreserialization.outputs.result}}"
+          JSONIGNOREDESERIALIZATION_RESULTS: "${{steps.jsonignoredeserialization.outputs.result}}"
+          JSONRANGECHECKDESERIALIZATION_RESULTS: "${{steps.jsonrangecheckdeserialization.outputs.result}}"
+          JSONSECRETDESERIALIZATION_RESULTS: "${{steps.jsonsecretdeserialization.outputs.result}}"
+        with:
+          runners: basic-persistence,jsoncheckdeserialization,jsonfilterserialization,jsonfilterdeserialization,jsonignoreserialization,jsonignoredeserialization,jsonrangecheckdeserialization,jsonsecretdeserialization
