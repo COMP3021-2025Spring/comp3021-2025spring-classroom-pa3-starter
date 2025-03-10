@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
  * GPT4oClient class:
  * <a href="https://itso.hkust.edu.hk/services/it-infrastructure/azure-openai-api-service">API reference</a>
  */
-public class GPT4oClient extends ChatClient implements Serializable {
+public class GPT4oClient extends ChatClient {
 
     /**
      * The model name, accessed at top-level repl statically

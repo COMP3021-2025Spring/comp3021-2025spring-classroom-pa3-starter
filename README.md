@@ -129,48 +129,55 @@ The project structure is as follows:
 - `Message` and `Messages` are used for storing chat messages.
 - `GPT4oClient` is a concrete class that extends `ChatClient`, `query()` is used for interacting with the API service.
 - `Utils` contains some utility functions.
-- `Serializable` is an interface for serialization and deserialization.
+- `Serializable` is an interface for serialization and deserialization, implemented by `ChatClient` and `Message(s)`.
 - `annotations/` contains annotations for guiding persistence.
-- `exceptions/` contains exceptions corresponding to the annotations.
+- `exceptions/` contains exceptions corresponding to the annotations, four of them are inherited from `PersistenceException`.
 
 ```mermaid
 classDiagram
 direction BT
 class ChatClient {
   + ChatClient() 
+  + ChatClient(JSONObject) 
   # String apiKey
+  # String description
+  + equals(Object) boolean
+  + getAllFields(Class~?~) Field[]
   ~ printHelp() void
+  + fromJSON(JSONObject) void
+  + addTags(String[]) void
   + query(String) String
+  + removeTag(String) void
   ~ readAndSetKey(String) boolean
-  + fromJSON(JSONObject) ChatClient
   ~ saveClient() void
   + toJSON() JSONObject
   + repl() void
+  ~ uploadFile(String) void
+   String description
    int clientMaxTokens
    String clientUID
    String apiKey
    String clientName
+   JSONObject POSTData
 }
 class GPT4oClient {
   + GPT4oClient() 
-  + fromJSON(JSONObject) ChatClient
+  + GPT4oClient(JSONObject) 
+  + String clientName
   + query(String) String
-   int clientMaxTokens
+  ~ sendPOSTRequest(HttpURLConnection) JSONObject
    String clientName
+   HttpURLConnection httpURLConnection
+   int clientMaxTokens
 }
-class Message {
-  + Message(String, String) 
-}
-class Messages {
-  + Messages() 
-  + addMessage(String, String) void
+class Serializable {
+<<Interface>>
+  + fromJSON(JSONObject) void
   + toJSON() JSONObject
-  + toString() String
 }
 
+ChatClient  ..>  Serializable 
 GPT4oClient  -->  ChatClient 
-ChatClient  -->  Message 
-ChatClient  -->  Messages
 ```
 
 ## Submission Policy
