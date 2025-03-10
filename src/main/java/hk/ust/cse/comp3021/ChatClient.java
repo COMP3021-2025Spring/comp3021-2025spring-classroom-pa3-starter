@@ -29,20 +29,20 @@ import java.util.*;
 public abstract class ChatClient implements Serializable {
     /**
      * The system prompt
-     * TODO: annotate as ignore for the systemPrompt
      */
+    @JsonIgnore
     protected String systemPrompt = "You are a helpful assistant.";
 
     /**
      * The shell prompt for the ChatClient repl
-     * TODO: annotate as ignore for the replPrompt
      */
+    @JsonIgnore
     protected String replPrompt = "ChatClient> ";
 
     /**
      * The API key
-     * TODO: annotate as secret for the apiKey
      */
+    @JsonSecret
     protected String apiKey;
 
     /**
@@ -72,38 +72,38 @@ public abstract class ChatClient implements Serializable {
 
     /**
      * The time created, <a href="https://www.epochconverter.com/">...</a>
-     * TODO: annotate a range check for the timeCreated, between March 1, 2025 and June 1, 2025
      */
+    @JsonRangeCheck(minLong = 1740787200, maxLong = 1748735999)
     protected long timeCreated;
 
     /**
      * The time last opened, <a href="https://www.epochconverter.com/">...</a>
-     * TODO: annotate a range check for the timeLastOpen, between March 1, 2025 and June 1, 2025
      */
+    @JsonRangeCheck(minLong = 1740787200, maxLong = 1748735999)
     protected long timeLastOpen;
 
     /**
      * The time last exit, <a href="https://www.epochconverter.com/">...</a>
-     * TODO: annotate a range check for the timeLastExit, between March 1, 2025 and June 1, 2025
      */
+    @JsonRangeCheck(minLong = 1740787200, maxLong = 1748735999)
     protected long timeLastExit;
 
     /**
      * The total prompt tokens queried by the ChatClient
-     * TODO: annotate a range check for the totalPromptTokens, above 0
      */
+    @JsonRangeCheck(minInt = 0)
     protected int totalPromptTokens;
 
     /**
      * The total completion tokens queried by the ChatClient
-     * TODO: annotate a range check for the totalCompletionTokens, above 0
      */
+    @JsonRangeCheck(minInt = 0)
     protected int totalCompletionTokens;
 
     /**
      * The temperature of the ChatClient
-     * TODO: annotate a range check for the temperature, between 0 and 2.0
      */
+    @JsonRangeCheck(minDouble = 0, maxDouble = 2)
     protected double temperature = 1;
 
     /**
@@ -113,14 +113,14 @@ public abstract class ChatClient implements Serializable {
 
     /**
      * The tags for filtering ChatClient
-     * TODO: annotate a filter for the tags
      */
+    @JsonFilter
     protected HashSet<String> tags = new HashSet<>();
 
     /**
      * The description of the ChatClient
-     * TODO: annotate a filter for the description
      */
+    @JsonFilter
     protected String description = "";
 
     /**
@@ -166,8 +166,8 @@ public abstract class ChatClient implements Serializable {
 
     /**
      * The menu, a map of command and description
-     * TODO: annotate as ignore for the menus
      */
+    @JsonIgnore
     static final Map<String, String> menus = new LinkedHashMap<>() {
         {
             put("file", "upload a file");
@@ -329,7 +329,9 @@ public abstract class ChatClient implements Serializable {
      * Save the client to a JSON file
      */
     void saveClient() {
-        // TODO: implement the client saving, remember to update timeLastExit
+        timeLastExit = Utils.getCurrentTime();
+        JSONObject clientJson = toJSON();
+        Utils.writeJSON(clientJson, getClientUID());
     }
 
     /**
@@ -354,17 +356,157 @@ public abstract class ChatClient implements Serializable {
      */
     @Override
     public JSONObject toJSON() {
-        // TODO: implement the serialization, use reflection to check the annotation and type of each field to be
-        //  serialized, then perform corresponding serialization actions
-        throw new UnsupportedOperationException("Not implemented yet");
+        JSONObject jsonObject = new JSONObject();
+        // iterate though all fields of the derived ChatClient class
+        Field[] allFields = getAllFields(this.getClass());
+        for (Field field : allFields) {
+            field.setAccessible(true);
+            try {
+                // parse annotations and perform their actions
+                Object fieldValue = field.get(this);
+                if (field.isAnnotationPresent(JsonIgnore.class)) {
+                    continue;
+                }
+                if (field.isAnnotationPresent(JsonSecret.class)) {
+                    JsonSecret secret = field.getAnnotation(JsonSecret.class);
+                    String key = secret.key();
+                    fieldValue = Utils.encrypt(fieldValue.toString(), key);
+                }
+                if (field.isAnnotationPresent(JsonFilter.class)) {
+                    if (fieldValue instanceof String fieldString) {
+                        for (String kw : field.getAnnotation(JsonFilter.class).kwList()) {
+                            fieldString = fieldString.replaceAll(kw, "*".repeat(kw.length()));
+                        }
+                        fieldValue = fieldString;
+                    } else if (fieldValue instanceof Collection<?> fieldCollection) {
+                        for (String kw : field.getAnnotation(JsonFilter.class).kwList()) {
+                            fieldCollection.remove(kw);
+                        }
+                    }
+                }
+                // JsonRangeCheck and JsonCheck is ignored when serializing
+
+                // start serializing the field
+                // if the field is of org.json supported type: int, long, double, String, Collection, etc
+                if (field.getType().isPrimitive() || field.getType().equals(String.class)
+                        || field.get(this) instanceof Collection<?>) {
+                    jsonObject.put(field.getName(), fieldValue);
+                } else if (fieldValue instanceof Serializable fieldSerializable) {
+                    // if the field is self-defined class, it must implement Serializable
+                    JSONObject fieldJson = fieldSerializable.toJSON();
+                    jsonObject.put(field.getName(), fieldJson);
+                } else {
+                    Utils.printlnError("Failed to serialize the field: " + field.getName());
+                }
+            } catch (IllegalAccessException e) {
+                Utils.printlnError("Failed to serialize the field: " + field.getName() + e.getMessage());
+            }
+        }
+        return jsonObject;
     }
 
     @Override
     public void fromJSON(JSONObject jsonObject) throws PersistenceException {
-        // TODO: implement the deserialization, use reflection to check the annotation and type of each field to be
-        //  deserialized and find their corresponding JSON key, then perform corresponding deserialization actions.
-        //  Throw PersistenceException if any error occurs.
-        throw new PersistenceException("Not implemented yet");
+        // iterate though all fields of the derived ChatClient class
+        Field[] allFields = getAllFields(this.getClass());
+        for (Field field : allFields) {
+            field.setAccessible(true);
+            try {
+                // parse annotations and perform their actions
+                if (field.isAnnotationPresent(JsonIgnore.class)) {
+                    continue;
+                }
+                String fieldName = field.getName();
+                Object fieldValue = switch (field.getType().getName()) {
+                    case "int" -> jsonObject.getInt(fieldName);
+                    case "long" -> jsonObject.getLong(fieldName);
+                    case "double" -> jsonObject.getDouble(fieldName);
+                    case "java.lang.String" -> jsonObject.getString(fieldName);
+                    default -> jsonObject.get(fieldName);
+                };
+                if (field.isAnnotationPresent(JsonSecret.class)) {
+                    JsonSecret secret = field.getAnnotation(JsonSecret.class);
+                    fieldValue = Utils.decrypt(fieldValue.toString(), secret.key());
+                    if (!Utils.isValidApiKey(fieldValue.toString())) {
+                        Utils.printlnError("The field " + field.getName() + " is not a valid API key.");
+                        throw new JsonSecretException("Field value: " + fieldValue);
+                    }
+                }
+                if (field.isAnnotationPresent(JsonRangeCheck.class)) {
+                    if (field.getType().equals(int.class)) {
+                        int fieldInt = (int) fieldValue;
+                        if (fieldInt < field.getAnnotation(JsonRangeCheck.class).minInt()
+                                || fieldInt > field.getAnnotation(JsonRangeCheck.class).maxInt()) {
+                            Utils.printlnError("The field " + field.getName() + " is out of range.");
+                            throw new JsonRangeCheckException("Field value: " + fieldInt);
+                        }
+                    } else if (field.getType().equals(long.class)) {
+                        long fieldLong = (long) fieldValue;
+                        if (fieldLong < field.getAnnotation(JsonRangeCheck.class).minLong()
+                                || fieldLong > field.getAnnotation(JsonRangeCheck.class).maxLong()) {
+                            Utils.printlnError("The field " + field.getName() + " is out of range.");
+                            throw new JsonRangeCheckException("Field value: " + fieldLong);
+                        }
+                    } else if (field.getType().equals(double.class)) {
+                        double fieldDouble = (double) fieldValue;
+                        if (fieldDouble < field.getAnnotation(JsonRangeCheck.class).minDouble()
+                                || fieldDouble > field.getAnnotation(JsonRangeCheck.class).maxDouble()) {
+                            Utils.printlnError("The field " + field.getName() + " is out of range.");
+                            throw new JsonRangeCheckException("Field value: " + fieldDouble);
+                        }
+                    } else {
+                        Utils.printlnError("Failed to deserialize the field: " + field.getName());
+                    }
+                }
+                if (field.isAnnotationPresent(JsonCheck.class)) {
+                    if (!fieldValue.equals(field.get(this))) {
+                        Utils.printlnError("The field " + field.getName() + " is not allowed to be changed.");
+                        throw new JsonCheckException(fieldName);
+                    }
+                }
+                if (field.isAnnotationPresent(JsonFilter.class)) {
+                    if (fieldValue instanceof String fieldString) {
+                        for (String kw : field.getAnnotation(JsonFilter.class).kwList()) {
+                            if (fieldString.contains(kw)) {
+                                Utils.printlnError("The field " + field.getName() + " contains prohibited information.");
+                                throw new JsonFilterException(fieldName);
+                            }
+                        }
+                    } else if (fieldValue instanceof JSONArray fieldArray) {
+                        for (String kw : field.getAnnotation(JsonFilter.class).kwList()) {
+                            if (fieldArray.toList().contains(kw)) {
+                                Utils.printlnError("The field " + field.getName() + " contains prohibited information.");
+                                throw new JsonFilterException(fieldName);
+                            }
+                        }
+                    }
+                }
+
+                // start deserializing back to field
+                if (Modifier.isFinal(field.getModifiers())) {
+                    // ignore final fields
+                    continue;
+                } else if (field.getType().isPrimitive() || field.getType().equals(String.class)) {
+                    // if the field is of org.json supported type: int, long, double, String, Collection, etc
+                    field.set(this, fieldValue);
+                } else if (fieldValue instanceof JSONArray fieldJsonArray) {
+                    // if the field is of Collection type, which usually deserialized from JSONArray
+                    if (field.get(this) instanceof HashSet<?>) {
+                        field.set(this, new HashSet<>(fieldJsonArray.toList()));
+                    } else {
+                        Utils.printlnError("Failed to deserialize the field: " + field.getName());
+                    }
+                } else if (fieldValue instanceof JSONObject fieldJsonObject && field.get(this) instanceof Serializable fieldSerializable) {
+                    // if the field is self-defined class, it must implement Serializable, which usually deserialized
+                    // from JSONObject
+                    fieldSerializable.fromJSON(fieldJsonObject);
+                } else {
+                    Utils.printlnError("Failed to deserialize the field: " + field.getName());
+                }
+            } catch (IllegalAccessException e) {
+                Utils.printlnError("Failed to deserialize the field: " + field.getName());
+            }
+        }
     }
 
     @Override
