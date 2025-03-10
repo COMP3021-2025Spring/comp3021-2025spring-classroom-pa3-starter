@@ -25,20 +25,20 @@ public class GPT4oClient extends ChatClient {
 
     /**
      * The model name, accessed at top-level repl statically
+     * TODO: annotate a check for the clientName
      */
-    @JsonCheck
     public static final String clientName = "GPT-4o";
 
     /**
      * The maximum tokens
+     * TODO: annotate a check for the maxTokens
      */
-    @JsonCheck
     static final int maxTokens = 8192;
 
     /**
      * The API URL
+     * TODO: annotate a check for the apiURL
      */
-    @JsonCheck
     static final String apiURL = "https://hkust.azure-api.net/openai/deployments/gpt-4o/chat/completions?api-version" +
             "=2024-06-01";
 
