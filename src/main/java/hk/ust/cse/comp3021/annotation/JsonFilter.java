@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation is used to mark fields that should be filtered out during serialization.
- * Any field annotated with {@link JsonFilter} will be checked against keywords.
+ * Any field annotated with {@link JsonFilter} will be checked against pre-defined prohibited keywords.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

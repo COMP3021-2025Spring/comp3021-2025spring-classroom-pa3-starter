@@ -12,8 +12,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used to check values does not change during deserialization.
- * Any field annotated with {@link JsonFilter} will be checked against keywords.
+ * This annotation is used to check values does not change after serialization.
+ * Any field annotated with {@link JsonFilter} will be checked whether equals to original value.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

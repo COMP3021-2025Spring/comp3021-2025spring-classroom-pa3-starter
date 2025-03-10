@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation is used to mark fields that should be ignored during serialization.
- * Any field annotated with {@link JsonIgnore} will be ignored.
+ * Any field annotated with {@link JsonIgnore} will be ignored and not saved to the JSON file.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

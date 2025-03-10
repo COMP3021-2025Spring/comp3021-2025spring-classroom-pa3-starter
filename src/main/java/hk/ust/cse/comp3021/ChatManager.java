@@ -305,7 +305,7 @@ public class ChatManager {
                         }
                         chatClient.repl();
                         System.out.println("Session " + chatClient.getClientUID() + " ended");
-                        // TODO: save the session
+                        // TODO: save the client to a session file using `chatClient.saveClient()` method
                         throw new UnsupportedOperationException("Forgot to save the session");
                     case "tag":
                         if (args.length < 2) {
@@ -335,7 +335,7 @@ public class ChatManager {
                         listSessions();
                         break;
                     case "load":
-                        // TODO: implement the load command using `getChatClient(JSONObject session)`
+                        // TODO: implement the load command using `getChatClient(JSONObject session)` method
                         throw new UnsupportedOperationException("Not implemented yet");
                     case "help":
                         printHelp();

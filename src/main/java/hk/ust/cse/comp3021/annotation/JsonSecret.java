@@ -12,8 +12,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used to mark fields that should be encrypted during serialization.
- * Any field annotated with {@link JsonSecret} will be encrypted.
+ * This annotation is used to mark fields that should be encrypted during serialization and decrypted during deserialization.
+ * Any field annotated with {@link JsonSecret} will be encrypted using XOR algorithm.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

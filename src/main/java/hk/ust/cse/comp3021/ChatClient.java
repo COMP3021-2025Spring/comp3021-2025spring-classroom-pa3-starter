@@ -72,37 +72,37 @@ public abstract class ChatClient implements Serializable {
 
     /**
      * The time created, <a href="https://www.epochconverter.com/">...</a>
-     * TODO: annotate a range check for the timeCreated
+     * TODO: annotate a range check for the timeCreated, between March 1, 2025 and June 1, 2025
      */
     protected long timeCreated;
 
     /**
      * The time last opened, <a href="https://www.epochconverter.com/">...</a>
-     * TODO: annotate a range check for the timeLastOpen
+     * TODO: annotate a range check for the timeLastOpen, between March 1, 2025 and June 1, 2025
      */
     protected long timeLastOpen;
 
     /**
      * The time last exit, <a href="https://www.epochconverter.com/">...</a>
-     * TODO: annotate a range check for the timeLastExit
+     * TODO: annotate a range check for the timeLastExit, between March 1, 2025 and June 1, 2025
      */
     protected long timeLastExit;
 
     /**
      * The total prompt tokens queried by the ChatClient
-     * TODO: annotate a range check for the totalPromptTokens
+     * TODO: annotate a range check for the totalPromptTokens, above 0
      */
     protected int totalPromptTokens;
 
     /**
      * The total completion tokens queried by the ChatClient
-     * TODO: annotate a range check for the totalCompletionTokens
+     * TODO: annotate a range check for the totalCompletionTokens, above 0
      */
     protected int totalCompletionTokens;
 
     /**
      * The temperature of the ChatClient
-     * TODO: annotate a range check for the temperature
+     * TODO: annotate a range check for the temperature, between 0 and 2.0
      */
     protected double temperature = 1;
 
@@ -354,13 +354,16 @@ public abstract class ChatClient implements Serializable {
      */
     @Override
     public JSONObject toJSON() {
-        // TODO: implement the serialization
+        // TODO: implement the serialization, use reflection to check the annotation and type of each field to be
+        //  serialized, then perform corresponding serialization actions
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
     public void fromJSON(JSONObject jsonObject) throws PersistenceException {
-        // TODO: implement the deserialization
+        // TODO: implement the deserialization, use reflection to check the annotation and type of each field to be
+        //  deserialized and find their corresponding JSON key, then perform corresponding deserialization actions.
+        //  Throw PersistenceException if any error occurs.
         throw new PersistenceException("Not implemented yet");
     }
 

@@ -13,8 +13,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used to mark fields that should within the range during serialization.
- * Any field annotated with {@link JsonRangeCheck} will checked with the min and max.
+ * This annotation is used to mark fields that should within the range during serialization and deserialization.
+ * Any field annotated with {@link JsonRangeCheck} will be checked with the min and max.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

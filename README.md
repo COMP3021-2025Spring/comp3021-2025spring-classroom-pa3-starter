@@ -24,9 +24,9 @@ implement a simple local chat manager (the `ChatManager` class) that can interac
 
 In PA1, you need to implement two tasks, detailed implementation can be searched with "TODO" in the codebase.
 
-- Task 1: Implement some methods in `ChatManager` class and `ChatClient` class, implement the all things in the
-  `GPT4oChatClient` class.
-- Task 2: Implement the persistence functionalities in the `ChatManager` class and `ChatClient` class.
+- Task 1: Implement `ChatManager` class and `ChatClient` class, implement the `query(String prompt)` method in `GPT4oChatClient` class.
+- Task 2: Implement the persistence interface (`fromJson` and `toJson` in `Serializable`) in the `ChatManager` class and `ChatClient` class, and add annotations for guiding persistence.
+- You are free to use provided utility methods in the `Utils` class, or implement your own methods.
 
 We will provide public test cases for you to verify the correctness of your implementations. However, passing all the
 public test cases does not mean that you can obtain the full mark for the PA. We also have many additional test cases as
