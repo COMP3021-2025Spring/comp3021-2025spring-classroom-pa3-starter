@@ -1,4 +1,4 @@
-# PA1 - LLM ChatManager
+# PA2 - LLM ChatManager
 
 Recently the LLM (Large Language Model) has become amazingly powerful and popular in the world. Several companies have
 deployed their LLM chat services, such as ChatGPT from OpenAI. In this programming assignment, you are going to
@@ -17,8 +17,11 @@ implement a simple local chat manager (the `ChatManager` class) that can interac
     - Add Task2 test cases
     - Code refactoring and bug fixing
 - PA2:
-    - `ChatManager`: add several statistics commands
+    - Merge sessions into one file, add `UserID` for each session
+    - `ChatManager`: add/update statistics commands: `report`, `history`, `tag`, `desc`
+    - `ChatClient`: implement the `Stream` interface
     - Add PA2 test cases
+    - Code refactoring and bug fixing
 
 ## Grading
 

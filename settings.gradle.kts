@@ -1,2 +1,2 @@
-rootProject.name = "PA1"
+rootProject.name = "PA2"
 
