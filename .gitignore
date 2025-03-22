@@ -43,4 +43,4 @@ bin/
 
 ### Do not include your API keys ###
 keys
-sessions
+sessions.json

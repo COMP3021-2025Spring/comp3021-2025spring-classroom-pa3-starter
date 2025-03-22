@@ -11,7 +11,6 @@ import org.jline.reader.*;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.reflections.Reflections;
 
@@ -19,11 +18,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import java.util.stream.Stream;
 
 /**
  * ChatManager class
@@ -56,9 +53,10 @@ public class ChatManager {
             put("tag", "tag the specified session");
             put("untag", "untag the specified session");
             put("desc", "set a description to the specified session");
-            put("list", "list available chat clients");
-            put("history", "show previous sessions");
+            put("show", "show available chat clients");
+            put("list", "list previous sessions");
             put("load", "load from a previous session");
+            put("whoami", "show the current user");
             put("help", "show this help message");
             put("exit", "exit the program");
         }
@@ -143,7 +141,7 @@ public class ChatManager {
     }
 
     /**
-     * Get the chat client by the client name
+     * Create a chat client by the client name
      *
      * @param clientName the client name
      * @return the chat client instance
@@ -165,19 +163,26 @@ public class ChatManager {
     }
 
     /**
-     * Get the chat client by the client name and session
+     * Restore a chat client by user and sessionUID
      *
-     * @param session the session
+     * @param user the user
+     * @param sessionUID the session UID
      * @return the chat client instance
      */
-    public static ChatClient getChatClient(JSONObject session) {
+    public static ChatClient getChatClient(String user, String sessionUID) {
+        JSONObject session = SessionManager.getSession(user, sessionUID);
+        if (session == null) {
+            return null;
+        }
         String clientName = session.getString("clientName");
         try {
             for (Class<? extends ChatClient> subType : getSubClasses()) {
                 String modelName = subType.getField("clientName").get(null).toString();
                 if (modelName.equals(clientName)) {
                     System.out.println("Loading " + clientName + " client...");
-                    return subType.getDeclaredConstructor(JSONObject.class).newInstance(session);
+                    ChatClient chatClient = subType.getDeclaredConstructor(JSONObject.class).newInstance(session);
+                    chatClient.sessionUID = sessionUID;
+                    return chatClient;
                 }
             }
             throw new InvalidClientNameException("Invalid client name: " + clientName);
@@ -191,52 +196,31 @@ public class ChatManager {
     }
 
     /**
-     * Print the session information
-     *
-     * @param filePath the file path of the session
-     */
-    static void printSession(Path filePath) {
-        try {
-            JSONObject session = new JSONObject(Files.readString(filePath));
-            String clientUID = filePath.getFileName().toString().replace(".json", "");
-            String tags = session.getJSONArray("tags").join(", ");
-            String description = session.getString("description");
-            String timeLastOpened = Utils.timeToString(session.getLong("timeLastOpen"));
-            String timeLastExit = Utils.timeToString(session.getLong("timeLastExit"));
-            System.out.printf("Session: %s Last Open: %s Last Exit: %s Tags: %-30s Description: %s %n",
-                    Utils.toInfo(clientUID), Utils.toInfo(timeLastOpened), Utils.toInfo(timeLastExit),
-                    Utils.toInfo(tags), Utils.toInfo(description));
-        } catch (IOException | JSONException e) {
-            Utils.printlnError("Error reading session: " + e.getMessage());
-        }
-    }
-
-    /**
      * Add tags to the session
      *
-     * @param clientUID the client UID
+     * @param sessionUID the session UID
      * @param tags      the tags to add
      */
-    static void addTags(String clientUID, String[] tags) {
-        JSONObject session = Utils.parseJSON(clientUID);
-        if (Objects.isNull(session)) {
+    static void addTags(String user, String sessionUID, String[] tags) {
+        JSONObject session = SessionManager.getSession(user, sessionUID);
+        if (session == null) {
             return;
         }
         for (String tag : tags) {
             session.getJSONArray("tags").put(tag.trim());
         }
-        Utils.writeJSON(session, clientUID);
+        SessionManager.setSession(user, sessionUID, session);
     }
 
     /**
      * Remove a tag from the session
      *
-     * @param clientUID the client UID
+     * @param sessionUID the session UID
      * @param tag       the tag to remove
      */
-    static void removeTag(String clientUID, String tag) {
-        JSONObject session = Utils.parseJSON(clientUID);
-        if (Objects.isNull(session)) {
+    static void removeTag(String user, String sessionUID, String tag) {
+        JSONObject session = SessionManager.getSession(user, sessionUID);
+        if (session == null) {
             return;
         }
         for (int i = 0; i < session.getJSONArray("tags").length(); i++) {
@@ -245,40 +229,31 @@ public class ChatManager {
                 break;
             }
         }
-        Utils.writeJSON(session, clientUID);
+        SessionManager.setSession(user, sessionUID, session);
     }
 
     /**
      * Add a description to the session
      *
-     * @param clientUID   the client UID
+     * @param sessionUID   the session UID
      * @param description the description to add
      */
-    static void setDescription(String clientUID, String description) {
-        JSONObject session = Utils.parseJSON(clientUID);
-        if (Objects.isNull(session)) {
+    static void setDescription(String user, String sessionUID, String description) {
+        JSONObject session = SessionManager.getSession(user, sessionUID);
+        if (session == null) {
             return;
         }
         session.put("description", description.trim());
-        Utils.writeJSON(session, clientUID);
-    }
-
-    /**
-     * List all the previously stored sessions
-     */
-    public static void listSessions() {
-        try (Stream<Path> paths = Files.walk(Paths.get("sessions"))) {
-            paths.filter(Files::isRegularFile).forEach(ChatManager::printSession);
-        } catch (IOException e) {
-            Utils.printlnError("Error listing sessions: " + e.getMessage());
-        }
+        SessionManager.setSession(user, sessionUID, session);
     }
 
     /**
      * Top-level Read-Eval-Print Loop
      */
-    public static void repl() {
-        Utils.printlnInfo(banner + "Welcome to LLM ChatManager!");
+    public static void repl(String user) {
+        Utils.printlnInfo(banner + String.format("Welcome %s to LLM ChatManager!", user));
+        SessionManager.loadSessions();
+        SessionManager.initSessions(user);
         printHelp();
         LineReader lineReader = LineReaderBuilder.builder().completer(completer).terminal(terminal).build();
 
@@ -289,7 +264,7 @@ public class ChatManager {
                 String command = tokens[0];
                 String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (command) {
-                    case "list":
+                    case "show":
                         System.out.println("Available LLM Chat Clients: " + getChatClientNames());
                         break;
                     case "chat":
@@ -304,53 +279,53 @@ public class ChatManager {
                             break;
                         }
                         chatClient.repl();
-                        System.out.println("Session " + chatClient.getClientUID() + " ended");
-                        chatClient.saveClient();
+                        System.out.println("Session " + chatClient.sessionUID + " ended");
+                        chatClient.saveClient(user);
                         break;
                     case "tag":
                         if (args.length < 2) {
                             Utils.printlnError("Usage: tag [session] [tag1] [tag2] ...");
                             break;
                         }
-                        addTags(args[0], Arrays.copyOfRange(args, 1, args.length));
-                        listSessions();
+                        addTags(user, args[0], Arrays.copyOfRange(args, 1, args.length));
+                        SessionManager.listSessions(user);
                         break;
                     case "untag":
                         if (args.length != 2) {
                             Utils.printlnError("Usage: untag [session] [tag]");
                             break;
                         }
-                        removeTag(args[0], args[1]);
-                        listSessions();
+                        removeTag(user, args[0], args[1]);
+                        SessionManager.listSessions(user);
                         break;
                     case "desc":
-                        if (args.length < 2) {
+                        if (args.length < 1) {
                             Utils.printlnError("Usage: description [session] [description]");
                             break;
                         }
-                        setDescription(args[0], String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
-                        listSessions();
+                        String description = args.length > 1 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : "";
+                        setDescription(user, args[0], description);
+                        SessionManager.listSessions(user);
                         break;
-                    case "history":
-                        listSessions();
+                    case "list":
+                        SessionManager.listSessions(user);
                         break;
                     case "load":
                         if (args.length < 1) {
                             Utils.printlnError("Usage: load [clientUID]");
                             break;
                         }
-                        String clientUID = args[0];
-                        JSONObject session = Utils.parseJSON(clientUID);
-                        if (session == null) {
-                            break;
-                        }
-                        chatClient = getChatClient(session);
+                        String sessionUID = args[0];
+                        chatClient = getChatClient(user, sessionUID);
                         if (chatClient == null) {
                             break;
                         }
                         chatClient.repl();
-                        System.out.println("Session " + chatClient.getClientUID() + " ended");
-                        chatClient.saveClient();
+                        System.out.println("Session " + sessionUID + " ended");
+                        chatClient.saveClient(user);
+                        break;
+                    case "whoami":
+                        System.out.println(user);
                         break;
                     case "help":
                         printHelp();
@@ -363,6 +338,7 @@ public class ChatManager {
                         Utils.printlnError("Invalid command");
                 }
             } catch (UserInterruptException | EndOfFileException e) {
+                SessionManager.saveSessions();
                 return;
             }
         }

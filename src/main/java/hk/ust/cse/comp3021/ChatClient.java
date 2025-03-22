@@ -124,6 +124,12 @@ public abstract class ChatClient implements Serializable {
     protected String description = "";
 
     /**
+     * The sessionUID of the ChatClient
+     */
+    @JsonIgnore
+    protected String sessionUID;
+
+    /**
      * Add a tag to the ChatClient
      *
      * @param tags the tag to add
@@ -199,6 +205,8 @@ public abstract class ChatClient implements Serializable {
         // set the time created and last open
         timeCreated = Utils.getCurrentTime();
         timeLastOpen = timeCreated;
+        // generate a sessionUID for new client
+        sessionUID = Utils.generateUID();
 
         String apiKeyFile = String.format("keys/%s.txt", getClientName());
         if (Files.exists(Path.of(apiKeyFile)) && readAndSetKey(apiKeyFile)) {
@@ -317,21 +325,12 @@ public abstract class ChatClient implements Serializable {
     }
 
     /**
-     * Get the client UID for indexing
-     *
-     * @return the client UID
+     * Save the client instance to a session in JSON format
      */
-    String getClientUID() {
-        return getClientName() + "_" + Utils.timeToFilename(timeCreated);
-    }
-
-    /**
-     * Save the client to a JSON file
-     */
-    void saveClient() {
+    void saveClient(String user) {
         timeLastExit = Utils.getCurrentTime();
-        JSONObject clientJson = toJSON();
-        Utils.writeJSON(clientJson, getClientUID());
+        JSONObject session = toJSON();
+        SessionManager.setSession(user, sessionUID, session);
     }
 
     /**
@@ -388,9 +387,10 @@ public abstract class ChatClient implements Serializable {
 
                 // start serializing the field
                 // if the field is of org.json supported type: int, long, double, String, Collection, etc
-                if (field.getType().isPrimitive() || field.getType().equals(String.class)
-                        || field.get(this) instanceof Collection<?>) {
+                if (field.getType().isPrimitive() || field.getType().equals(String.class)) {
                     jsonObject.put(field.getName(), fieldValue);
+                } else if (field.get(this) instanceof Collection<?>) {
+                    jsonObject.put(field.getName(), new JSONArray((Collection<?>) fieldValue));
                 } else if (fieldValue instanceof Serializable fieldSerializable) {
                     // if the field is self-defined class, it must implement Serializable
                     JSONObject fieldJson = fieldSerializable.toJSON();

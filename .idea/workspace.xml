@@ -4,12 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="create session folder before running Task2Test">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="remove previous Test and resources">
+      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Utils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +71,8 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Application.main.executor": "Debug",
+    "Application.main.executor": "Run",
+    "Gradle.Build PA.executor": "Run",
     "Gradle.Build comp3021-2025spring-classroom-pa1-starter.executor": "Run",
     "Gradle.ChatManagerTest.executor": "Run",
     "Gradle.ChatManagerTest.getChatClient.executor": "Run",
@@ -77,6 +80,7 @@
     "Gradle.GPT4oClientTest.executor": "Run",
     "Gradle.GPT4oClientTest.getModelName.executor": "Run",
     "Gradle.GPT4oClientTest.query.executor": "Run",
+    "Gradle.PA [:hk.ust.cse.comp3021.Main.main()].executor": "Debug",
     "Gradle.comp3021-2025spring-classroom-pa1-starter [:hk.ust.cse.comp3021.Main.main()].executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -108,6 +112,29 @@
     </key>
   </component>
   <component name="RunManager" selected="Application.main">
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="Python.FlaskServer">
       <module name="comp3021-2025spring-classroom-pa1-starter" />
       <option name="ENV_FILES" value="" />
@@ -122,11 +149,23 @@
       <option name="launchJavascriptDebuger" value="false" />
       <method v="2" />
     </configuration>
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="corretto-17" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="hk.ust.cse.comp3021.Main" />
-      <module name="PA1.main" />
+      <module name="PA2.main" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -256,41 +295,6 @@
       <option name="filePath" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Tox" factoryName="Tox">
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <method v="2" />
-    </configuration>
     <list>
       <item itemvalue="Application.main" />
       <item itemvalue="Gradle.ChatManagerTest" />
@@ -312,8 +316,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
       </set>
     </attachedChunks>
   </component>
@@ -327,7 +331,9 @@
       <updated>1740215250957</updated>
       <workItem from="1740215252150" duration="53619000" />
       <workItem from="1740453315555" duration="20017000" />
-      <workItem from="1742113798663" duration="969000" />
+      <workItem from="1742113798663" duration="7585000" />
+      <workItem from="1742522323023" duration="19000" />
+      <workItem from="1742522365525" duration="13923000" />
     </task>
     <task id="LOCAL-00001" summary="ChatManager Prototype">
       <option name="closed" value="true" />
@@ -529,7 +535,23 @@
       <option name="project" value="LOCAL" />
       <updated>1741535575900</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="rename to PA2">
+      <option name="closed" value="true" />
+      <created>1742115874136</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1742115874136</updated>
+    </task>
+    <task id="LOCAL-00027" summary="remove previous Test and resources">
+      <option name="closed" value="true" />
+      <created>1742282793522</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1742282793522</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -558,6 +580,8 @@
     <MESSAGE value="add description to passing api key to GitHub Action" />
     <MESSAGE value="modify classroom.yml for Task2Test" />
     <MESSAGE value="create session folder before running Task2Test" />
-    <option name="LAST_COMMIT_MESSAGE" value="create session folder before running Task2Test" />
+    <MESSAGE value="rename to PA2" />
+    <MESSAGE value="remove previous Test and resources" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove previous Test and resources" />
   </component>
 </project>

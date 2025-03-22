@@ -6,17 +6,10 @@
 
 package hk.ust.cse.comp3021;
 
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 import static org.fusesource.jansi.Ansi.Color.*;
 import static org.fusesource.jansi.Ansi.*;
@@ -73,17 +66,6 @@ public class Utils {
     }
 
     /**
-     * Convert the time to a string accepted by the file system
-     *
-     * @param time the epoch time to convert
-     * @return the string representation of the time
-     */
-    public static String timeToFilename(long time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
-        return LocalDateTime.ofEpochSecond(time, 0, ZoneOffset.UTC).format(formatter);
-    }
-
-    /**
      * Convert the time to a string
      *
      * @param time the epoch time to convert
@@ -92,40 +74,6 @@ public class Utils {
     public static String timeToString(long time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return LocalDateTime.ofEpochSecond(time, 0, ZoneOffset.UTC).format(formatter);
-    }
-
-    /**
-     * Parse a JSONObject from file given by the clientUID
-     *
-     * @param clientUID the clientUID
-     * @return the JSONObject
-     */
-    public static JSONObject parseJSON(String clientUID) {
-        try {
-            Path filePath = Paths.get("sessions", clientUID + ".json");
-            return new JSONObject(Files.readString(filePath));
-        } catch (JSONException e) {
-            Utils.printlnError("Failed to parse the session: " + e.getMessage());
-            return null;
-        } catch (IOException e) {
-            Utils.printlnError("Failed to load the session: " + e.getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Write a JSONObject to file given by the clientUID
-     *
-     * @param json      the JSONObject
-     * @param clientUID the clientUID
-     */
-    public static void writeJSON(JSONObject json, String clientUID) {
-        Path filePath = Paths.get("sessions", clientUID + ".json");
-        try {
-            Files.writeString(filePath, json.toString(2));
-        } catch (IOException e) {
-            Utils.printlnError("Failed to save the session: " + e.getMessage());
-        }
     }
 
     /**
@@ -161,5 +109,13 @@ public class Utils {
      */
     public static boolean isValidApiKey(String apiKey) {
         return apiKey.matches("^[a-zA-Z0-9]{32}$");
+    }
+
+    /**
+     * Generate a random UID for each session
+     * @return the UID, 32 characters long, with only numbers and letters
+     */
+    public static String generateUID() {
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 32);
     }
 }
