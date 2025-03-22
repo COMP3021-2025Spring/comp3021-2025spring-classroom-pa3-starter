@@ -4,14 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="remove previous Test and resources">
-      <change afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" afterDir="false" />
+    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="refactor the session database into one file managed by SessionManager">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -333,7 +330,7 @@
       <workItem from="1740453315555" duration="20017000" />
       <workItem from="1742113798663" duration="7585000" />
       <workItem from="1742522323023" duration="19000" />
-      <workItem from="1742522365525" duration="13923000" />
+      <workItem from="1742522365525" duration="17142000" />
     </task>
     <task id="LOCAL-00001" summary="ChatManager Prototype">
       <option name="closed" value="true" />
@@ -551,7 +548,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742282793522</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="refactor the session database into one file managed by SessionManager">
+      <option name="closed" value="true" />
+      <created>1742624511872</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1742624511872</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -582,6 +587,7 @@
     <MESSAGE value="create session folder before running Task2Test" />
     <MESSAGE value="rename to PA2" />
     <MESSAGE value="remove previous Test and resources" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove previous Test and resources" />
+    <MESSAGE value="refactor the session database into one file managed by SessionManager" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor the session database into one file managed by SessionManager" />
   </component>
 </project>

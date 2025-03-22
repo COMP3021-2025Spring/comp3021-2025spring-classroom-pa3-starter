@@ -101,12 +101,14 @@ public class SessionManager {
      */
     static void printSession(String sessionUID, JSONObject session) {
         try {
+            String clientName = session.getString("clientName");
             String tags = session.getJSONArray("tags").join(", ");
             String description = session.getString("description");
             String timeLastOpened = Utils.timeToString(session.getLong("timeLastOpen"));
             String timeLastExit = Utils.timeToString(session.getLong("timeLastExit"));
-            System.out.printf("UID: %s Last Open: %s Last Exit: %s Tags: %-30s Description: %s %n",
-                    Utils.toInfo(sessionUID), Utils.toInfo(timeLastOpened), Utils.toInfo(timeLastExit),
+            System.out.printf("UID: %s Client: %-20s Last Open: %s Last Exit: %s Tags: %-30s Description: %s %n",
+                    Utils.toInfo(sessionUID), Utils.toInfo(clientName), Utils.toInfo(timeLastOpened),
+                    Utils.toInfo(timeLastExit),
                     Utils.toInfo(tags), Utils.toInfo(description));
         } catch (JSONException e) {
             Utils.printlnError("Error reading session: " + e.getMessage());
@@ -124,5 +126,15 @@ public class SessionManager {
             }
             printSession(sessionUID, session);
         }
+    }
+
+    /**
+     * Generate a profile for the user and save as json file
+     *
+     * @param user the user to generate profile for
+     */
+    public static void generateProfile(String user) {
+        Utils.printlnInfo("---- YOUR CHAT CLIENT PROFILE ----");
+        listSessions(user);
     }
 }

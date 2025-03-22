@@ -57,6 +57,7 @@ public class ChatManager {
             put("list", "list previous sessions");
             put("load", "load from a previous session");
             put("whoami", "show the current user");
+            put("profile", "generate a profile for the current user");
             put("help", "show this help message");
             put("exit", "exit the program");
         }
@@ -326,6 +327,9 @@ public class ChatManager {
                         break;
                     case "whoami":
                         System.out.println(user);
+                        break;
+                    case "profile":
+                        SessionManager.generateProfile(user);
                         break;
                     case "help":
                         printHelp();
