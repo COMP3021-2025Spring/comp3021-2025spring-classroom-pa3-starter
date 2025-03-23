@@ -8,7 +8,10 @@ package hk.ust.cse.comp3021;
 
 public class Main {
     public static void main(String[] args) {
-        String user = (args.length == 0) ? "admin" : args[0];
-        ChatManager.repl(user);
+        if (args.length == 0) {
+            ChatManager.adminRepl();
+        } else {
+            ChatManager.repl(args[0]);
+        }
     }
 }

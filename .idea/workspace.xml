@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="refactor the session database into one file managed by SessionManager">
+    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="add GPT4ominiClient and profile interface">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -95,7 +96,7 @@
     "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "preferences.sourceCode.Java",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -108,7 +109,7 @@
       <recent name="hk.ust.cse.comp3021" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.main">
+  <component name="RunManager" selected="Application.user">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -158,7 +159,7 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <method v="2" />
     </configuration>
-    <configuration name="main" type="Application" factoryName="Application">
+    <configuration name="admin" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="corretto-17" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="hk.ust.cse.comp3021.Main" />
@@ -167,29 +168,15 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ChatManagerTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;hk.ust.cse.comp3021.ChatManagerTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
+    <configuration name="user" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="corretto-17" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="hk.ust.cse.comp3021.Main" />
+      <module name="PA2.main" />
+      <option name="PROGRAM_PARAMETERS" value="Lisa" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
     <configuration name="ChatManagerTest.getChatClient" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
@@ -293,8 +280,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Application.main" />
-      <item itemvalue="Gradle.ChatManagerTest" />
+      <item itemvalue="Application.admin" />
+      <item itemvalue="Application.user" />
       <item itemvalue="Gradle.ChatManagerTest.getChatClient" />
       <item itemvalue="Gradle.ChatManagerTest.showChatClients" />
       <item itemvalue="Gradle.GPT4oClientTest" />
@@ -303,7 +290,6 @@
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.ChatManagerTest.getChatClient" />
-        <item itemvalue="Gradle.ChatManagerTest" />
         <item itemvalue="Gradle.GPT4oClientTest" />
         <item itemvalue="Gradle.ChatManagerTest.showChatClients" />
         <item itemvalue="Gradle.GPT4oClientTest.query" />
@@ -330,7 +316,8 @@
       <workItem from="1740453315555" duration="20017000" />
       <workItem from="1742113798663" duration="7585000" />
       <workItem from="1742522323023" duration="19000" />
-      <workItem from="1742522365525" duration="17142000" />
+      <workItem from="1742522365525" duration="28783000" />
+      <workItem from="1742704796680" duration="9527000" />
     </task>
     <task id="LOCAL-00001" summary="ChatManager Prototype">
       <option name="closed" value="true" />
@@ -556,14 +543,29 @@
       <option name="project" value="LOCAL" />
       <updated>1742624511872</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="add GPT4ominiClient and profile interface">
+      <option name="closed" value="true" />
+      <created>1742648574715</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1742648574715</updated>
+    </task>
+    <task id="LOCAL-00030" summary="add GPT4ominiClient and profile interface">
+      <option name="closed" value="true" />
+      <created>1742648583589</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1742648583589</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="ChatManager Prototype" />
     <MESSAGE value="add ANSI color and self-defined Exception" />
     <MESSAGE value="minor refine: (1) add timestamp (2) add abstract method toJson()" />
     <MESSAGE value="add file upload and some code refraction" />
@@ -588,6 +590,7 @@
     <MESSAGE value="rename to PA2" />
     <MESSAGE value="remove previous Test and resources" />
     <MESSAGE value="refactor the session database into one file managed by SessionManager" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor the session database into one file managed by SessionManager" />
+    <MESSAGE value="add GPT4ominiClient and profile interface" />
+    <option name="LAST_COMMIT_MESSAGE" value="add GPT4ominiClient and profile interface" />
   </component>
 </project>

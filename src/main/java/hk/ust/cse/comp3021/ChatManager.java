@@ -32,6 +32,11 @@ public class ChatManager {
     static final String replPrompt = Utils.toInfo("ChatManager> ");
 
     /**
+     * The shell prompt for the ChatManager admin repl
+     */
+    static final String adminPromt = Utils.toInfo("Admin> ");
+
+    /**
      * The banner, generated from:
      * <a href="https://patorjk.com/software/taag/#p=display&f=Ogre&t=LLM%20ChatManager">...</a>
      */
@@ -64,6 +69,17 @@ public class ChatManager {
     };
 
     /**
+     * The admin menu, a map of command and description
+     */
+    static final Map<String, String> adminMenus = new LinkedHashMap<>() {
+        {
+            put("profile", "show the system profile of the database");
+            put("help", "show this help message");
+            put("exit", "exit the program");
+        }
+    };
+
+    /**
      * Initialize the terminal for jline
      */
     static final Terminal terminal;
@@ -78,6 +94,16 @@ public class ChatManager {
         }
     }
 
+    /**
+     * The completer for the ChatManager repl
+     */
+    static final Completer completer = new StringsCompleter(menus.keySet());
+
+    /**
+     * Initialize the line reader for jline
+     */
+    static final LineReader lineReader = LineReaderBuilder.builder().completer(completer).terminal(terminal).build();
+
     // create the session directory if not exists
     static {
         try {
@@ -91,11 +117,6 @@ public class ChatManager {
     }
 
     /**
-     * The completer for the ChatManager repl
-     */
-    static final Completer completer = new StringsCompleter(menus.keySet());
-
-    /**
      * The current active ChatClient
      */
     static ChatClient chatClient;
@@ -103,7 +124,7 @@ public class ChatManager {
     /**
      * Print the help message
      */
-    private static void printHelp() {
+    private static void printHelp(Map<String, String> menus) {
         System.out.println("Available commands:");
         for (Map.Entry<String, String> entry : menus.entrySet()) {
             System.out.print("- ");
@@ -166,7 +187,7 @@ public class ChatManager {
     /**
      * Restore a chat client by user and sessionUID
      *
-     * @param user the user
+     * @param user       the user
      * @param sessionUID the session UID
      * @return the chat client instance
      */
@@ -188,8 +209,7 @@ public class ChatManager {
             }
             throw new InvalidClientNameException("Invalid client name: " + clientName);
         } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            Utils.printlnError(cause.getMessage());
+            Utils.printlnError(e.getClass().getName() + " " + e.getCause().getMessage());
         } catch (ReflectiveOperationException | InvalidClientNameException e) {
             Utils.printlnError(e.getMessage());
         }
@@ -199,8 +219,9 @@ public class ChatManager {
     /**
      * Add tags to the session
      *
+     * @param user       the user
      * @param sessionUID the session UID
-     * @param tags      the tags to add
+     * @param tags       the tags to add
      */
     static void addTags(String user, String sessionUID, String[] tags) {
         JSONObject session = SessionManager.getSession(user, sessionUID);
@@ -216,8 +237,9 @@ public class ChatManager {
     /**
      * Remove a tag from the session
      *
+     * @param user       the user
      * @param sessionUID the session UID
-     * @param tag       the tag to remove
+     * @param tag        the tag to remove
      */
     static void removeTag(String user, String sessionUID, String tag) {
         JSONObject session = SessionManager.getSession(user, sessionUID);
@@ -236,7 +258,8 @@ public class ChatManager {
     /**
      * Add a description to the session
      *
-     * @param sessionUID   the session UID
+     * @param user       the user
+     * @param sessionUID  the session UID
      * @param description the description to add
      */
     static void setDescription(String user, String sessionUID, String description) {
@@ -253,10 +276,9 @@ public class ChatManager {
      */
     public static void repl(String user) {
         Utils.printlnInfo(banner + String.format("Welcome %s to LLM ChatManager!", user));
-        SessionManager.loadSessions();
+        SessionManager.loadDatabase();
         SessionManager.initSessions(user);
-        printHelp();
-        LineReader lineReader = LineReaderBuilder.builder().completer(completer).terminal(terminal).build();
+        printHelp(menus);
 
         while (true) {
             try {
@@ -304,7 +326,8 @@ public class ChatManager {
                             Utils.printlnError("Usage: description [session] [description]");
                             break;
                         }
-                        String description = args.length > 1 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : "";
+                        String description = args.length > 1 ? String.join(" ", Arrays.copyOfRange(args, 1,
+                                args.length)) : "";
                         setDescription(user, args[0], description);
                         SessionManager.listSessions(user);
                         break;
@@ -332,7 +355,7 @@ public class ChatManager {
                         SessionManager.generateProfile(user);
                         break;
                     case "help":
-                        printHelp();
+                        printHelp(menus);
                         break;
                     case "exit":
                         throw new EndOfFileException();
@@ -342,7 +365,42 @@ public class ChatManager {
                         Utils.printlnError("Invalid command");
                 }
             } catch (UserInterruptException | EndOfFileException e) {
-                SessionManager.saveSessions();
+                SessionManager.saveDatabase();
+                return;
+            }
+        }
+    }
+
+    /**
+     * Administer Read-Eval-Print Loop
+     */
+    public static void adminRepl() {
+        Utils.printlnInfo(banner + "Welcome to Administrator portal!");
+        SessionManager.loadDatabase();
+        printHelp(adminMenus);
+
+        while (true) {
+            try {
+                Utils.printInfo(replPrompt);
+                String[] tokens = lineReader.readLine().split("\\s+");
+                String command = tokens[0];
+                String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
+                switch (command) {
+                    case "profile":
+                        SessionManager.generateProfile();
+                        break;
+                    case "help":
+                        printHelp(adminMenus);
+                        break;
+                    case "exit":
+                        throw new EndOfFileException();
+                    case "":
+                        break;
+                    default:
+                        Utils.printlnError("Invalid command");
+                }
+            } catch (UserInterruptException | EndOfFileException e) {
+                SessionManager.saveDatabase();
                 return;
             }
         }
