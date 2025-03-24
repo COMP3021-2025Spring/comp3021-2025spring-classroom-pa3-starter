@@ -114,6 +114,7 @@ public class GPT4ominiClient extends ChatClient {
      * Constructor of ChatClient when deserializing from JSON
      *
      * @param session the JSON object
+     * @throws PersistenceException if the JSON object is invalid when checking the annotations
      */
     public GPT4ominiClient(JSONObject session) throws PersistenceException {
         super(session);

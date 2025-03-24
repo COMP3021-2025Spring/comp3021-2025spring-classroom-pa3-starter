@@ -31,10 +31,20 @@ public class Messages implements Serializable {
         messageList.add(new Message(role, content));
     }
 
+    /**
+     * Add a {@link Message} to the list
+     * @param role role in LLM: system, user, assistant
+     * @param content content of the message
+     * @param tokens number of tokens
+     */
     public void addMessage(String role, String content, int tokens) {
         messageList.add(new Message(role, content, tokens));
     }
 
+    /**
+     * Get the last message
+     * @return the last message
+     */
     public Message getLastMessage() {
         return messageList.get(messageList.size() - 1);
     }

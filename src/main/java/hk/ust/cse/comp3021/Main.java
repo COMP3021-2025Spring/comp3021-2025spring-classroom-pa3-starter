@@ -6,7 +6,14 @@
 
 package hk.ust.cse.comp3021;
 
+/**
+ * The entry of the application
+ */
 public class Main {
+    /**
+     * The main function
+     * @param args the cmd arguments
+     */
     public static void main(String[] args) {
         if (args.length == 0) {
             ChatManager.adminRepl();

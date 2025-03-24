@@ -230,6 +230,7 @@ public abstract class ChatClient implements Serializable {
      * Constructor of ChatClient when deserializing from JSON
      *
      * @param session the JSON object
+     * @throws PersistenceException if the JSON object is invalid when checking the annotations
      */
     public ChatClient(JSONObject session) throws PersistenceException {
         fromJSON(session);
@@ -339,6 +340,11 @@ public abstract class ChatClient implements Serializable {
      */
     public abstract String query(String prompt);
 
+    /**
+     * Get all fields of the class and its superclasses
+     * @param clazz the class
+     * @return the array of fields
+     */
     public static Field[] getAllFields(Class<?> clazz) {
         List<Field> fields = new ArrayList<>();
         while (clazz != null) {

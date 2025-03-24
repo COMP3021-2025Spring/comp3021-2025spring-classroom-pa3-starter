@@ -10,6 +10,10 @@ package hk.ust.cse.comp3021.exception;
  * Throw this exception when deserializing if the field contains prohibited content
  */
 public class JsonFilterException extends PersistenceException {
+    /**
+     * Constructor
+     * @param message the message to show
+     */
     public JsonFilterException(String message) {
         super(message);
     }

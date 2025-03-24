@@ -10,6 +10,10 @@ package hk.ust.cse.comp3021.exception;
  * Throw this exception when deserializing if the field is out of range
  */
 public class JsonRangeCheckException extends PersistenceException {
+    /**
+     * Constructor
+     * @param message the message to show
+     */
     public JsonRangeCheckException(String message) {
         super(message);
     }

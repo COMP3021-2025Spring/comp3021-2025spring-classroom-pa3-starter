@@ -6,7 +6,9 @@
 
 package hk.ust.cse.comp3021;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -72,8 +74,26 @@ public class Utils {
      * @return the string representation of the time
      */
     public static String timeToString(long time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return LocalDateTime.ofEpochSecond(time, 0, ZoneOffset.UTC).format(formatter);
+        if (time < 86400) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss a");
+            return LocalTime.ofSecondOfDay(time).format(formatter);
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            return LocalDateTime.ofEpochSecond(time, 0, ZoneOffset.UTC).format(formatter);
+        }
+    }
+
+    /**
+     * Get the duration between two times in minutes
+     * @param startTime the start time
+     * @param endTime the end time
+     * @return the duration in minutes
+     */
+    public static int getDuration(long startTime, long endTime) {
+        LocalDateTime start = LocalDateTime.ofEpochSecond(startTime, 0, ZoneOffset.UTC);
+        LocalDateTime end = LocalDateTime.ofEpochSecond(endTime, 0, ZoneOffset.UTC);
+        Duration duration = Duration.between(start, end);
+        return (int) duration.toMinutes();
     }
 
     /**
@@ -104,6 +124,7 @@ public class Utils {
 
     /**
      * Check if the API key for genai platform is valid
+     *
      * @param apiKey the API key
      * @return true if the API key is valid
      */
@@ -113,6 +134,7 @@ public class Utils {
 
     /**
      * Generate a random UID for each session
+     *
      * @return the UID, 32 characters long, with only numbers and letters
      */
     public static String generateUID() {

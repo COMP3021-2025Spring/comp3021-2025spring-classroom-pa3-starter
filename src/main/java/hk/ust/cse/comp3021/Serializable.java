@@ -22,6 +22,7 @@ public interface Serializable {
     /**
      * Convert the object from JSON
      * @param jsonObject the JSON object
+     * @throws PersistenceException if the JSON object is invalid when checking the annotations
      */
     void fromJSON(JSONObject jsonObject) throws PersistenceException;
 }

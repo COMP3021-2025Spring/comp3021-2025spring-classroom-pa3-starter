@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="add GPT4ominiClient and profile interface">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" afterDir="false" />
-    </list>
+    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="implement basic querying feature using functional programming (map+reduce)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -66,40 +60,40 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Application.main.executor": "Run",
-    "Gradle.Build PA.executor": "Run",
-    "Gradle.Build comp3021-2025spring-classroom-pa1-starter.executor": "Run",
-    "Gradle.ChatManagerTest.executor": "Run",
-    "Gradle.ChatManagerTest.getChatClient.executor": "Run",
-    "Gradle.ChatManagerTest.showChatClients.executor": "Run",
-    "Gradle.GPT4oClientTest.executor": "Run",
-    "Gradle.GPT4oClientTest.getModelName.executor": "Run",
-    "Gradle.GPT4oClientTest.query.executor": "Run",
-    "Gradle.PA [:hk.ust.cse.comp3021.Main.main()].executor": "Debug",
-    "Gradle.comp3021-2025spring-classroom-pa1-starter [:hk.ust.cse.comp3021.Main.main()].executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
-    "git-widget-placeholder": "dev",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/cascades/COMP3021/PA",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Libraries",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.sourceCode.Java",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Application.main.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build PA.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build comp3021-2025spring-classroom-pa1-starter.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatManagerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatManagerTest.getChatClient.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ChatManagerTest.showChatClients.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.GPT4oClientTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.GPT4oClientTest.getModelName.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.GPT4oClientTest.query.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.PA [:hk.ust.cse.comp3021.Main.main()].executor&quot;: &quot;Debug&quot;,
+    &quot;Gradle.comp3021-2025spring-classroom-pa1-starter [:hk.ust.cse.comp3021.Main.main()].executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/cascades/COMP3021/PA&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
@@ -317,7 +311,8 @@
       <workItem from="1742113798663" duration="7585000" />
       <workItem from="1742522323023" duration="19000" />
       <workItem from="1742522365525" duration="28783000" />
-      <workItem from="1742704796680" duration="9527000" />
+      <workItem from="1742704796680" duration="22245000" />
+      <workItem from="1742796802141" duration="3571000" />
     </task>
     <task id="LOCAL-00001" summary="ChatManager Prototype">
       <option name="closed" value="true" />
@@ -559,15 +554,37 @@
       <option name="project" value="LOCAL" />
       <updated>1742648583589</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="implement basic querying feature using functional programming (map+reduce)">
+      <option name="closed" value="true" />
+      <created>1742740244276</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1742740244277</updated>
+    </task>
+    <task id="LOCAL-00032" summary="implement basic querying feature using functional programming (map+reduce)">
+      <option name="closed" value="true" />
+      <created>1742740518539</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1742740518539</updated>
+    </task>
+    <task id="LOCAL-00033" summary="implement basic querying feature using functional programming (map+reduce)">
+      <option name="closed" value="true" />
+      <created>1742800124644</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1742800124644</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add ANSI color and self-defined Exception" />
-    <MESSAGE value="minor refine: (1) add timestamp (2) add abstract method toJson()" />
     <MESSAGE value="add file upload and some code refraction" />
     <MESSAGE value="support basic session serialization" />
     <MESSAGE value="add a new ChatClient" />
@@ -591,6 +608,8 @@
     <MESSAGE value="remove previous Test and resources" />
     <MESSAGE value="refactor the session database into one file managed by SessionManager" />
     <MESSAGE value="add GPT4ominiClient and profile interface" />
-    <option name="LAST_COMMIT_MESSAGE" value="add GPT4ominiClient and profile interface" />
+    <MESSAGE value="implement the profile command both for user and admin, complete java doc" />
+    <MESSAGE value="implement basic querying feature using functional programming (map+reduce)" />
+    <option name="LAST_COMMIT_MESSAGE" value="implement basic querying feature using functional programming (map+reduce)" />
   </component>
 </project>

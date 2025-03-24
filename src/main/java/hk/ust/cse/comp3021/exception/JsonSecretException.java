@@ -10,6 +10,10 @@ package hk.ust.cse.comp3021.exception;
  * Throw this exception when deserializing if the field cannot be successfully decrypted, e.g. corrupted
  */
 public class JsonSecretException extends PersistenceException {
+    /**
+     * Constructor
+     * @param message the message to show
+     */
     public JsonSecretException(String message) {
         super(message);
     }

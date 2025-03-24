@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -106,16 +108,14 @@ public class SessionManager {
      * @return the sessions
      */
     static Stream<JSONObject> getSessionsStream(String user) {
-        return db.getJSONObject(user).toMap().keySet().stream().map(uid -> getSession(user, uid));
-    }
-
-    /**
-     * Get all the sessions of all users as stream
-     *
-     * @return the sessions
-     */
-    static Stream<JSONObject> getSessionsStream() {
-        return db.toMap().entrySet().stream().flatMap(e -> getSessionsStream(e.getKey()));
+        if (Objects.equals(user, "admin"))
+            return db.toMap()
+                    .entrySet().stream()
+                    .flatMap(e -> getSessionsStream(e.getKey()));
+        else
+            return db.getJSONObject(user).toMap()
+                    .keySet().stream()
+                    .map(uid -> Objects.requireNonNull(getSession(user, uid)));
     }
 
     /**
@@ -132,8 +132,7 @@ public class SessionManager {
             String timeLastExit = Utils.timeToString(session.getLong("timeLastExit"));
             System.out.printf("UID: %s Client: %-20s Created: %s Last Exit: %s Tags: %-30s Description: %s %n",
                     Utils.toInfo(sessionUID), Utils.toInfo(clientName), Utils.toInfo(timeCreated),
-                    Utils.toInfo(timeLastExit),
-                    Utils.toInfo(tags), Utils.toInfo(description));
+                    Utils.toInfo(timeLastExit), Utils.toInfo(tags), Utils.toInfo(description));
         } catch (JSONException e) {
             Utils.printlnError("Error reading session: " + e.getMessage());
         }
@@ -141,13 +140,19 @@ public class SessionManager {
 
     /**
      * List all the previously stored sessions
+     *
+     * @param user the user to list sessions for
      */
     public static void listSessions(String user) {
-        db.getJSONObject(user).toMap().forEach((key, value) -> printSession(key, getSession(user, key)));
+        db.getJSONObject(user).toMap()
+                .forEach((key, value) ->
+                        printSession(key, Objects.requireNonNull(getSession(user, key))));
     }
 
     /**
      * Get the number of users
+     *
+     * @return the number of users
      */
     public static int getNumUsers() {
         return db.toMap().size();
@@ -164,58 +169,148 @@ public class SessionManager {
     }
 
     /**
-     * Get the number of sessions of all users
-     *
-     * @return the number of sessions
-     */
-    public static long getNumSessions() {
-        return getSessionsStream().count();
-    }
-
-    /**
      * Get the statistics of the user using map-reduce
      *
-     * @param user the user to get statistics for
+     * @param user the user to get statistics for, use "admin" to get statistics for all users
      * @param m    the map function
-     * @param i    the initial reduce value
+     * @param i    the identity value
      * @param r    the reduce function
      * @return the statistics
      */
     public static int getStat(String user, ToIntFunction<JSONObject> m, int i, IntBinaryOperator r) {
-        return getSessionsStream(user).mapToInt(m).reduce(i, r);
+        return getSessionsStream(user)
+                .mapToInt(m)
+                .reduce(i, r);
     }
 
     /**
-     * Get the statistics of all users using map-reduce
-     *
-     * @param m the map function
-     * @param i the initial reduce value
-     * @param r the reduce function
-     * @return the statistics
+     * The list of ignored words when counting top words
      */
-    public static int getStat(ToIntFunction<JSONObject> m, int i, IntBinaryOperator r) {
-        return getSessionsStream().mapToInt(m).reduce(i, r);
+    static final List<String> ignoredWords = List.of("i", "it",
+            "She", "The", "This", "You", "a", "about", "all", "also", "am", "an", "and", "any", "are", "as", "at",
+            "be", "been", "but", "by", "can", "could", "data", "de", "def", "do", "each", "following", "for", "from",
+            "had", "has", "have", "he", "help", "her", "his", "how", "if", "important", "in", "information", "into",
+            "is", "it", "its", "key", "like", "make", "may", "me", "more", "my", "need",
+            "no", "not", "of", "on", "one", "or", "other", "provide", "return", "she", "so", "some", "specific",
+            "such", "that", "the", "their", "there", "they", "this", "to", "use", "used", "using", "was", "we", "what"
+            , "which", "who", "will", "with", "would", "you", "your", "here", "were", "does", "our", "a", "if", "he");
+
+
+    /**
+     * Counts the number of occurrences of the top k string in the stream using reduce
+     *
+     * @return the hash map of the string and its count
+     */
+    static HashMap<String, Integer> topString(Stream<String> stream, int k) {
+        HashMap<String, Integer> map = new HashMap<>();
+        stream.forEach(str -> map.put(str, map.getOrDefault(str, 0) + 1));
+        return map.entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .limit(k)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, HashMap::new));
     }
 
     /**
      * Generate a profile for the user and save as json file
+     * Casting the epoch time from Long to Integer is safe because we will not encounter the
+     * <a href="https://en.wikipedia.org/wiki/Year_2038_problem">Year 2038 problem</a>.
      *
      * @param user the user to generate profile for
      */
     public static void generateProfile(String user) {
         JSONObject profile = new JSONObject();
 
+        if (user.equals("admin"))
+            profile.put("numUsers", getNumUsers());
         profile.put("numSessions", getNumSessions(user));
-        profile.put("sumPromptTokens", getStat(user, s -> s.getInt("totalPromptTokens"), 0, Integer::sum));
-        profile.put("sumCompletionTokens", getStat(user, s -> s.getInt("totalCompletionTokens"), 0, Integer::sum));
-        profile.put("maxPromptTokens", getStat(user, s -> s.getInt("totalPromptTokens"), Integer.MIN_VALUE, Math::max));
-        profile.put("maxCompletionTokens", getStat(user, s -> s.getInt("totalCompletionTokens"), Integer.MIN_VALUE, Math::max));
-        profile.put("minPromptTokens", getStat(user, s -> s.getInt("totalPromptTokens"), Integer.MAX_VALUE, Math::min));
-        profile.put("minCompletionTokens", getStat(user, s -> s.getInt("totalCompletionTokens"), Integer.MAX_VALUE, Math::min));
-        profile.put("averagePromptTokens", (double) getStat(user, s -> s.getInt("totalPromptTokens"), 0, Integer::sum) / getNumSessions(user));
-        profile.put("averageCompletionTokens", (double) getStat(user, s -> s.getInt("totalCompletionTokens"), 0, Integer::sum) / getNumSessions(user));
+        // get sum statistics
+        profile.put("sumPromptTokens", getStat(user,
+                s -> s.getInt("totalPromptTokens"),
+                0,
+                Integer::sum));
+        profile.put("sumCompletionTokens", getStat(user,
+                s -> s.getInt("totalCompletionTokens"),
+                0,
+                Integer::sum));
+        // get max statistics
+        profile.put("maxPromptTokens", getStat(user,
+                s -> s.getInt("totalPromptTokens"),
+                Integer.MIN_VALUE,
+                Math::max));
+        profile.put("maxCompletionTokens", getStat(user,
+                s -> s.getInt("totalCompletionTokens"),
+                Integer.MIN_VALUE,
+                Math::max));
+        profile.put("maxTimeCreated", Utils.timeToString(getStat(user,
+                s -> s.getInt("timeCreated"),
+                Integer.MIN_VALUE,
+                Math::max)));
+        profile.put("maxTimeLastExit", Utils.timeToString(getStat(user,
+                s -> s.getInt("timeLastExit"),
+                Integer.MIN_VALUE,
+                Math::max)));
+        // get min statistics
+        profile.put("minPromptTokens", getStat(user,
+                s -> s.getInt("totalPromptTokens"),
+                Integer.MAX_VALUE,
+                Math::min));
+        profile.put("minCompletionTokens", getStat(user,
+                s -> s.getInt("totalCompletionTokens"),
+                Integer.MAX_VALUE,
+                Math::min));
+        profile.put("minTimeCreated", Utils.timeToString(getStat(user,
+                s -> s.getInt("timeCreated"),
+                Integer.MAX_VALUE,
+                Math::min)));
+        // get average statistics
+        profile.put("averagePromptTokens", (double) getStat(user,
+                s -> s.getInt("totalPromptTokens"),
+                0,
+                Integer::sum) / getNumSessions(user));
+        profile.put("averageCompletionTokens", (double) getStat(user,
+                s -> s.getInt("totalCompletionTokens"),
+                0,
+                Integer::sum) / getNumSessions(user));
+        profile.put("averageTemperature", (double) getStat(user,
+                s -> (int) s.getDouble("temperature") * 10,
+                0,
+                Integer::sum) / (10 * getNumSessions(user)));
+        profile.put("averageTimeCreated", Utils.timeToString(getStat(user,
+                s -> s.getInt("timeCreated") % 86400,
+                0,
+                Integer::sum) / getNumSessions(user)));
+        profile.put("averageTimeLastOpen", Utils.timeToString(getStat(user,
+                s -> s.getInt("timeLastOpen") % 86400,
+                0,
+                Integer::sum) / getNumSessions(user)));
+        profile.put("averageTimeLastExit", Utils.timeToString(getStat(user,
+                s -> s.getInt("timeLastExit") % 86400,
+                0,
+                Integer::sum) / getNumSessions(user)));
+        profile.put("averageLastSessionDuration", (getStat(user,
+                s -> Utils.getDuration(s.getInt("timeLastOpen"), s.getInt("timeLastExit")),
+                0,
+                Integer::sum) / getNumSessions(user)));
+        // get top String statistics
+        profile.put("topTags", topString(getSessionsStream(user)
+                        .flatMap(s -> s.getJSONArray("tags")
+                                .toList()
+                                .stream()
+                                .map(String::valueOf))
+                , 3));
+        profile.put("topWords", topString(getSessionsStream(user)
+                        .flatMap(s -> Arrays.stream(
+                                s.getJSONObject("messages").getJSONArray("contents")
+                                        .join(" ")
+                                        .split("\\s+")))
+                        .filter(s -> !ignoredWords.contains(s.toLowerCase()))
+                        .filter(s -> s.matches("[a-zA-Z]+"))
+                , 20));
+        profile.put("topClients", topString(getSessionsStream(user)
+                        .map(s -> s.getString("clientName"))
+                , 3));
 
-        System.out.println("----- YOUR CHAT CLIENT PROFILE -----");
+        System.out.printf("----- %s CHAT CLIENT PROFILE ----- %n", user.toUpperCase());
         System.out.println(profile.toString(2));
 
         try {
@@ -224,36 +319,6 @@ public class SessionManager {
             System.out.println("Profile generated at " + Utils.toInfo(filePath.toString()));
         } catch (IOException e) {
             Utils.printlnError("Fail to generate profile for " + user);
-        }
-    }
-
-    /**
-     * Show the status of the session database
-     */
-    public static void generateProfile() {
-        JSONObject profile = new JSONObject();
-
-        profile.put("numSessions", getNumSessions());
-        profile.put("numUsers", getNumUsers());
-        profile.put("averageSessionsPerUser", getNumSessions() / getNumUsers());
-        profile.put("sumPromptTokens", getStat(s -> s.getInt("totalPromptTokens"), 0, Integer::sum));
-        profile.put("sumCompletionTokens", getStat(s -> s.getInt("totalCompletionTokens"), 0, Integer::sum));
-        profile.put("maxPromptTokens", getStat(s -> s.getInt("totalPromptTokens"), Integer.MIN_VALUE, Math::max));
-        profile.put("maxCompletionTokens", getStat(s -> s.getInt("totalCompletionTokens"), Integer.MIN_VALUE, Math::max));
-        profile.put("minPromptTokens", getStat(s -> s.getInt("totalPromptTokens"), Integer.MAX_VALUE, Math::min));
-        profile.put("minCompletionTokens", getStat(s -> s.getInt("totalCompletionTokens"), Integer.MAX_VALUE, Math::min));
-        profile.put("averagePromptTokens", (double) getStat(s -> s.getInt("totalPromptTokens"), 0, Integer::sum) / getNumSessions());
-        profile.put("averageCompletionTokens", (double) getStat(s -> s.getInt("totalCompletionTokens"), 0, Integer::sum) / getNumSessions());
-
-        System.out.println("----- SESSION DATABASE PROFILE -----");
-        System.out.println(profile.toString(2));
-
-        try {
-            Path filePath = Paths.get("system-profile.json");
-            Files.writeString(filePath, profile.toString(2));
-            System.out.println("Profile generated at " + Utils.toInfo(filePath.toString()));
-        } catch (IOException e) {
-            Utils.printlnError("Fail to generate profile for the session database");
         }
     }
 }

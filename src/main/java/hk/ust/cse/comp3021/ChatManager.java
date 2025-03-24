@@ -37,8 +37,7 @@ public class ChatManager {
     static final String adminPromt = Utils.toInfo("Admin> ");
 
     /**
-     * The banner, generated from:
-     * <a href="https://patorjk.com/software/taag/#p=display&f=Ogre&t=LLM%20ChatManager">...</a>
+     * The banner, generated using <a href="https://patorjk.com/software/taag/#p=display&f=Ogre&t=LLM%20ChatManager">ascii art</a>
      */
     static final String banner = """
                __    __             ___ _           _                                           \s
@@ -144,7 +143,9 @@ public class ChatManager {
     }
 
     /**
-     * Show names of all available chat clients
+     * Get names of all available chat clients
+     *
+     * @return the names of all available chat clients
      */
     public static String getChatClientNames() {
         List<String> clientNames = new ArrayList<>();
@@ -273,6 +274,8 @@ public class ChatManager {
 
     /**
      * Top-level Read-Eval-Print Loop
+     *
+     * @param user the user
      */
     public static void repl(String user) {
         Utils.printlnInfo(banner + String.format("Welcome %s to LLM ChatManager!", user));
@@ -381,13 +384,12 @@ public class ChatManager {
 
         while (true) {
             try {
-                Utils.printInfo(replPrompt);
+                Utils.printInfo(adminPromt);
                 String[] tokens = lineReader.readLine().split("\\s+");
                 String command = tokens[0];
-                String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (command) {
                     case "profile":
-                        SessionManager.generateProfile();
+                        SessionManager.generateProfile("admin");
                         break;
                     case "help":
                         printHelp(adminMenus);

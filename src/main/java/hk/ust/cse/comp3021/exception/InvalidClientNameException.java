@@ -10,6 +10,10 @@ package hk.ust.cse.comp3021.exception;
  * Throw this exception when we are asked to create a client with an invalid name
  */
 public class InvalidClientNameException extends Exception {
+    /**
+     * Constructor
+     * @param message the message to show
+     */
     public InvalidClientNameException(String message) {
         super(message);
     }

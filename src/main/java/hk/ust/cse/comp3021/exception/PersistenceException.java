@@ -10,6 +10,10 @@ package hk.ust.cse.comp3021.exception;
  * The common interface for all exceptions related to persistence
  */
 public class PersistenceException extends Exception {
+    /**
+     * Constructor
+     * @param message the message to show
+     */
     public PersistenceException(String message) {
         super(message);
     }

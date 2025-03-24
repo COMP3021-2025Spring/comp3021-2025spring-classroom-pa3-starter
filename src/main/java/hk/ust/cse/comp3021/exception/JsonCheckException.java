@@ -10,6 +10,10 @@ package hk.ust.cse.comp3021.exception;
  * Throw this exception when deserializing if the field has been changed after serialization
  */
 public class JsonCheckException extends PersistenceException {
+    /**
+     * Constructor
+     * @param message the message to show
+     */
     public JsonCheckException(String message) {
         super(message);
     }
