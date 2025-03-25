@@ -342,6 +342,7 @@ public abstract class ChatClient implements Serializable {
 
     /**
      * Get all fields of the class and its superclasses
+     *
      * @param clazz the class
      * @return the array of fields
      */
@@ -531,5 +532,11 @@ public abstract class ChatClient implements Serializable {
             }
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(systemPrompt, replPrompt, apiKey, timeCreated, timeLastOpen, timeLastExit,
+                totalPromptTokens, totalCompletionTokens, temperature, messages, tags, description, sessionUID);
     }
 }

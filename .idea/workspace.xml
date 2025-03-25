@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="implement basic querying feature using functional programming (map+reduce)" />
+    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="implement the profile command for both user and admin and complete javadoc">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Message.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Messages.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Messages.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -312,7 +319,8 @@
       <workItem from="1742522323023" duration="19000" />
       <workItem from="1742522365525" duration="28783000" />
       <workItem from="1742704796680" duration="22245000" />
-      <workItem from="1742796802141" duration="3571000" />
+      <workItem from="1742796802141" duration="3837000" />
+      <workItem from="1742908060732" duration="446000" />
     </task>
     <task id="LOCAL-00001" summary="ChatManager Prototype">
       <option name="closed" value="true" />
@@ -578,14 +586,21 @@
       <option name="project" value="LOCAL" />
       <updated>1742800124644</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="implement the profile command for both user and admin and complete javadoc">
+      <option name="closed" value="true" />
+      <created>1742800489630</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1742800489630</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add file upload and some code refraction" />
     <MESSAGE value="support basic session serialization" />
     <MESSAGE value="add a new ChatClient" />
     <MESSAGE value="disable log and support color in windows" />
@@ -610,6 +625,7 @@
     <MESSAGE value="add GPT4ominiClient and profile interface" />
     <MESSAGE value="implement the profile command both for user and admin, complete java doc" />
     <MESSAGE value="implement basic querying feature using functional programming (map+reduce)" />
-    <option name="LAST_COMMIT_MESSAGE" value="implement basic querying feature using functional programming (map+reduce)" />
+    <MESSAGE value="implement the profile command for both user and admin and complete javadoc" />
+    <option name="LAST_COMMIT_MESSAGE" value="implement the profile command for both user and admin and complete javadoc" />
   </component>
 </project>

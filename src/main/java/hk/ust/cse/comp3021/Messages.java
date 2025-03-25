@@ -108,4 +108,9 @@ public class Messages implements Serializable {
         Messages messages = (Messages) o;
         return messageList.equals(messages.messageList);
     }
+
+    @Override
+    public int hashCode() {
+        return messageList.hashCode();
+    }
 }

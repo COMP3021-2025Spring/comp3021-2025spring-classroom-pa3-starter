@@ -7,6 +7,7 @@
 package hk.ust.cse.comp3021;
 
 import org.json.JSONObject;
+import java.util.Objects;
 
 /**
  * Message class, consisting of role and content
@@ -92,5 +93,10 @@ public class Message implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Message message = (Message) o;
         return tokens == message.tokens && role.equals(message.role) && content.equals(message.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(role, content, tokens);
     }
 }

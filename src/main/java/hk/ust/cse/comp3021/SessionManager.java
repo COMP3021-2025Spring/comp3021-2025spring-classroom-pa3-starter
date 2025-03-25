@@ -30,7 +30,7 @@ public class SessionManager {
     /**
      * The path to the session database file
      */
-    final static String dbPath = "db.json";
+    static final String dbPath = "db.json";
 
     /**
      * Load session database from file into memory, create an empty database if not exist
