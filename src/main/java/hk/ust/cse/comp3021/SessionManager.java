@@ -220,8 +220,11 @@ public class SessionManager {
     public static void generateProfile(String user) {
         JSONObject profile = new JSONObject();
 
-        if (user.equals("admin"))
+        // admin-only statistics
+        if (user.equals("admin")) {
             profile.put("numUsers", getNumUsers());
+            profile.put("averageSessions", getNumSessions(user) / getNumUsers());
+        }
         profile.put("numSessions", getNumSessions(user));
         // get sum statistics
         profile.put("sumPromptTokens", getStat(user,
