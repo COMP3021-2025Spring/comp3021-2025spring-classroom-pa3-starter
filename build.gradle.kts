@@ -29,6 +29,7 @@ tasks.test {
     }
     // parallel request may be banned by the server
     maxParallelForks = 1
+    maxHeapSize = "1g"
 }
 
 tasks.named<JavaExec>("run") {

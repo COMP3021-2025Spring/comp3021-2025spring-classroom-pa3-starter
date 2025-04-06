@@ -159,6 +159,15 @@ public class SessionManager {
     }
 
     /**
+     * Get the set of users
+     *
+     * @return the set of users
+     */
+    public static Set<String> getUsers() {
+        return db.toMap().keySet();
+    }
+
+    /**
      * Get the number of sessions of the user
      *
      * @param user the user to get number of sessions for
@@ -181,6 +190,23 @@ public class SessionManager {
         return getSessionsStream(user)
                 .mapToInt(m)
                 .reduce(i, r);
+    }
+
+    /**
+     * Divide to get the average statistics
+     *
+     * @param user the user to get statistics for, use "admin" to get statistics for all users
+     * @param m    the map function
+     * @param i    the identity value
+     * @param r    the reduce function
+     * @param num  the count
+     * @return the average statistics
+     */
+    public static double getStatAverage(String user, ToIntFunction<JSONObject> m, int i, IntBinaryOperator r,
+                                        long num) {
+        int stat = getStat(user, m, i, r);
+        if (stat == 0 || num == 0) return 0;
+        return (double) stat / num;
     }
 
     /**
@@ -217,15 +243,17 @@ public class SessionManager {
      *
      * @param user the user to generate profile for
      */
-    public static void generateProfile(String user) {
+    public static JSONObject generateProfile(String user) {
         JSONObject profile = new JSONObject();
+        long numSessions = getNumSessions(user);
 
         // admin-only statistics
         if (user.equals("admin")) {
             profile.put("numUsers", getNumUsers());
-            profile.put("averageSessions", getNumSessions(user) / getNumUsers());
+            profile.put("averageSessions", numSessions / getNumUsers());
         }
-        profile.put("numSessions", getNumSessions(user));
+
+        profile.put("numSessions", numSessions);
         // get sum statistics
         profile.put("sumPromptTokens", getStat(user,
                 s -> s.getInt("totalPromptTokens"),
@@ -238,62 +266,62 @@ public class SessionManager {
         // get max statistics
         profile.put("maxPromptTokens", getStat(user,
                 s -> s.getInt("totalPromptTokens"),
-                Integer.MIN_VALUE,
+                0,
                 Math::max));
         profile.put("maxCompletionTokens", getStat(user,
                 s -> s.getInt("totalCompletionTokens"),
-                Integer.MIN_VALUE,
+                0,
                 Math::max));
         profile.put("maxTimeCreated", Utils.timeToString(getStat(user,
                 s -> s.getInt("timeCreated"),
-                Integer.MIN_VALUE,
+                0,
                 Math::max)));
         profile.put("maxTimeLastExit", Utils.timeToString(getStat(user,
                 s -> s.getInt("timeLastExit"),
-                Integer.MIN_VALUE,
+                0,
                 Math::max)));
         // get min statistics
         profile.put("minPromptTokens", getStat(user,
                 s -> s.getInt("totalPromptTokens"),
-                Integer.MAX_VALUE,
+                0,
                 Math::min));
         profile.put("minCompletionTokens", getStat(user,
                 s -> s.getInt("totalCompletionTokens"),
-                Integer.MAX_VALUE,
+                0,
                 Math::min));
         profile.put("minTimeCreated", Utils.timeToString(getStat(user,
                 s -> s.getInt("timeCreated"),
-                Integer.MAX_VALUE,
+                0,
                 Math::min)));
         // get average statistics
-        profile.put("averagePromptTokens", (double) getStat(user,
+        profile.put("averagePromptTokens", getStatAverage(user,
                 s -> s.getInt("totalPromptTokens"),
                 0,
-                Integer::sum) / getNumSessions(user));
-        profile.put("averageCompletionTokens", (double) getStat(user,
+                Integer::sum, numSessions));
+        profile.put("averageCompletionTokens", getStatAverage(user,
                 s -> s.getInt("totalCompletionTokens"),
                 0,
-                Integer::sum) / getNumSessions(user));
-        profile.put("averageTemperature", (double) getStat(user,
+                Integer::sum, numSessions));
+        profile.put("averageTemperature", getStatAverage(user,
                 s -> (int) s.getDouble("temperature") * 10,
                 0,
-                Integer::sum) / (10 * getNumSessions(user)));
-        profile.put("averageTimeCreated", Utils.timeToString(getStat(user,
-                s -> s.getInt("timeCreated") % 86400,
+                Integer::sum, 10 * numSessions));
+        profile.put("averageTimeCreated", Utils.timeToString((long) getStatAverage(user,
+                s -> s.getInt("timeCreated") % Utils.SoD,
                 0,
-                Integer::sum) / getNumSessions(user)));
-        profile.put("averageTimeLastOpen", Utils.timeToString(getStat(user,
-                s -> s.getInt("timeLastOpen") % 86400,
+                Integer::sum, numSessions)));
+        profile.put("averageTimeLastOpen", Utils.timeToString((long) getStatAverage(user,
+                s -> s.getInt("timeLastOpen") % Utils.SoD,
                 0,
-                Integer::sum) / getNumSessions(user)));
-        profile.put("averageTimeLastExit", Utils.timeToString(getStat(user,
-                s -> s.getInt("timeLastExit") % 86400,
+                Integer::sum, numSessions)));
+        profile.put("averageTimeLastExit", Utils.timeToString((long) getStatAverage(user,
+                s -> s.getInt("timeLastExit") % Utils.SoD,
                 0,
-                Integer::sum) / getNumSessions(user)));
-        profile.put("averageLastSessionDuration", (getStat(user,
+                Integer::sum, numSessions)));
+        profile.put("averageLastSessionDuration", (getStatAverage(user,
                 s -> Utils.getDuration(s.getInt("timeLastOpen"), s.getInt("timeLastExit")),
                 0,
-                Integer::sum) / getNumSessions(user)));
+                Integer::sum, numSessions)));
         // get top String statistics
         profile.put("topTags", topString(getSessionsStream(user)
                         .flatMap(s -> s.getJSONArray("tags")
@@ -313,9 +341,16 @@ public class SessionManager {
                         .map(s -> s.getString("clientName"))
                 , 3));
 
+        return profile;
+    }
+
+    public static void printProfile(String user) {
+        // print profile to stdout
         System.out.printf("----- %s CHAT CLIENT PROFILE ----- %n", user.toUpperCase());
+        JSONObject profile = generateProfile(user);
         System.out.println(profile.toString(2));
 
+        // save profile to file
         try {
             Path filePath = Paths.get(user + "-profile.json");
             Files.writeString(filePath, profile.toString(2));

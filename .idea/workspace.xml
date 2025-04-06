@@ -4,9 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="fix 5 style issues&#10;&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/ChatClient.java:518:5: Definition of 'equals()' without corresponding definition of 'hashCode()'. [EqualsHashCode]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/Message.java:89:5: Definition of 'equals()' without corresponding definition of 'hashCode()'. [EqualsHashCode]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/Messages.java:104:5: Definition of 'equals()' without corresponding definition of 'hashCode()'. [EqualsHashCode]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/SessionManager.java:33:11: 'static' modifier out of order with the JLS suggestions. [ModifierOrder]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/ChatManager.java:392:1: File contains tab characters (this is the first instance). [FileTabCharacter]">
+    <list default="true" id="604eb6ea-59fe-48af-8ca5-acb93fb5db3b" name="Changes" comment="add one admin-only statistics">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/ChatManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/SessionManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/hk/ust/cse/comp3021/Utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/hk/ust/cse/comp3021/PA2Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/hk/ust/cse/comp3021/PA2Test.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,40 +68,40 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Application.main.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build PA.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build comp3021-2025spring-classroom-pa1-starter.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ChatManagerTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ChatManagerTest.getChatClient.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ChatManagerTest.showChatClients.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.GPT4oClientTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.GPT4oClientTest.getModelName.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.GPT4oClientTest.query.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.PA [:hk.ust.cse.comp3021.Main.main()].executor&quot;: &quot;Debug&quot;,
-    &quot;Gradle.comp3021-2025spring-classroom-pa1-starter [:hk.ust.cse.comp3021.Main.main()].executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/cascades/COMP3021/PA&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.main.executor": "Run",
+    "Gradle.Build PA.executor": "Run",
+    "Gradle.Build comp3021-2025spring-classroom-pa1-starter.executor": "Run",
+    "Gradle.ChatManagerTest.executor": "Run",
+    "Gradle.ChatManagerTest.getChatClient.executor": "Run",
+    "Gradle.ChatManagerTest.showChatClients.executor": "Run",
+    "Gradle.GPT4oClientTest.executor": "Run",
+    "Gradle.GPT4oClientTest.getModelName.executor": "Run",
+    "Gradle.GPT4oClientTest.query.executor": "Run",
+    "Gradle.PA [:hk.ust.cse.comp3021.Main.main()].executor": "Debug",
+    "Gradle.comp3021-2025spring-classroom-pa1-starter [:hk.ust.cse.comp3021.Main.main()].executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "git-widget-placeholder": "dev",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/cascades/COMP3021/PA",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
@@ -317,6 +322,7 @@
       <workItem from="1742704796680" duration="22245000" />
       <workItem from="1742796802141" duration="3837000" />
       <workItem from="1742908060732" duration="1153000" />
+      <workItem from="1743758377438" duration="12266000" />
     </task>
     <task id="LOCAL-00001" summary="ChatManager Prototype">
       <option name="closed" value="true" />
@@ -598,14 +604,21 @@
       <option name="project" value="LOCAL" />
       <updated>1742908587575</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="add one admin-only statistics">
+      <option name="closed" value="true" />
+      <created>1743758574457</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1743758574457</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add a new ChatClient" />
     <MESSAGE value="disable log and support color in windows" />
     <MESSAGE value="add Task1 test and its specification" />
     <MESSAGE value="fix a typo" />
@@ -630,6 +643,7 @@
     <MESSAGE value="implement basic querying feature using functional programming (map+reduce)" />
     <MESSAGE value="implement the profile command for both user and admin and complete javadoc" />
     <MESSAGE value="fix 5 style issues&#10;&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/ChatClient.java:518:5: Definition of 'equals()' without corresponding definition of 'hashCode()'. [EqualsHashCode]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/Message.java:89:5: Definition of 'equals()' without corresponding definition of 'hashCode()'. [EqualsHashCode]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/Messages.java:104:5: Definition of 'equals()' without corresponding definition of 'hashCode()'. [EqualsHashCode]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/SessionManager.java:33:11: 'static' modifier out of order with the JLS suggestions. [ModifierOrder]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/ChatManager.java:392:1: File contains tab characters (this is the first instance). [FileTabCharacter]" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix 5 style issues&#10;&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/ChatClient.java:518:5: Definition of 'equals()' without corresponding definition of 'hashCode()'. [EqualsHashCode]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/Message.java:89:5: Definition of 'equals()' without corresponding definition of 'hashCode()'. [EqualsHashCode]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/Messages.java:104:5: Definition of 'equals()' without corresponding definition of 'hashCode()'. [EqualsHashCode]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/SessionManager.java:33:11: 'static' modifier out of order with the JLS suggestions. [ModifierOrder]&#10;[ant:checkstyle] [ERROR] /Users/cascades/COMP3021/PA/src/main/java/hk/ust/cse/comp3021/ChatManager.java:392:1: File contains tab characters (this is the first instance). [FileTabCharacter]" />
+    <MESSAGE value="add one admin-only statistics" />
+    <option name="LAST_COMMIT_MESSAGE" value="add one admin-only statistics" />
   </component>
 </project>

@@ -21,6 +21,11 @@ import static org.fusesource.jansi.Ansi.*;
  */
 public class Utils {
     /**
+     * Total seconds of Day
+     */
+    public static final int SoD = 86400;
+
+    /**
      * Print the content in green
      *
      * @param content the content to print
@@ -74,7 +79,7 @@ public class Utils {
      * @return the string representation of the time
      */
     public static String timeToString(long time) {
-        if (time < 86400) {
+        if (time < SoD) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss a");
             return LocalTime.ofSecondOfDay(time).format(formatter);
         } else {
