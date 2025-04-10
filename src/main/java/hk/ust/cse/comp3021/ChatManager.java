@@ -355,7 +355,7 @@ public class ChatManager {
                         System.out.println(user);
                         break;
                     case "profile":
-                        SessionManager.printProfile(user);
+                        SessionManager.profile(user);
                         break;
                     case "help":
                         printHelp(menus);
@@ -389,7 +389,7 @@ public class ChatManager {
                 String command = tokens[0];
                 switch (command) {
                     case "profile":
-                        SessionManager.printProfile("admin");
+                        SessionManager.profile("admin");
                         break;
                     case "help":
                         printHelp(adminMenus);

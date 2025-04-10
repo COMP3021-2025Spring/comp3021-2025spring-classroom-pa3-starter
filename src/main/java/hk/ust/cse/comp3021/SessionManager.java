@@ -14,8 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -110,12 +108,14 @@ public class SessionManager {
     static Stream<JSONObject> getSessionsStream(String user) {
         if (Objects.equals(user, "admin"))
             return db.toMap()
-                    .entrySet().stream()
-                    .flatMap(e -> getSessionsStream(e.getKey()));
+                    .keySet()
+                    .stream()
+                    .flatMap(SessionManager::getSessionsStream);
         else
             return db.getJSONObject(user).toMap()
-                    .keySet().stream()
-                    .map(uid -> Objects.requireNonNull(getSession(user, uid)));
+                    .keySet()
+                    .stream()
+                    .map(uid -> getSession(user, uid));
     }
 
     /**
@@ -168,48 +168,6 @@ public class SessionManager {
     }
 
     /**
-     * Get the number of sessions of the user
-     *
-     * @param user the user to get number of sessions for
-     * @return the number of sessions
-     */
-    public static long getNumSessions(String user) {
-        return getSessionsStream(user).count();
-    }
-
-    /**
-     * Get the statistics of the user using map-reduce
-     *
-     * @param user the user to get statistics for, use "admin" to get statistics for all users
-     * @param m    the map function
-     * @param i    the identity value
-     * @param r    the reduce function
-     * @return the statistics
-     */
-    public static int getStat(String user, ToIntFunction<JSONObject> m, int i, IntBinaryOperator r) {
-        return getSessionsStream(user)
-                .mapToInt(m)
-                .reduce(i, r);
-    }
-
-    /**
-     * Divide to get the average statistics
-     *
-     * @param user the user to get statistics for, use "admin" to get statistics for all users
-     * @param m    the map function
-     * @param i    the identity value
-     * @param r    the reduce function
-     * @param num  the count
-     * @return the average statistics
-     */
-    public static double getStatAverage(String user, ToIntFunction<JSONObject> m, int i, IntBinaryOperator r,
-                                        long num) {
-        int stat = getStat(user, m, i, r);
-        if (stat == 0 || num == 0) return 0;
-        return (double) stat / num;
-    }
-
-    /**
      * The list of ignored words when counting top words
      */
     static final List<String> ignoredWords = List.of("i", "it",
@@ -221,134 +179,164 @@ public class SessionManager {
             "such", "that", "the", "their", "there", "they", "this", "to", "use", "used", "using", "was", "we", "what"
             , "which", "who", "will", "with", "would", "you", "your", "here", "were", "does", "our", "a", "if", "he");
 
+    /**
+     * The unit price of a prompt/completion token using one billion parameters
+     */
+    static final Double unitPrice = 0.000002;
 
     /**
-     * Counts the number of occurrences of the top k string in the stream using reduce
+     * Initialize an empty profile
      *
-     * @return the hash map of the string and its count
+     * @return the empty profile
      */
-    static HashMap<String, Integer> topString(Stream<String> stream, int k) {
-        HashMap<String, Integer> map = new HashMap<>();
-        stream.forEach(str -> map.put(str, map.getOrDefault(str, 0) + 1));
-        return map.entrySet().stream()
-                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
-                .limit(k)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, HashMap::new));
+    static JSONObject createEmptyProfile() {
+        return new JSONObject()
+                .put("numSessions", 0)
+                .put("sumPromptTokens", 0)
+                .put("sumCompletionTokens", 0)
+                .put("sumTemperature", 0.0)
+                .put("sumTimeCreated", 0)
+                .put("sumTimeLastExit", 0)
+                .put("sumTimeLastOpen", 0)
+                .put("sumLastSessionDuration", 0)
+                .put("maxPromptTokens", Integer.MIN_VALUE)
+                .put("maxCompletionTokens", Integer.MIN_VALUE)
+                .put("maxTimeCreated", Integer.MIN_VALUE)
+                .put("maxTimeLastExit", Integer.MIN_VALUE)
+                .put("minPromptTokens", Integer.MAX_VALUE)
+                .put("minCompletionTokens", Integer.MAX_VALUE)
+                .put("minTimeCreated", Integer.MAX_VALUE)
+                .put("minTimeLastExit", Integer.MAX_VALUE)
+                .put("topTags", new JSONObject())
+                .put("topWords", new JSONObject())
+                .put("topModels", new JSONObject());
     }
 
     /**
-     * Generate a profile for the user and save as json file
+     * Update the top string map with new strings
+     *
+     * @param topStringMap the top string map, from its
+     * @param newStrings   the new strings to add
+     * @return the updated top string map
+     */
+    private static JSONObject updateTopString(JSONObject topStringMap, Stream<String> newStrings) {
+        newStrings.forEach(topStringMap::increment);
+        return topStringMap;
+    }
+
+    /**
+     * Keep only the top N strings in the map
+     *
+     * @param topNStringMap the top N string map
+     * @param N             the number of top strings to keep
+     * @return the updated top N string map
+     */
+    private static JSONObject limitTopNString(JSONObject topNStringMap, int N) {
+        return topNStringMap.toMap().entrySet().stream()
+                .sorted((e1, e2) -> Integer.compare((Integer) e2.getValue(), (Integer) e1.getValue()))
+                .limit(N)
+                .reduce(new JSONObject(),
+                        (acc, entry) -> acc.put(entry.getKey(), entry.getValue()),
+                        (acc1, acc2) -> acc1);
+    }
+
+    /**
+     * Generate a profile for the user and save as json file using reduce
      * Casting the epoch time from Long to Integer is safe because we will not encounter the
      * <a href="https://en.wikipedia.org/wiki/Year_2038_problem">Year 2038 problem</a>.
      *
      * @param user the user to generate profile for
      */
-    public static JSONObject generateProfile(String user) {
-        JSONObject profile = new JSONObject();
-        long numSessions = getNumSessions(user);
-
-        // admin-only statistics
-        if (user.equals("admin")) {
-            profile.put("numUsers", getNumUsers());
-            profile.put("averageSessions", numSessions / getNumUsers());
-        }
-
-        profile.put("numSessions", numSessions);
-        // get sum statistics
-        profile.put("sumPromptTokens", getStat(user,
-                s -> s.getInt("totalPromptTokens"),
-                0,
-                Integer::sum));
-        profile.put("sumCompletionTokens", getStat(user,
-                s -> s.getInt("totalCompletionTokens"),
-                0,
-                Integer::sum));
-        // get max statistics
-        profile.put("maxPromptTokens", getStat(user,
-                s -> s.getInt("totalPromptTokens"),
-                0,
-                Math::max));
-        profile.put("maxCompletionTokens", getStat(user,
-                s -> s.getInt("totalCompletionTokens"),
-                0,
-                Math::max));
-        profile.put("maxTimeCreated", Utils.timeToString(getStat(user,
-                s -> s.getInt("timeCreated"),
-                0,
-                Math::max)));
-        profile.put("maxTimeLastExit", Utils.timeToString(getStat(user,
-                s -> s.getInt("timeLastExit"),
-                0,
-                Math::max)));
-        // get min statistics
-        profile.put("minPromptTokens", getStat(user,
-                s -> s.getInt("totalPromptTokens"),
-                0,
-                Math::min));
-        profile.put("minCompletionTokens", getStat(user,
-                s -> s.getInt("totalCompletionTokens"),
-                0,
-                Math::min));
-        profile.put("minTimeCreated", Utils.timeToString(getStat(user,
-                s -> s.getInt("timeCreated"),
-                0,
-                Math::min)));
+    private static JSONObject generateProfile(String user) {
+        // iterate through all sessions and collect statistics
+        JSONObject profile = getSessionsStream(user)
+                .reduce(createEmptyProfile(), (p, s) -> p
+                        // get sum statistics
+                        .increment("numSessions")
+                        .put("sumPromptTokens", p.getInt("sumPromptTokens") + s.getInt("totalPromptTokens"))
+                        .put("sumCompletionTokens", p.getInt("sumCompletionTokens") + s.getInt("totalCompletionTokens"))
+                        .put("sumTemperature", p.getDouble("sumTemperature") + s.getDouble("temperature"))
+                        .put("sumTimeCreated", p.getInt("sumTimeCreated") + s.getInt("timeCreated") % Utils.SoD)
+                        .put("sumTimeLastOpen", p.getInt("sumTimeLastOpen") + s.getInt("timeLastOpen") % Utils.SoD)
+                        .put("sumTimeLastExit", p.getInt("sumTimeLastExit") + s.getInt("timeLastExit") % Utils.SoD)
+                        .put("sumLastSessionDuration", p.getInt("sumLastSessionDuration") +
+                                Utils.getDuration(s.getInt("timeLastOpen"), s.getInt("timeLastExit")))
+                        // get max statistics
+                        .put("maxPromptTokens", Math.max(p.getInt("maxPromptTokens"),
+                                s.getInt("totalPromptTokens")))
+                        .put("maxCompletionTokens", Math.max(p.getInt("maxCompletionTokens"),
+                                s.getInt("totalCompletionTokens")))
+                        .put("maxTimeCreated", Math.max(p.getInt("maxTimeCreated"),
+                                s.getInt("timeCreated")))
+                        .put("maxTimeLastExit", Math.max(p.getInt("maxTimeLastExit"),
+                                s.getInt("timeLastExit")))
+                        // get min statistics
+                        .put("minPromptTokens", Math.min(p.getInt("minPromptTokens"),
+                                s.getInt("totalPromptTokens")))
+                        .put("minCompletionTokens", Math.min(p.getInt("minCompletionTokens"),
+                                s.getInt("totalCompletionTokens")))
+                        .put("minTimeCreated", Math.min(p.getInt("minTimeCreated"),
+                                s.getInt("timeCreated")))
+                        // get top String statistics
+                        .put("topTags", updateTopString(p.getJSONObject("topTags"),
+                                s.getJSONArray("tags").toList().stream().map(String::valueOf)))
+                        .put("topWords", updateTopString(p.getJSONObject("topWords"),
+                                Arrays.stream(s.getJSONObject("messages")
+                                                .getJSONArray("contents")
+                                                .join(" ")
+                                                .split("\\s+"))
+                                        .filter(str -> !ignoredWords.contains(str.toLowerCase()))
+                                        .filter(str -> str.matches("[a-zA-Z]+"))))
+                        .put("topModels", updateTopString(p.getJSONObject("topModels"),
+                                Stream.of(s.getString("clientName").split("-")[0])))
+                );
+        // post process
+        int numSessions = profile.getInt("numSessions");
+        Object nullObject = null;
         // get average statistics
-        profile.put("averagePromptTokens", getStatAverage(user,
-                s -> s.getInt("totalPromptTokens"),
-                0,
-                Integer::sum, numSessions));
-        profile.put("averageCompletionTokens", getStatAverage(user,
-                s -> s.getInt("totalCompletionTokens"),
-                0,
-                Integer::sum, numSessions));
-        profile.put("averageTemperature", getStatAverage(user,
-                s -> (int) s.getDouble("temperature") * 10,
-                0,
-                Integer::sum, 10 * numSessions));
-        profile.put("averageTimeCreated", Utils.timeToString((long) getStatAverage(user,
-                s -> s.getInt("timeCreated") % Utils.SoD,
-                0,
-                Integer::sum, numSessions)));
-        profile.put("averageTimeLastOpen", Utils.timeToString((long) getStatAverage(user,
-                s -> s.getInt("timeLastOpen") % Utils.SoD,
-                0,
-                Integer::sum, numSessions)));
-        profile.put("averageTimeLastExit", Utils.timeToString((long) getStatAverage(user,
-                s -> s.getInt("timeLastExit") % Utils.SoD,
-                0,
-                Integer::sum, numSessions)));
-        profile.put("averageLastSessionDuration", (getStatAverage(user,
-                s -> Utils.getDuration(s.getInt("timeLastOpen"), s.getInt("timeLastExit")),
-                0,
-                Integer::sum, numSessions)));
-        // get top String statistics
-        profile.put("topTags", topString(getSessionsStream(user)
-                        .flatMap(s -> s.getJSONArray("tags")
-                                .toList()
-                                .stream()
-                                .map(String::valueOf))
-                , 3));
-        profile.put("topWords", topString(getSessionsStream(user)
-                        .flatMap(s -> Arrays.stream(
-                                s.getJSONObject("messages").getJSONArray("contents")
-                                        .join(" ")
-                                        .split("\\s+")))
-                        .filter(s -> !ignoredWords.contains(s.toLowerCase()))
-                        .filter(s -> s.matches("[a-zA-Z]+"))
-                , 20));
-        profile.put("topClients", topString(getSessionsStream(user)
-                        .map(s -> s.getString("clientName"))
-                , 3));
-
-        return profile;
+        return profile.put("avgTemperature", profile.getDouble("sumTemperature") / numSessions)
+                .put("avgTimeLastOpen", profile.getInt("sumTimeLastOpen") / numSessions)
+                .put("avgTimeCreated", profile.getInt("sumTimeCreated") / numSessions)
+                .put("avgTimeLastExit", profile.getInt("sumTimeLastExit") / numSessions)
+                .put("avgLastSessionDuration", profile.getInt("sumLastSessionDuration") / numSessions)
+                .put("avgPromptTokens", profile.getInt("sumPromptTokens") / numSessions)
+                .put("avgCompletionTokens", profile.getInt("sumCompletionTokens") / numSessions)
+                // remove useless statistics
+                .put("sumTemperature", nullObject)
+                .put("sumTimeCreated", nullObject)
+                .put("sumTimeLastOpen", nullObject)
+                .put("sumTimeLastExit", nullObject)
+                .put("sumLastSessionDuration", nullObject)
+                // filter the topN strings
+                .put("topTags", limitTopNString(profile.getJSONObject("topTags"), 3))
+                .put("topWords", limitTopNString(profile.getJSONObject("topWords"), 20))
+                .put("topModels", limitTopNString(profile.getJSONObject("topModels"), 5));
     }
 
-    public static void printProfile(String user) {
+    /**
+     * Print the profile in human-readable form
+     *
+     * @param profile the JSON format profile to print
+     */
+    private static void printProfile(JSONObject profile) {
+        System.out.println(profile.toString(2));
+    }
+
+    /**
+     * Generate a profile for the user, print and save as json file
+     *
+     * @param user the user to generate profile for
+     */
+    public static void profile(String user) {
         // print profile to stdout
         System.out.printf("----- %s CHAT CLIENT PROFILE ----- %n", user.toUpperCase());
         JSONObject profile = generateProfile(user);
-        System.out.println(profile.toString(2));
+        // admin-only statistics
+        if (user.equals("admin")) {
+            profile.put("numUsers", getNumUsers());
+            profile.put("averageSessions", profile.getInt("numSessions") / getNumUsers());
+        }
+        printProfile(profile);
 
         // save profile to file
         try {
