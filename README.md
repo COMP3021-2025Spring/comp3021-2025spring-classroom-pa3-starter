@@ -17,26 +17,24 @@ play with it:
 
 Here's a screencast of the application running:
 
-TODO: add screencast
+[![asciicast](https://asciinema.org/a/2YH05TlQpY0aC5WUJF8plwIOY.svg)](https://asciinema.org/a/2YH05TlQpY0aC5WUJF8plwIOY)
 
 ## Change Log
 
 - PA0: Initial release, implement the basic functionalities of `ChatManager` and `ChatClient` and `GPT4oClient` class,
   design Task1 test cases
 - PA1:
-    - `ChatManager`: refine REPL, add history and list command
-    - `ChatClient`: add persistence functionalities, add tag and description, add token statistics in Message
-    - Add Interface `Serializable` for `ChatClient` and `Message`
-    - Add annotations for guiding persistence
-    - Add Task2 test cases
-    - Code refactoring and bug fixing
+  - `ChatManager`: refine REPL, add history and list command
+  - `ChatClient`: add persistence functionalities, add tag and description, add token statistics in Message
+  - Add Interface `Serializable` for `ChatClient` and `Message`
+  - Add annotations for guiding persistence
+  - Add Task2 test cases
+  - Code refactoring and bug fixing
 - PA2:
-    - Merge sessions into one file, add `UserID` for each session
-    - `ChatManager`: add/update statistics commands: `report`, `history`, `tag`, `desc`
-    - `ChatClient`: implement the `Stream` interface
-    - Add `SessionManager` as the interface between ChatClient and session files.
-    - Add PA2 test cases
-    - Code refactoring and bug fixing
+  - Merge sessions into one database file, which manages all users and their sessions
+  - Add `SessionManager` as the interface between ChatClient and session files.
+  - Add PA2 test cases
+  - Code refactoring and bug fixing
 
 ## Grading
 
@@ -44,7 +42,8 @@ In PA2, you need to implement the following methods, detailed implementation can
 codebase.
 
 - You will be implementing the profile functionality in the `SessionManager` class, which is responsible for
-  generating the profile from the session database.
+  generating the profile from the session database. The profile consists of 25 statistics from 6 types.
+- The focus of PA2 is functional programming, you need to convert the Sessions into Streams and perform the statistical analysis on them.
 - You are free to use provided utility methods in the `Utils` class, or implement your own helper methods.
 
 We will provide public test cases for you to verify the correctness of your implementations. However, passing all the
@@ -92,16 +91,24 @@ To run PA2 public tests:
 ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test"
 ```
 
-The public test cases and their corresponding code are given below:
+First you need to implement those methods with "TODO" in the codebase,
 
-| Test Name               | Score | Related Methods/Statistics                                                                                                                                        |
-|-------------------------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| testSumStatistics       | 10%   | generateProfile: `sumPromptTokens`, `sumCompletionTokens`                                                                                                         |
-| testMaxStatistics       | 10%   | generateProfile, `maxPromptTokens`, `maxCompletionTokens`, `maxTimeLastOpen`, `maxTimeLastExit`, `maxTimeCreated`                                                 |
-| testMinStatistics       | 10%   | generateProfile, `maxPromptTokens`, `maxCompletionTokens`, `maxTimeLastOpen`, `maxTimeLastExit`, `maxTimeCreated`                                                 |
-| testAvgStatistics       | 10%   | generateProfile, `avgPromptTokens`, `avgCompletionTokens`, `avgTimeLastOpen`, `avgTimeLastExit`, `avgTimeCreated`, `avgTimeLastSessionDuration`, `avgTemperature` |
-| testTopStringStatistics | 10%   | generateProfile, updateTopString, limitTopNString, `topTags`, `topModels`, `topWords`                                                                             |
-| testGeneralStatistics   | 10%   | profile, generateProfile                                                                                                                                          |
+- `profile`: interface for the REPL, whether normal user or "admin". If the user is "admin", it will should profile
+  of all sessions, otherwise it will profile sessions of the current user.
+- `generateProfile`: generate the profile for a user using functional programming
+- `createEmptyProfile`: initialize the profile
+- `getSessionsStream`: converts all sessions associated with a user into a stream
+
+The public test cases and their corresponding statistics are given below:
+
+| Test Name               | Score | Related Methods/Statistics                                                                                                                       |
+|-------------------------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| testSumStatistics       | 10%   | `sumPromptTokens`, `sumCompletionTokens`                                                                                                         |
+| testMaxStatistics       | 10%   | `maxPromptTokens`, `maxCompletionTokens`, `maxTimeLastOpen`, `maxTimeLastExit`, `maxTimeCreated`                                                 |
+| testMinStatistics       | 10%   | `maxPromptTokens`, `maxCompletionTokens`, `maxTimeLastOpen`, `maxTimeLastExit`, `maxTimeCreated`                                                 |
+| testAvgStatistics       | 10%   | `avgPromptTokens`, `avgCompletionTokens`, `avgTimeLastOpen`, `avgTimeLastExit`, `avgTimeCreated`, `avgTimeLastSessionDuration`, `avgTemperature` |
+| testTopStringStatistics | 10%   | updateTopString, limitTopNString, `topTags`, `topModels`, `topWords`                                                                             |
+| testGeneralStatistics   | 10%   | profile, createEmptyProfile                                                                                                                      |
 
 ### Private Test Cases
 
@@ -130,8 +137,8 @@ The project structure is as follows:
 - `ChatManager` manages all `ChatClient`s, `repl()` is the entry point for the command-line REPL (outer REPL).
 - `ChatClient` contains common implementation and specifies abstract methods, `repl()` is the entry point for the chat
   REPL (inner REPL).
-    - Under `client/`, we have two concrete classes `GPT4oClient` and `GPT4ominiClient` that extends `ChatClient`, the
-      `query()` method is used for interacting with the API service.
+  - Under `client/`, we have two concrete classes `GPT4oClient` and `GPT4ominiClient` that extends `ChatClient`, the
+    `query()` method is used for interacting with the API service.
 - `SessionManager` provide read/write/profile interface for the session database
 - `Message` and `Messages` are used for storing chat messages.
 - `Utils` contains some utility functions.
@@ -142,49 +149,49 @@ The project structure is as follows:
 
 ```mermaid
 classDiagram
-    direction BT
-    class ChatClient {
-        + ChatClient()
-        + ChatClient(JSONObject)
-        # String apiKey
-        # String description
-        + equals(Object) boolean
-        + getAllFields(Class~?~) Field[]
-        ~ printHelp() void
-        + fromJSON(JSONObject) void
-        + addTags(String[]) void
-        + query(String) String
-        + removeTag(String) void
-        ~ readAndSetKey(String) boolean
-        ~ saveClient() void
-        + toJSON() JSONObject
-        + repl() void
-        ~ uploadFile(String) void
-        String description
-        int clientMaxTokens
-        String clientUID
-        String apiKey
-        String clientName
-        JSONObject POSTData
-    }
-    class GPT4oClient {
-        + GPT4oClient()
-        + GPT4oClient(JSONObject)
-        + String clientName
-        + query(String) String
-        ~ sendPOSTRequest(HttpURLConnection) JSONObject
-        String clientName
-        HttpURLConnection httpURLConnection
-        int clientMaxTokens
-    }
-    class Serializable {
-        <<Interface>>
-        + fromJSON(JSONObject) void
-        + toJSON() JSONObject
-    }
+  direction BT
+  class ChatClient {
+    + ChatClient()
+    + ChatClient(JSONObject)
+    # String apiKey
+    # String description
+    + equals(Object) boolean
+    + getAllFields(Class~?~) Field[]
+    ~ printHelp() void
+    + fromJSON(JSONObject) void
+    + addTags(String[]) void
+    + query(String) String
+    + removeTag(String) void
+    ~ readAndSetKey(String) boolean
+    ~ saveClient() void
+    + toJSON() JSONObject
+    + repl() void
+    ~ uploadFile(String) void
+    String description
+    int clientMaxTokens
+    String clientUID
+    String apiKey
+    String clientName
+    JSONObject POSTData
+  }
+  class GPT4oClient {
+    + GPT4oClient()
+    + GPT4oClient(JSONObject)
+    + String clientName
+    + query(String) String
+    ~ sendPOSTRequest(HttpURLConnection) JSONObject
+    String clientName
+    HttpURLConnection httpURLConnection
+    int clientMaxTokens
+  }
+  class Serializable {
+    <<Interface>>
+    + fromJSON(JSONObject) void
+    + toJSON() JSONObject
+  }
 
-    ChatClient ..> Serializable
-    GPT4oClient --> ChatClient 
+  ChatClient ..> Serializable
+  GPT4oClient --> ChatClient 
 ```
 
 ## Submission Policy
