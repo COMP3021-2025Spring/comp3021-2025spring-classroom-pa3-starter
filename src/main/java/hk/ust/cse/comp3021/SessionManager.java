@@ -316,15 +316,26 @@ public class SessionManager {
         // post process
         int numSessions = profile.getInt("numSessions");
         // get average statistics
-        return profile
+        if (numSessions != 0) {
+            profile
                 .put("avgTemperature", profile.getDouble("sumTemperature") / numSessions)
                 .put("avgTimeLastOpen", profile.getInt("sumTimeLastOpen") / numSessions)
                 .put("avgTimeCreated", profile.getInt("sumTimeCreated") / numSessions)
                 .put("avgTimeLastExit", profile.getInt("sumTimeLastExit") / numSessions)
                 .put("avgLastSessionDuration", profile.getInt("sumLastSessionDuration") / numSessions)
                 .put("avgPromptTokens", profile.getInt("sumPromptTokens") / numSessions)
-                .put("avgCompletionTokens", profile.getInt("sumCompletionTokens") / numSessions)
-                // remove useless statistics
+                .put("avgCompletionTokens", profile.getInt("sumCompletionTokens") / numSessions);
+        } else {
+            profile.put("avgTemperature", 0.0)
+                    .put("avgTimeLastOpen", 0)
+                    .put("avgTimeCreated", 0)
+                    .put("avgTimeLastExit", 0)
+                    .put("avgLastSessionDuration", 0)
+                    .put("avgPromptTokens", 0)
+                    .put("avgCompletionTokens", 0);
+        }
+        // remove useless statistics
+        return profile
                 .put("sumTemperature", (Object) null)
                 .put("sumTimeCreated", (Object) null)
                 .put("sumTimeLastOpen", (Object) null)
