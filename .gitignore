@@ -43,5 +43,4 @@ bin/
 
 ### Do not include your API keys ###
 keys
-db.json
 *-profile.json
