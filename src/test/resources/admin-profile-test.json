@@ -25,6 +25,7 @@
   "maxCompletionTokens": 253033,
   "avgLastSessionDuration": 59,
   "maxTimeLastOpen": 1748735986,
+  "avgSessions": 39,
   "topWords": {
     "code": 10395,
     "data": 15675,
@@ -52,5 +53,6 @@
   "avgCompletionTokens": 806,
   "avgTimeCreated": 42892,
   "avgTimeLastExit": 43638,
-  "avgTemperature": 0.9962300000000034
+  "avgTemperature": 0.9962300000000034,
+  "numUsers": 501
 }

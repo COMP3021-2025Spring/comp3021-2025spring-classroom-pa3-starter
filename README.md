@@ -64,7 +64,12 @@ the hidden ones, which are different from the ones we provided in the skeleton.
 
 #### Download sessions database
 
-Download the sessions database (~111MB) from [Canvas](https://canvas.ust.hk/files/10425403/download?download_frd=1) and save it as `db.json` under the project root directory.
+Download the sessions database (~111MB) is tracked using Git LFS, use the following command to download the database:
+
+```shell
+git lfs install
+git lfs pull
+```
 
 #### Generate an API Key (optional)
 
@@ -88,7 +93,7 @@ To check the code style, run the following commands and make sure no warnings em
 To run PA2 public tests:
 
 ```bash
-./gradlew test --tests "hk.ust.cse.comp3021.PA2Test"
+./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.test*"
 ```
 
 First you need to implement those methods with "TODO" in the codebase,
@@ -122,9 +127,12 @@ Besides, you should also pay attention to some edge cases like dealing with new 
 
 ### Bonus
 
-PA2's bonus task is open-ended. You can try to implement as more "functional" as possible. For example, implement with
-less statements, more stream operations. For some function you can even try to implement using only one `return`
-statement.
+PA2's bonus task is open-ended and multi-criteria. You can try to implement as more functional as possible. For example, implement with
+less statements, more stream operations. For some function you can even try to implement using only one `return` statement. 
+To make the main implementation more functional, you can add your own helper functions or even create new class for the `Profile`.
+
+The most functional style implementation will get full bonus. If the implementation is purely based on procedural programming, like loops,
+if-else statements, etc., it will get 0 bonus.
 
 ## Project Structure
 

@@ -334,6 +334,13 @@ public class SessionManager {
                     .put("avgPromptTokens", 0)
                     .put("avgCompletionTokens", 0);
         }
+
+        // admin only statistics
+        if (user.equals("admin")) {
+            profile.put("numUsers", getNumUsers());
+            profile.put("avgSessions", profile.getInt("numSessions") / getNumUsers());
+        }
+
         // remove useless statistics
         return profile
                 .put("sumTemperature", (Object) null)
@@ -369,11 +376,6 @@ public class SessionManager {
         JSONObject profile = generateProfile(user);
         LocalDateTime endProfile = LocalDateTime.now();
         System.out.printf("The profiling cost %d ms %n", Duration.between(startProfile, endProfile).toMillis());
-        // admin-only statistics
-        if (user.equals("admin")) {
-            profile.put("numUsers", getNumUsers());
-            profile.put("averageSessions", profile.getInt("numSessions") / getNumUsers());
-        }
         printProfile(profile);
 
         // save profile to file
