@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -39,7 +41,7 @@ public class SessionManager {
             db = new JSONObject(Files.readString(filePath));
             Utils.printlnInfo("Sessions database loaded");
         } catch (IOException | JSONException e) {
-            Utils.printlnError("Failed to load the session: " + e.getMessage());
+            Utils.printlnError("Failed to load the database: " + e.getMessage());
             db = new JSONObject();
             Utils.printlnInfo("Empty sessions database created");
         }
@@ -170,19 +172,27 @@ public class SessionManager {
     /**
      * The list of ignored words when counting top words
      */
-    static final List<String> ignoredWords = List.of("i", "it",
-            "She", "The", "This", "You", "a", "about", "all", "also", "am", "an", "and", "any", "are", "as", "at",
-            "be", "been", "but", "by", "can", "could", "data", "de", "def", "do", "each", "following", "for", "from",
-            "had", "has", "have", "he", "help", "her", "his", "how", "if", "important", "in", "information", "into",
-            "is", "it", "its", "key", "like", "make", "may", "me", "more", "my", "need",
-            "no", "not", "of", "on", "one", "or", "other", "provide", "return", "she", "so", "some", "specific",
-            "such", "that", "the", "their", "there", "they", "this", "to", "use", "used", "using", "was", "we", "what"
-            , "which", "who", "will", "with", "would", "you", "your", "here", "were", "does", "our", "a", "if", "he");
+    static List<String> ignoredWords;
+
+    // Load the stopwords from the file stopwords.txt, remember to filter out comments
+    static {
+        try {
+            ignoredWords = Files.readAllLines(Paths.get("stopwords.txt"));
+        } catch (IOException e) {
+            Utils.printlnError("Failed to load stopwords: " + e.getMessage());
+            ignoredWords = new ArrayList<>();
+        }
+    }
 
     /**
-     * The unit price of a prompt/completion token using one billion parameters
+     * The unit USD price of a prompt token using one billion parameters
      */
-    static final Double unitPrice = 0.000002;
+    static final Double unitPromptPrice = 8.82e-09;
+
+    /**
+     * The unit USD price of a response token using one billion parameters
+     */
+    static final Double unitCompletionPrice = 3.53e-08;
 
     /**
      * Initialize an empty profile
@@ -199,13 +209,16 @@ public class SessionManager {
                 .put("sumTimeLastExit", 0)
                 .put("sumTimeLastOpen", 0)
                 .put("sumLastSessionDuration", 0)
+//                .put("sumPrice", 0.0)
                 .put("maxPromptTokens", Integer.MIN_VALUE)
                 .put("maxCompletionTokens", Integer.MIN_VALUE)
                 .put("maxTimeCreated", Integer.MIN_VALUE)
+                .put("maxTimeLastOpen", Integer.MIN_VALUE)
                 .put("maxTimeLastExit", Integer.MIN_VALUE)
                 .put("minPromptTokens", Integer.MAX_VALUE)
                 .put("minCompletionTokens", Integer.MAX_VALUE)
                 .put("minTimeCreated", Integer.MAX_VALUE)
+                .put("minTimeLastOpen", Integer.MAX_VALUE)
                 .put("minTimeLastExit", Integer.MAX_VALUE)
                 .put("topTags", new JSONObject())
                 .put("topWords", new JSONObject())
@@ -228,13 +241,13 @@ public class SessionManager {
      * Keep only the top N strings in the map
      *
      * @param topNStringMap the top N string map
-     * @param N             the number of top strings to keep
+     * @param topN          the number of top strings to keep
      * @return the updated top N string map
      */
-    private static JSONObject limitTopNString(JSONObject topNStringMap, int N) {
+    private static JSONObject limitTopNString(JSONObject topNStringMap, int topN) {
         return topNStringMap.toMap().entrySet().stream()
                 .sorted((e1, e2) -> Integer.compare((Integer) e2.getValue(), (Integer) e1.getValue()))
-                .limit(N)
+                .limit(topN)
                 .reduce(new JSONObject(),
                         (acc, entry) -> acc.put(entry.getKey(), entry.getValue()),
                         (acc1, acc2) -> acc1);
@@ -247,7 +260,7 @@ public class SessionManager {
      *
      * @param user the user to generate profile for
      */
-    private static JSONObject generateProfile(String user) {
+    static JSONObject generateProfile(String user) {
         // iterate through all sessions and collect statistics
         JSONObject profile = getSessionsStream(user)
                 .reduce(createEmptyProfile(), (p, s) -> p
@@ -261,6 +274,10 @@ public class SessionManager {
                         .put("sumTimeLastExit", p.getInt("sumTimeLastExit") + s.getInt("timeLastExit") % Utils.SoD)
                         .put("sumLastSessionDuration", p.getInt("sumLastSessionDuration") +
                                 Utils.getDuration(s.getInt("timeLastOpen"), s.getInt("timeLastExit")))
+//                        .put("sumPrice", p.getDouble("sumPrice")
+//                                + (s.getInt("totalPromptTokens") * unitPromptPrice
+//                                + s.getInt("totalCompletionTokens") * unitCompletionPrice)
+//                                * Integer.parseInt(s.getString("clientName").split("[-b]")[1]))
                         // get max statistics
                         .put("maxPromptTokens", Math.max(p.getInt("maxPromptTokens"),
                                 s.getInt("totalPromptTokens")))
@@ -268,6 +285,8 @@ public class SessionManager {
                                 s.getInt("totalCompletionTokens")))
                         .put("maxTimeCreated", Math.max(p.getInt("maxTimeCreated"),
                                 s.getInt("timeCreated")))
+                        .put("maxTimeLastOpen", Math.max(p.getInt("maxTimeLastOpen"),
+                                s.getInt("timeLastOpen")))
                         .put("maxTimeLastExit", Math.max(p.getInt("maxTimeLastExit"),
                                 s.getInt("timeLastExit")))
                         // get min statistics
@@ -277,6 +296,10 @@ public class SessionManager {
                                 s.getInt("totalCompletionTokens")))
                         .put("minTimeCreated", Math.min(p.getInt("minTimeCreated"),
                                 s.getInt("timeCreated")))
+                        .put("minTimeLastOpen", Math.min(p.getInt("minTimeLastOpen"),
+                                s.getInt("timeLastOpen")))
+                        .put("minTimeLastExit", Math.min(p.getInt("minTimeLastExit"),
+                                s.getInt("timeLastExit")))
                         // get top String statistics
                         .put("topTags", updateTopString(p.getJSONObject("topTags"),
                                 s.getJSONArray("tags").toList().stream().map(String::valueOf)))
@@ -292,9 +315,9 @@ public class SessionManager {
                 );
         // post process
         int numSessions = profile.getInt("numSessions");
-        Object nullObject = null;
         // get average statistics
-        return profile.put("avgTemperature", profile.getDouble("sumTemperature") / numSessions)
+        return profile
+                .put("avgTemperature", profile.getDouble("sumTemperature") / numSessions)
                 .put("avgTimeLastOpen", profile.getInt("sumTimeLastOpen") / numSessions)
                 .put("avgTimeCreated", profile.getInt("sumTimeCreated") / numSessions)
                 .put("avgTimeLastExit", profile.getInt("sumTimeLastExit") / numSessions)
@@ -302,11 +325,11 @@ public class SessionManager {
                 .put("avgPromptTokens", profile.getInt("sumPromptTokens") / numSessions)
                 .put("avgCompletionTokens", profile.getInt("sumCompletionTokens") / numSessions)
                 // remove useless statistics
-                .put("sumTemperature", nullObject)
-                .put("sumTimeCreated", nullObject)
-                .put("sumTimeLastOpen", nullObject)
-                .put("sumTimeLastExit", nullObject)
-                .put("sumLastSessionDuration", nullObject)
+                .put("sumTemperature", (Object) null)
+                .put("sumTimeCreated", (Object) null)
+                .put("sumTimeLastOpen", (Object) null)
+                .put("sumTimeLastExit", (Object) null)
+                .put("sumLastSessionDuration", (Object) null)
                 // filter the topN strings
                 .put("topTags", limitTopNString(profile.getJSONObject("topTags"), 3))
                 .put("topWords", limitTopNString(profile.getJSONObject("topWords"), 20))
@@ -315,6 +338,7 @@ public class SessionManager {
 
     /**
      * Print the profile in human-readable form
+     * TODO: print the time as human-readable form
      *
      * @param profile the JSON format profile to print
      */
@@ -330,7 +354,10 @@ public class SessionManager {
     public static void profile(String user) {
         // print profile to stdout
         System.out.printf("----- %s CHAT CLIENT PROFILE ----- %n", user.toUpperCase());
+        LocalDateTime startProfile = LocalDateTime.now();
         JSONObject profile = generateProfile(user);
+        LocalDateTime endProfile = LocalDateTime.now();
+        System.out.printf("The profiling cost %d ms %n", Duration.between(startProfile, endProfile).toMillis());
         // admin-only statistics
         if (user.equals("admin")) {
             profile.put("numUsers", getNumUsers());

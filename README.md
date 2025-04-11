@@ -17,7 +17,7 @@ play with it:
 
 Here's a screencast of the application running:
 
-TODO: [![asciicast](https://asciinema.org/a/kBYt3kYUAW5j0Z18hfzBvn0EM.svg)](https://asciinema.org/a/kBYt3kYUAW5j0Z18hfzBvn0EM)
+TODO: add screencast
 
 ## Change Log
 
@@ -43,7 +43,8 @@ TODO: [![asciicast](https://asciinema.org/a/kBYt3kYUAW5j0Z18hfzBvn0EM.svg)](http
 In PA2, you need to implement the following methods, detailed implementation can be searched with "TODO" in the
 codebase.
 
-- TODO:
+- You will be implementing the profile functionality in the `SessionManager` class, which is responsible for
+  generating the profile from the session database.
 - You are free to use provided utility methods in the `Utils` class, or implement your own helper methods.
 
 We will provide public test cases for you to verify the correctness of your implementations. However, passing all the
@@ -54,8 +55,8 @@ the hidden ones, which are different from the ones we provided in the skeleton.
 |-------------------------------------------------|-------|---------------------------------------------------------------------------------|
 | Having at least three commits on different days | 5%    | You should commit three times during different days in your repository          |
 | Code style                                      | 5%    | You get 5% by default, and every 5 warnings from CheckStyle deducts 1%.         |
-| Public test cases                               | 50%   | Based on the Result of GitHub Action (# of passing tests / # of provided tests) |
-| Private test cases                              | 40%   | Based on TA evaluation (# of passing tests / # of provided tests)               |
+| Public test cases                               | 60%   | Based on the Result of GitHub Action (# of passing tests / # of provided tests) |
+| Private test cases                              | 30%   | Based on TA evaluation (# of passing tests / # of provided tests)               |
 | Bonus                                           | 10%   | Based on TA evaluation                                                          |
 
 ## Test
@@ -64,7 +65,7 @@ the hidden ones, which are different from the ones we provided in the skeleton.
 
 #### Download sessions database
 
-Download the sessions database (~128MB) from [Canvas](TODO:) and save it as `db.json` under the project root directory.
+Download the sessions database (~111MB) from [Canvas](https://canvas.ust.hk/files/10425403/download?download_frd=1) and save it as `db.json` under the project root directory.
 
 #### Generate an API Key (optional)
 
@@ -93,15 +94,30 @@ To run PA2 public tests:
 
 The public test cases and their corresponding code are given below:
 
-TODO: table
+| Test Name               | Score | Related Methods/Statistics                                                                                                                                        |
+|-------------------------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| testSumStatistics       | 10%   | generateProfile: `sumPromptTokens`, `sumCompletionTokens`                                                                                                         |
+| testMaxStatistics       | 10%   | generateProfile, `maxPromptTokens`, `maxCompletionTokens`, `maxTimeLastOpen`, `maxTimeLastExit`, `maxTimeCreated`                                                 |
+| testMinStatistics       | 10%   | generateProfile, `maxPromptTokens`, `maxCompletionTokens`, `maxTimeLastOpen`, `maxTimeLastExit`, `maxTimeCreated`                                                 |
+| testAvgStatistics       | 10%   | generateProfile, `avgPromptTokens`, `avgCompletionTokens`, `avgTimeLastOpen`, `avgTimeLastExit`, `avgTimeCreated`, `avgTimeLastSessionDuration`, `avgTemperature` |
+| testTopStringStatistics | 10%   | generateProfile, updateTopString, limitTopNString, `topTags`, `topModels`, `topWords`                                                                             |
+| testGeneralStatistics   | 10%   | profile, generateProfile                                                                                                                                          |
 
 ### Private Test Cases
 
-TODO: hint
+The private test will test a new statistic value in the profile called `sumPrice`. The value is computed as follows:
+
+$$ sumPrice = \sum_{session} (totalPromptTokens \times unitPromptPrice + totalCompletionTokens \times unitCompletionPrice) \times modelSize $$
+
+The unit `modelSize` is 1B parameters. For example, model `wizardlm-13b` has a size of 13.
+
+Besides, you should also pay attention to some edge cases like dealing with new user.
 
 ### Bonus
 
-TODO: implement the functional as parallel, use as less methods as possible
+PA2's bonus task is open-ended. You can try to implement as more "functional" as possible. For example, implement with
+less statements, more stream operations. For some function you can even try to implement using only one `return`
+statement.
 
 ## Project Structure
 
@@ -126,49 +142,49 @@ The project structure is as follows:
 
 ```mermaid
 classDiagram
-direction BT
-class ChatClient {
-  + ChatClient() 
-  + ChatClient(JSONObject) 
-  # String apiKey
-  # String description
-  + equals(Object) boolean
-  + getAllFields(Class~?~) Field[]
-  ~ printHelp() void
-  + fromJSON(JSONObject) void
-  + addTags(String[]) void
-  + query(String) String
-  + removeTag(String) void
-  ~ readAndSetKey(String) boolean
-  ~ saveClient() void
-  + toJSON() JSONObject
-  + repl() void
-  ~ uploadFile(String) void
-   String description
-   int clientMaxTokens
-   String clientUID
-   String apiKey
-   String clientName
-   JSONObject POSTData
-}
-class GPT4oClient {
-  + GPT4oClient() 
-  + GPT4oClient(JSONObject) 
-  + String clientName
-  + query(String) String
-  ~ sendPOSTRequest(HttpURLConnection) JSONObject
-   String clientName
-   HttpURLConnection httpURLConnection
-   int clientMaxTokens
-}
-class Serializable {
-<<Interface>>
-  + fromJSON(JSONObject) void
-  + toJSON() JSONObject
-}
+    direction BT
+    class ChatClient {
+        + ChatClient()
+        + ChatClient(JSONObject)
+        # String apiKey
+        # String description
+        + equals(Object) boolean
+        + getAllFields(Class~?~) Field[]
+        ~ printHelp() void
+        + fromJSON(JSONObject) void
+        + addTags(String[]) void
+        + query(String) String
+        + removeTag(String) void
+        ~ readAndSetKey(String) boolean
+        ~ saveClient() void
+        + toJSON() JSONObject
+        + repl() void
+        ~ uploadFile(String) void
+        String description
+        int clientMaxTokens
+        String clientUID
+        String apiKey
+        String clientName
+        JSONObject POSTData
+    }
+    class GPT4oClient {
+        + GPT4oClient()
+        + GPT4oClient(JSONObject)
+        + String clientName
+        + query(String) String
+        ~ sendPOSTRequest(HttpURLConnection) JSONObject
+        String clientName
+        HttpURLConnection httpURLConnection
+        int clientMaxTokens
+    }
+    class Serializable {
+        <<Interface>>
+        + fromJSON(JSONObject) void
+        + toJSON() JSONObject
+    }
 
-ChatClient  ..>  Serializable 
-GPT4oClient  -->  ChatClient 
+    ChatClient ..> Serializable
+    GPT4oClient --> ChatClient 
 ```
 
 ## Submission Policy
