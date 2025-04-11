@@ -1,0 +1,53 @@
+{
+  "topTags": {
+    "todo": 5,
+    "test": 8,
+    "demo": 10
+  },
+  "sumPromptTokens": 7352,
+  "minTimeCreated": 1740975576,
+  "topModels": {
+    "koala": 3,
+    "vicuna": 21
+  },
+  "numSessions": 24,
+  "maxPromptTokens": 1574,
+  "maxTimeLastExit": 1748678999,
+  "avgTimeLastOpen": 45244,
+  "maxTimeCreated": 1748524276,
+  "minPromptTokens": 20,
+  "sumCompletionTokens": 21541,
+  "minTimeLastExit": 1742982386,
+  "minCompletionTokens": 69,
+  "maxCompletionTokens": 7342,
+  "avgLastSessionDuration": 55,
+  "maxTimeLastOpen": 1748676388,
+  "topWords": {
+    "grateful": 28,
+    "abuse": 35,
+    "data": 45,
+    "string": 23,
+    "satisfied": 27,
+    "happy": 34,
+    "feel": 35,
+    "opportunity": 24,
+    "mom": 49,
+    "started": 25,
+    "wonderful": 22,
+    "mother": 40,
+    "bikini": 44,
+    "loved": 25,
+    "Create": 22,
+    "attention": 24,
+    "try": 32,
+    "time": 41,
+    "wild": 32,
+    "key": 25
+  },
+  "minTimeLastOpen": 1742979818,
+  "avgPromptTokens": 306,
+  "avgCompletionTokens": 897,
+  "avgTimeCreated": 34810,
+  "avgTimeLastExit": 48623,
+  "avgTemperature": 1.1
+}

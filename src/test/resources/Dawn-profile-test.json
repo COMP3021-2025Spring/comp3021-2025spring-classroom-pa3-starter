@@ -1,0 +1,53 @@
+{
+  "topTags": {
+    "test": 7,
+    "useful": 7,
+    "favorite": 5
+  },
+  "sumPromptTokens": 5290,
+  "minTimeCreated": 1740991652,
+  "topModels": {
+    "koala": 1,
+    "vicuna": 19
+  },
+  "numSessions": 20,
+  "maxPromptTokens": 1230,
+  "maxTimeLastExit": 1748543461,
+  "avgTimeLastOpen": 53433,
+  "maxTimeCreated": 1747454376,
+  "minPromptTokens": 16,
+  "sumCompletionTokens": 15135,
+  "minTimeLastExit": 1742821646,
+  "minCompletionTokens": 22,
+  "maxCompletionTokens": 2751,
+  "avgLastSessionDuration": 61,
+  "maxTimeLastOpen": 1748539818,
+  "topWords": {
+    "que": 25,
+    "add": 23,
+    "pain": 23,
+    "social": 17,
+    "pleasure": 24,
+    "balls": 20,
+    "feel": 25,
+    "discount": 16,
+    "store": 15,
+    "specific": 16,
+    "content": 24,
+    "indices": 27,
+    "security": 21,
+    "system": 17,
+    "constructivism": 40,
+    "function": 16,
+    "sensor": 20,
+    "time": 29,
+    "human": 22,
+    "return": 16
+  },
+  "minTimeLastOpen": 1742819088,
+  "avgPromptTokens": 264,
+  "avgCompletionTokens": 756,
+  "avgTimeCreated": 45844,
+  "avgTimeLastExit": 52859,
+  "avgTemperature": 1.1199999999999999
+}

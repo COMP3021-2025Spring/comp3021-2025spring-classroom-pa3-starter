@@ -1,0 +1,53 @@
+{
+  "topTags": {
+    "todo": 5,
+    "useful": 7,
+    "demo": 5
+  },
+  "sumPromptTokens": 1535,
+  "minTimeCreated": 1740907012,
+  "topModels": {
+    "koala": 1,
+    "vicuna": 11
+  },
+  "numSessions": 12,
+  "maxPromptTokens": 479,
+  "maxTimeLastExit": 1748703187,
+  "avgTimeLastOpen": 36852,
+  "maxTimeCreated": 1748656910,
+  "minPromptTokens": 20,
+  "sumCompletionTokens": 10824,
+  "minTimeLastExit": 1743799894,
+  "minCompletionTokens": 213,
+  "maxCompletionTokens": 2203,
+  "avgLastSessionDuration": 88,
+  "maxTimeLastOpen": 1748696456,
+  "topWords": {
+    "living": 16,
+    "data": 28,
+    "test": 20,
+    "determine": 17,
+    "air": 15,
+    "specific": 23,
+    "smart": 24,
+    "Republic": 14,
+    "sleep": 21,
+    "volume": 18,
+    "help": 18,
+    "input": 16,
+    "system": 26,
+    "music": 14,
+    "feature": 22,
+    "blockchain": 15,
+    "adjust": 30,
+    "temperature": 32,
+    "actions": 19,
+    "user": 19
+  },
+  "minTimeLastOpen": 1743794336,
+  "avgPromptTokens": 127,
+  "avgCompletionTokens": 902,
+  "avgTimeCreated": 37109,
+  "avgTimeLastExit": 35008,
+  "avgTemperature": 1.175
+}

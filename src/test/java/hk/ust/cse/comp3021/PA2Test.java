@@ -26,7 +26,7 @@ public class PA2Test {
      * @return the JSONObject parsed from the JSON file
      */
     static JSONObject getTestProfile(String user) throws IOException {
-        Path filePath = Paths.get("src/test/resources/" + user + "-profile.json");
+        Path filePath = Paths.get("src/test/resources/" + user + "-profile-test.json");
         return new JSONObject(Files.readString(filePath));
     }
 
@@ -70,9 +70,9 @@ public class PA2Test {
     // Only used by TA, do not use it!
     @Test
     void setTestProfile() throws IOException {
-        for (String user : SessionManager.getUsers()) {
+        for (String user : userProfiles.keySet()) {
             JSONObject testProfile = userProfiles.get(user);
-            Path filePath = Paths.get("src/test/resources/" + user + "-profile.json");
+            Path filePath = Paths.get("src/test/resources/" + user + "-profile-test.json");
             Files.writeString(filePath, testProfile.toString(2));
         }
     }

@@ -1,0 +1,53 @@
+{
+  "topTags": {
+    "unlike": 3,
+    "done": 5,
+    "favorite": 4
+  },
+  "sumPromptTokens": 1294,
+  "minTimeCreated": 1740895231,
+  "topModels": {
+    "koala": 1,
+    "vicuna": 13
+  },
+  "numSessions": 14,
+  "maxPromptTokens": 590,
+  "maxTimeLastExit": 1748702217,
+  "avgTimeLastOpen": 48220,
+  "maxTimeCreated": 1748242877,
+  "minPromptTokens": 14,
+  "sumCompletionTokens": 8449,
+  "minTimeLastExit": 1743972590,
+  "minCompletionTokens": 35,
+  "maxCompletionTokens": 1459,
+  "avgLastSessionDuration": 53,
+  "maxTimeLastOpen": 1748697517,
+  "topWords": {
+    "iPhone": 17,
+    "que": 13,
+    "sky": 12,
+    "Tap": 14,
+    "access": 13,
+    "data": 22,
+    "learn": 15,
+    "learning": 21,
+    "food": 16,
+    "et": 20,
+    "via": 13,
+    "stands": 26,
+    "help": 13,
+    "des": 11,
+    "la": 17,
+    "safety": 15,
+    "online": 14,
+    "un": 14,
+    "Internet": 16,
+    "connect": 12
+  },
+  "minTimeLastOpen": 1743966352,
+  "avgPromptTokens": 92,
+  "avgCompletionTokens": 603,
+  "avgTimeCreated": 52519,
+  "avgTimeLastExit": 51433,
+  "avgTemperature": 1.0571428571428574
+}

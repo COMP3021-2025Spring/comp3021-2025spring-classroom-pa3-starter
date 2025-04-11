@@ -109,7 +109,7 @@ The private test will test a new statistic value in the profile called `sumPrice
 
 $$ sumPrice = \sum_{session} (totalPromptTokens \times unitPromptPrice + totalCompletionTokens \times unitCompletionPrice) \times modelSize $$
 
-The unit `modelSize` is 1B parameters. For example, model `wizardlm-13b` has a size of 13.
+The unit of `modelSize` is 1B parameters. For example, model `wizardlm-13b` has a size of 13.
 
 Besides, you should also pay attention to some edge cases like dealing with new user.
 

@@ -1,0 +1,53 @@
+{
+  "topTags": {
+    "todo": 8,
+    "test": 5,
+    "favorite": 7
+  },
+  "sumPromptTokens": 4534,
+  "minTimeCreated": 1742036883,
+  "topModels": {
+    "koala": 4,
+    "vicuna": 15
+  },
+  "numSessions": 19,
+  "maxPromptTokens": 1765,
+  "maxTimeLastExit": 1748737959,
+  "avgTimeLastOpen": 46185,
+  "maxTimeCreated": 1748715706,
+  "minPromptTokens": 12,
+  "sumCompletionTokens": 15433,
+  "minTimeLastExit": 1743984559,
+  "minCompletionTokens": 16,
+  "maxCompletionTokens": 2997,
+  "avgLastSessionDuration": 51,
+  "maxTimeLastOpen": 1748731652,
+  "topWords": {
+    "variables": 34,
+    "instance": 53,
+    "columns": 24,
+    "CSV": 29,
+    "values": 24,
+    "remote": 24,
+    "matrix": 24,
+    "list": 24,
+    "SQL": 49,
+    "output": 48,
+    "help": 35,
+    "input": 32,
+    "file": 34,
+    "Town": 30,
+    "variable": 57,
+    "model": 25,
+    "text": 48,
+    "value": 49,
+    "table": 25,
+    "creation": 23
+  },
+  "minTimeLastOpen": 1743982404,
+  "avgPromptTokens": 238,
+  "avgCompletionTokens": 812,
+  "avgTimeCreated": 47520,
+  "avgTimeLastExit": 40192,
+  "avgTemperature": 1.010526315789474
+}

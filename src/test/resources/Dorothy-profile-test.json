@@ -1,0 +1,53 @@
+{
+  "topTags": {
+    "todo": 8,
+    "test": 14,
+    "favorite": 6
+  },
+  "sumPromptTokens": 2722,
+  "minTimeCreated": 1741178080,
+  "topModels": {
+    "vicuna": 16,
+    "chatglm": 1
+  },
+  "numSessions": 17,
+  "maxPromptTokens": 613,
+  "maxTimeLastExit": 1748665969,
+  "avgTimeLastOpen": 38445,
+  "maxTimeCreated": 1748586858,
+  "minPromptTokens": 13,
+  "sumCompletionTokens": 12711,
+  "minTimeLastExit": 1741968338,
+  "minCompletionTokens": 89,
+  "maxCompletionTokens": 1555,
+  "avgLastSessionDuration": 46,
+  "maxTimeLastOpen": 1748665715,
+  "topWords": {
+    "code": 13,
+    "string": 38,
+    "data": 20,
+    "Manager": 15,
+    "literal": 21,
+    "example": 11,
+    "Secret": 12,
+    "input": 12,
+    "oil": 20,
+    "function": 15,
+    "gas": 19,
+    "variable": 16,
+    "decline": 13,
+    "prediction": 13,
+    "create": 12,
+    "Software": 36,
+    "time": 16,
+    "value": 25,
+    "cash": 12,
+    "wind": 16
+  },
+  "minTimeLastOpen": 1741962653,
+  "avgPromptTokens": 160,
+  "avgCompletionTokens": 747,
+  "avgTimeCreated": 43536,
+  "avgTimeLastExit": 36174,
+  "avgTemperature": 1.0823529411764705
+}
