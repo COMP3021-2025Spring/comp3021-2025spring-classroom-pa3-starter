@@ -113,7 +113,7 @@ The public test cases and their corresponding statistics are given below:
 | testMinStatistics       | 10%   | `maxPromptTokens`, `maxCompletionTokens`, `maxTimeLastOpen`, `maxTimeLastExit`, `maxTimeCreated`                                                 |
 | testAvgStatistics       | 10%   | `avgPromptTokens`, `avgCompletionTokens`, `avgTimeLastOpen`, `avgTimeLastExit`, `avgTimeCreated`, `avgTimeLastSessionDuration`, `avgTemperature` |
 | testTopStringStatistics | 10%   | updateTopString, limitTopNString, `topTags`, `topModels`, `topWords`                                                                             |
-| testGeneralStatistics   | 10%   | profile, createEmptyProfile                                                                                                                      |
+| testGeneralStatistics   | 10%   | createEmptyProfile                                                                                                                               |
 
 ### Private Test Cases
 
