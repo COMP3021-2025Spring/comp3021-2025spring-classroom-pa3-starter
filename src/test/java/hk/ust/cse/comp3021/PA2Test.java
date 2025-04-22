@@ -69,7 +69,7 @@ public class PA2Test {
 
     // Only used by TA, do not use it!
     @Test
-    void setTestProfile() throws IOException {
+    void setTestProfiles() throws IOException {
         for (String user : userProfiles.keySet()) {
             JSONObject testProfile = userProfiles.get(user);
             Path filePath = Paths.get("src/test/resources/" + user + "-profile-test.json");
