@@ -304,10 +304,12 @@ public class SessionManager {
                         .put("topTags", updateTopString(p.getJSONObject("topTags"),
                                 s.getJSONArray("tags").toList().stream().map(String::valueOf)))
                         .put("topWords", updateTopString(p.getJSONObject("topWords"),
-                                Arrays.stream(s.getJSONObject("messages")
-                                                .getJSONArray("contents")
-                                                .join(" ")
-                                                .split("\\s+"))
+                                s.getJSONObject("messages")
+                                        .getJSONArray("contents")
+                                        .toList()
+                                        .stream()
+                                        .flatMap(m -> Arrays.stream(((Map<String, String>) m).get("content").split("\\s+")))
+                                        .map(str -> str.replaceAll("[^a-zA-Z0-9]", ""))
                                         .filter(str -> !ignoredWords.contains(str.toLowerCase()))
                                         .filter(str -> str.matches("[a-zA-Z]+"))))
                         .put("topModels", updateTopString(p.getJSONObject("topModels"),
@@ -326,13 +328,14 @@ public class SessionManager {
                 .put("avgPromptTokens", profile.getInt("sumPromptTokens") / numSessions)
                 .put("avgCompletionTokens", profile.getInt("sumCompletionTokens") / numSessions);
         } else {
-            profile.put("avgTemperature", 0.0)
-                    .put("avgTimeLastOpen", 0)
-                    .put("avgTimeCreated", 0)
-                    .put("avgTimeLastExit", 0)
-                    .put("avgLastSessionDuration", 0)
-                    .put("avgPromptTokens", 0)
-                    .put("avgCompletionTokens", 0);
+            profile
+                .put("avgTemperature", 0.0)
+                .put("avgTimeLastOpen", 0)
+                .put("avgTimeCreated", 0)
+                .put("avgTimeLastExit", 0)
+                .put("avgLastSessionDuration", 0)
+                .put("avgPromptTokens", 0)
+                .put("avgCompletionTokens", 0);
         }
 
         // admin only statistics
