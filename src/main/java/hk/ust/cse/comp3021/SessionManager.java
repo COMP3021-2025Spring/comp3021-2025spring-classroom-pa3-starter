@@ -209,7 +209,7 @@ public class SessionManager {
                 .put("sumTimeLastExit", 0)
                 .put("sumTimeLastOpen", 0)
                 .put("sumLastSessionDuration", 0)
-//                .put("sumPrice", 0.0)
+                .put("sumPrice", 0.0)
                 .put("maxPromptTokens", Integer.MIN_VALUE)
                 .put("maxCompletionTokens", Integer.MIN_VALUE)
                 .put("maxTimeCreated", Integer.MIN_VALUE)
@@ -300,10 +300,10 @@ public class SessionManager {
                         .put("sumTimeLastExit", p.getInt("sumTimeLastExit") + s.getInt("timeLastExit") % Utils.SoD)
                         .put("sumLastSessionDuration", p.getInt("sumLastSessionDuration") +
                                 Utils.getDuration(s.getInt("timeLastOpen"), s.getInt("timeLastExit")))
-//                        .put("sumPrice", p.getDouble("sumPrice")
-//                                + (s.getInt("totalPromptTokens") * unitPromptPrice
-//                                + s.getInt("totalCompletionTokens") * unitCompletionPrice)
-//                                * Integer.parseInt(s.getString("clientName").split("[-b]")[1]))
+                        .put("sumPrice", p.getDouble("sumPrice")
+                                + (s.getInt("totalPromptTokens") * unitPromptPrice
+                                + s.getInt("totalCompletionTokens") * unitCompletionPrice)
+                                * Integer.parseInt(s.getString("clientName").split("[-b]")[1]))
                         // get max statistics
                         .put("maxPromptTokens", Math.max(p.getInt("maxPromptTokens"),
                                 s.getInt("totalPromptTokens")))
@@ -378,12 +378,21 @@ public class SessionManager {
 
     /**
      * Print the profile in human-readable form
-     * TODO: print the time as human-readable form
      *
      * @param profile the JSON format profile to print
      */
     private static void printProfile(JSONObject profile) {
-        System.out.println(profile.toString(2));
+        for (String key : profile.keySet()) {
+            if (profile.get(key) instanceof JSONObject) {
+                System.out.printf("%s: %s %n", Utils.toInfo(key), profile.getJSONObject(key).toString(2));
+            } else if (profile.get(key) instanceof Double) {
+                System.out.printf("%s: %.2f %n", Utils.toInfo(key), profile.getDouble(key));
+            } else if (key.contains("Time")) {
+                System.out.printf("%s: %s %n", Utils.toInfo(key), Utils.timeToString(profile.getInt(key)));
+            } else {
+                System.out.printf("%s: %s %n", Utils.toInfo(key), profile.get(key));
+            }
+        }
     }
 
     /**
@@ -397,8 +406,8 @@ public class SessionManager {
         LocalDateTime startProfile = LocalDateTime.now();
         JSONObject profile = generateProfile(user);
         LocalDateTime endProfile = LocalDateTime.now();
-        System.out.printf("The profiling cost %d ms %n", Duration.between(startProfile, endProfile).toMillis());
         printProfile(profile);
+        System.out.printf("The profiling cost %d ms %n", Duration.between(startProfile, endProfile).toMillis());
 
         // save profile to file
         try {
