@@ -238,7 +238,7 @@ public class SessionManager {
     }
 
     /**
-     * Keep only the top N strings in the map
+     * Keep only the top N strings in the map, first sorted by the value, then by the key
      *
      * @param topNStringMap the top N string map
      * @param topN          the number of top strings to keep
@@ -246,11 +246,37 @@ public class SessionManager {
      */
     private static JSONObject limitTopNString(JSONObject topNStringMap, int topN) {
         return topNStringMap.toMap().entrySet().stream()
-                .sorted((e1, e2) -> Integer.compare((Integer) e2.getValue(), (Integer) e1.getValue()))
+                .sorted((e1, e2) -> {
+                    Integer i1 = (Integer) e1.getValue();
+                    Integer i2 = (Integer) e2.getValue();
+                    if (i1.equals(i2)) {
+                        return e2.getKey().compareTo(e1.getKey());
+                    } else {
+                        return i2.compareTo(i1);
+                    }
+                })
                 .limit(topN)
                 .reduce(new JSONObject(),
                         (acc, entry) -> acc.put(entry.getKey(), entry.getValue()),
                         (acc1, acc2) -> acc1);
+    }
+
+    /**
+     * Tokenize the message into stream of words
+     *
+     * @param session the session contains messages
+     * @return the stream of tokens
+     */
+    static Stream<String> tokenizeMessages(JSONObject session) {
+        return session.getJSONObject("messages")
+                .getJSONArray("contents")
+                .toList()
+                .stream()
+                .map(m -> ((Map<String, String>) m).get("content")
+                        .replaceAll("[^a-zA-Z0-9]", " ")
+                        .toLowerCase())
+                .flatMap(m -> Arrays.stream(m.split(" ")))
+                .filter(str -> str.matches("[a-zA-Z]+"));
     }
 
     /**
@@ -304,14 +330,7 @@ public class SessionManager {
                         .put("topTags", updateTopString(p.getJSONObject("topTags"),
                                 s.getJSONArray("tags").toList().stream().map(String::valueOf)))
                         .put("topWords", updateTopString(p.getJSONObject("topWords"),
-                                s.getJSONObject("messages")
-                                        .getJSONArray("contents")
-                                        .toList()
-                                        .stream()
-                                        .flatMap(m -> Arrays.stream(((Map<String, String>) m).get("content").split("\\s+")))
-                                        .map(str -> str.replaceAll("[^a-zA-Z0-9]", ""))
-                                        .filter(str -> !ignoredWords.contains(str.toLowerCase()))
-                                        .filter(str -> str.matches("[a-zA-Z]+"))))
+                                tokenizeMessages(s).filter(word -> !ignoredWords.contains(word))))
                         .put("topModels", updateTopString(p.getJSONObject("topModels"),
                                 Stream.of(s.getString("clientName").split("-")[0])))
                 );
@@ -320,22 +339,22 @@ public class SessionManager {
         // get average statistics
         if (numSessions != 0) {
             profile
-                .put("avgTemperature", profile.getDouble("sumTemperature") / numSessions)
-                .put("avgTimeLastOpen", profile.getInt("sumTimeLastOpen") / numSessions)
-                .put("avgTimeCreated", profile.getInt("sumTimeCreated") / numSessions)
-                .put("avgTimeLastExit", profile.getInt("sumTimeLastExit") / numSessions)
-                .put("avgLastSessionDuration", profile.getInt("sumLastSessionDuration") / numSessions)
-                .put("avgPromptTokens", profile.getInt("sumPromptTokens") / numSessions)
-                .put("avgCompletionTokens", profile.getInt("sumCompletionTokens") / numSessions);
+                    .put("avgTemperature", profile.getDouble("sumTemperature") / numSessions)
+                    .put("avgTimeLastOpen", profile.getInt("sumTimeLastOpen") / numSessions)
+                    .put("avgTimeCreated", profile.getInt("sumTimeCreated") / numSessions)
+                    .put("avgTimeLastExit", profile.getInt("sumTimeLastExit") / numSessions)
+                    .put("avgLastSessionDuration", profile.getInt("sumLastSessionDuration") / numSessions)
+                    .put("avgPromptTokens", profile.getInt("sumPromptTokens") / numSessions)
+                    .put("avgCompletionTokens", profile.getInt("sumCompletionTokens") / numSessions);
         } else {
             profile
-                .put("avgTemperature", 0.0)
-                .put("avgTimeLastOpen", 0)
-                .put("avgTimeCreated", 0)
-                .put("avgTimeLastExit", 0)
-                .put("avgLastSessionDuration", 0)
-                .put("avgPromptTokens", 0)
-                .put("avgCompletionTokens", 0);
+                    .put("avgTemperature", 0.0)
+                    .put("avgTimeLastOpen", 0)
+                    .put("avgTimeCreated", 0)
+                    .put("avgTimeLastExit", 0)
+                    .put("avgLastSessionDuration", 0)
+                    .put("avgPromptTokens", 0)
+                    .put("avgCompletionTokens", 0);
         }
 
         // admin only statistics
