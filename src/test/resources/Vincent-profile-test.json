@@ -1,6 +1,6 @@
 {
   "topTags": {
-    "todo": 12,
+    "unlike": 12,
     "useful": 16,
     "demo": 16
   },
@@ -9,7 +9,7 @@
   "topModels": {
     "guanaco": 2,
     "llama": 1,
-    "koala": 1,
+    "wizardlm": 1,
     "vicuna": 48,
     "chatglm": 3
   },
@@ -27,25 +27,25 @@
   "maxTimeLastOpen": 1748714529,
   "topWords": {
     "que": 39,
-    "include": 39,
+    "include": 42,
+    "don": 36,
     "access": 45,
-    "data": 50,
-    "Im": 48,
-    "words": 32,
-    "feel": 34,
+    "data": 57,
+    "ehdi": 56,
+    "words": 35,
+    "feel": 35,
     "language": 41,
-    "tools": 38,
+    "tools": 40,
     "drug": 40,
-    "Name": 29,
-    "help": 66,
-    "couldnt": 37,
-    "Sexual": 44,
-    "world": 33,
-    "provide": 41,
-    "information": 64,
-    "model": 31,
-    "time": 54,
-    "dont": 35
+    "couldn": 37,
+    "help": 70,
+    "world": 44,
+    "provide": 53,
+    "name": 462,
+    "information": 68,
+    "time": 60,
+    "sexual": 54,
+    "male": 37
   },
   "minTimeLastOpen": 1742405225,
   "avgPromptTokens": 150,

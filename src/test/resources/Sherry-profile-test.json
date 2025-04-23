@@ -1,8 +1,8 @@
 {
   "topTags": {
     "test": 4,
-    "favorite": 4,
-    "useful": 4
+    "useful": 4,
+    "favorite": 4
   },
   "sumPromptTokens": 2973,
   "minTimeCreated": 1742608696,
@@ -24,26 +24,26 @@
   "avgLastSessionDuration": 54,
   "maxTimeLastOpen": 1748726738,
   "topWords": {
-    "image": 29,
+    "image": 37,
     "pain": 27,
     "data": 33,
-    "method": 24,
+    "method": 27,
     "curve": 29,
-    "nipple": 20,
     "match": 37,
-    "runoff": 27,
-    "language": 20,
-    "water": 69,
-    "duration": 21,
+    "edges": 23,
+    "hydrograph": 24,
+    "water": 71,
     "help": 24,
+    "unit": 25,
     "edge": 22,
+    "re": 31,
     "stream": 38,
-    "discharge": 25,
-    "Oh": 22,
+    "name": 261,
+    "discharge": 28,
+    "oh": 22,
     "time": 23,
     "flow": 37,
-    "streamflow": 37,
-    "energy": 20
+    "streamflow": 37
   },
   "minTimeLastOpen": 1745358737,
   "avgPromptTokens": 212,

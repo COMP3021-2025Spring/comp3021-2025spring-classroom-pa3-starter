@@ -1,8 +1,8 @@
 {
   "topTags": {
-    "test": 6,
     "favorite": 9,
-    "done": 7
+    "done": 7,
+    "useful": 6
   },
   "sumPromptTokens": 4607,
   "minTimeCreated": 1740859564,
@@ -25,26 +25,26 @@
   "avgLastSessionDuration": 61,
   "maxTimeLastOpen": 1748658837,
   "topWords": {
-    "code": 17,
-    "Im": 21,
     "steering": 20,
     "control": 20,
-    "ADCU": 26,
     "body": 26,
-    "experience": 18,
     "eyes": 20,
-    "token": 22,
-    "network": 21,
-    "target": 17,
+    "token": 26,
+    "network": 25,
+    "moon": 20,
     "system": 22,
-    "driver": 35,
+    "driver": 37,
     "provide": 21,
     "function": 21,
-    "create": 21,
+    "circumference": 21,
+    "name": 137,
+    "adcu": 28,
+    "create": 25,
     "information": 30,
     "braking": 34,
-    "potential": 15,
-    "women": 16
+    "radius": 19,
+    "write": 18,
+    "women": 20
   },
   "minTimeLastOpen": 1742690426,
   "avgPromptTokens": 164,

@@ -1,17 +1,17 @@
 {
   "topTags": {
     "todo": 15,
-    "demo": 13,
-    "favorite": 13
+    "favorite": 13,
+    "demo": 13
   },
   "sumPromptTokens": 6605,
   "minTimeCreated": 1741009667,
   "topModels": {
     "guanaco": 2,
     "koala": 2,
-    "alpaca": 2,
     "wizardlm": 2,
-    "vicuna": 33
+    "vicuna": 33,
+    "chatglm": 2
   },
   "numSessions": 43,
   "maxPromptTokens": 1128,
@@ -26,26 +26,26 @@
   "avgLastSessionDuration": 51,
   "maxTimeLastOpen": 1748734179,
   "topWords": {
-    "game": 49,
-    "Im": 33,
-    "data": 31,
-    "players": 25,
-    "language": 63,
+    "game": 50,
+    "data": 32,
+    "language": 69,
     "specific": 26,
-    "people": 32,
+    "people": 35,
+    "andorra": 38,
     "help": 53,
     "century": 30,
-    "system": 52,
+    "system": 53,
     "government": 32,
     "cells": 27,
-    "provide": 34,
+    "provide": 36,
+    "china": 29,
     "pears": 28,
-    "Andorra": 37,
-    "China": 29,
-    "model": 63,
+    "name": 252,
+    "model": 67,
     "information": 29,
-    "time": 45,
-    "human": 28
+    "time": 50,
+    "hello": 36,
+    "human": 29
   },
   "minTimeLastOpen": 1742413189,
   "avgPromptTokens": 153,

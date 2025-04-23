@@ -1,14 +1,14 @@
 {
   "topTags": {
     "test": 12,
-    "demo": 9,
-    "useful": 9
+    "useful": 9,
+    "demo": 9
   },
   "sumPromptTokens": 5583,
   "minTimeCreated": 1741019445,
   "topModels": {
-    "guanaco": 2,
     "llama": 2,
+    "guanaco": 2,
     "koala": 1,
     "wizardlm": 1,
     "vicuna": 28
@@ -26,26 +26,26 @@
   "avgLastSessionDuration": 62,
   "maxTimeLastOpen": 1748716297,
   "topWords": {
-    "waste": 28,
-    "bus": 29,
-    "American": 42,
-    "noodles": 26,
+    "bus": 45,
+    "town": 35,
+    "data": 32,
+    "pushover": 66,
     "feel": 39,
-    "pushover": 38,
+    "american": 42,
     "sense": 32,
     "language": 31,
-    "analysis": 54,
-    "Pushover": 28,
-    "building": 26,
+    "analysis": 75,
+    "building": 34,
     "help": 50,
-    "system": 39,
-    "sensors": 29,
+    "system": 40,
     "provide": 30,
-    "person": 30,
-    "function": 38,
-    "model": 36,
+    "person": 31,
+    "function": 39,
+    "name": 351,
+    "model": 43,
+    "time": 31,
     "arm": 40,
-    "DIA": 31
+    "dia": 31
   },
   "minTimeLastOpen": 1742397619,
   "avgPromptTokens": 159,

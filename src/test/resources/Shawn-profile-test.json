@@ -1,8 +1,8 @@
 {
   "topTags": {
     "todo": 6,
-    "demo": 7,
-    "favorite": 7
+    "favorite": 7,
+    "demo": 7
   },
   "sumPromptTokens": 3567,
   "minTimeCreated": 1741090344,
@@ -27,22 +27,22 @@
   "maxTimeLastOpen": 1748699536,
   "topWords": {
     "process": 29,
+    "python": 22,
     "passage": 26,
-    "Im": 21,
     "own": 22,
-    "socialism": 39,
+    "socialism": 45,
     "political": 28,
     "global": 37,
-    "history": 22,
+    "history": 23,
     "people": 35,
     "life": 51,
-    "Earth": 21,
     "suggests": 46,
     "help": 36,
+    "world": 27,
     "system": 24,
     "phrase": 28,
-    "powerful": 21,
-    "time": 22,
+    "name": 190,
+    "time": 23,
     "implies": 27,
     "human": 34,
     "economic": 41

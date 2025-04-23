@@ -1,7 +1,7 @@
 {
   "topTags": {
-    "todo": 4,
     "test": 6,
+    "unlike": 4,
     "done": 5
   },
   "sumPromptTokens": 4611,
@@ -9,9 +9,9 @@
   "topModels": {
     "llama": 1,
     "koala": 2,
-    "alpaca": 1,
     "wizardlm": 1,
-    "vicuna": 19
+    "vicuna": 19,
+    "chatglm": 1
   },
   "numSessions": 25,
   "maxPromptTokens": 903,
@@ -26,26 +26,26 @@
   "avgLastSessionDuration": 58,
   "maxTimeLastOpen": 1748444016,
   "topWords": {
+    "vous": 34,
+    "nextcloud": 29,
     "private": 49,
-    "NULL": 102,
-    "data": 79,
+    "data": 83,
     "pouvez": 30,
-    "pour": 36,
+    "column": 49,
+    "pour": 45,
     "limiting": 34,
-    "message": 25,
     "beliefs": 28,
-    "users": 30,
     "help": 45,
+    "null": 102,
     "provide": 28,
-    "Nextcloud": 25,
+    "name": 234,
     "le": 50,
-    "information": 26,
-    "text": 111,
+    "information": 27,
+    "text": 119,
     "les": 27,
     "belief": 63,
     "votre": 37,
-    "connect": 34,
-    "Columnname": 49
+    "connect": 35
   },
   "minTimeLastOpen": 1742001015,
   "avgPromptTokens": 184,

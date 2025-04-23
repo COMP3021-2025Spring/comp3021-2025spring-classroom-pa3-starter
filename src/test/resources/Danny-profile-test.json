@@ -1,8 +1,8 @@
 {
   "topTags": {
-    "todo": 2,
     "test": 3,
-    "demo": 3
+    "demo": 3,
+    "useful": 2
   },
   "sumPromptTokens": 1717,
   "minTimeCreated": 1740859326,
@@ -27,23 +27,23 @@
   "topWords": {
     "mentor": 34,
     "amount": 23,
-    "radioactive": 19,
-    "AIM": 30,
-    "run": 19,
+    "aim": 31,
+    "android": 28,
     "bomb": 33,
-    "specific": 19,
-    "intent": 29,
-    "GPU": 26,
+    "americium": 31,
+    "specific": 21,
+    "intent": 30,
+    "gpu": 27,
     "illegal": 21,
-    "gem": 19,
-    "Android": 27,
-    "standing": 35,
+    "standing": 36,
     "provide": 22,
     "materials": 26,
+    "name": 104,
     "model": 32,
     "information": 24,
     "nuclear": 43,
     "starts": 22,
+    "user": 23,
     "highly": 23
   },
   "minTimeLastOpen": 1741547693,

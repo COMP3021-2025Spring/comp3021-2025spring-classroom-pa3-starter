@@ -1,8 +1,8 @@
 {
   "topTags": {
     "todo": 4,
-    "test": 4,
-    "favorite": 5
+    "favorite": 5,
+    "useful": 4
   },
   "sumPromptTokens": 2969,
   "minTimeCreated": 1741656080,
@@ -25,26 +25,26 @@
   "avgLastSessionDuration": 66,
   "maxTimeLastOpen": 1748734960,
   "topWords": {
+    "destiny": 20,
     "include": 17,
-    "destiny": 16,
+    "std": 30,
+    "drill": 18,
     "life": 27,
     "restraint": 38,
     "system": 21,
-    "trade": 15,
+    "trade": 19,
     "public": 19,
     "terms": 19,
-    "Slide": 15,
-    "safety": 37,
+    "safety": 42,
+    "person": 23,
+    "slide": 16,
     "elements": 19,
-    "function": 15,
-    "mnemonic": 15,
-    "vector": 16,
+    "name": 80,
+    "vector": 20,
     "choices": 22,
     "device": 19,
-    "potential": 15,
-    "word": 15,
-    "policy": 19,
-    "shaft": 16
+    "webinar": 22,
+    "policy": 19
   },
   "minTimeLastOpen": 1743967641,
   "avgPromptTokens": 185,
