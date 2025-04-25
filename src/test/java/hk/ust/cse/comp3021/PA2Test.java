@@ -39,9 +39,9 @@ public class PA2Test {
      */
     static void compareProfileByKey(JSONObject profile, JSONObject testProfile, String key) {
         if (key.startsWith("top"))
-            assertEquals(profile.get(key).toString(), testProfile.get(key).toString());
+            assertEquals(testProfile.getJSONObject(key).toMap(), profile.getJSONObject(key).toMap());
         else
-            assertEquals(profile.get(key), testProfile.get(key));
+            assertEquals(testProfile.get(key), profile.get(key));
     }
 
     /**
@@ -53,7 +53,7 @@ public class PA2Test {
      * @param delta       the delta for compare
      */
     static void compareProfileByKey(JSONObject profile, JSONObject testProfile, String key, double delta) {
-        assertEquals(profile.getDouble(key), testProfile.getDouble(key), delta);
+        assertEquals(testProfile.getDouble(key), profile.getDouble(key), delta);
     }
 
     @BeforeAll
