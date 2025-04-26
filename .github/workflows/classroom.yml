@@ -13,12 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          lfs: true
-      - name: Set up LFS
-        run: |
-          git lfs install
-          git lfs pull
+      - name: Unzip database
+        run: zstd -d db.json.zst
       - name: testSumStatistics
         id: testsumstatistics
         uses: classroom-resources/autograding-command-grader@v1
