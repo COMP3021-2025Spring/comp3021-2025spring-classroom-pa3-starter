@@ -1,8 +1,9 @@
-# PA2 - LLM ChatManager
+# PA3 - LLM ChatManager
 
-We have already practiced how to build a configurable persistence framework in the LLM ChatManager in PA1. Since we have
-got the database containing thousands of serialized sessions, we can perform statistical analysis and generate profile
-from them. In this PA, you will need to implement the profile functionalities in the `SessionManager` class.
+In PA2 we implemented the `generateProfile` method using functional programming. One of the advantages of functional
+programming is that it is easier to be parallelized, which can boost the profiling process. In this PA, you will
+implement three versions of `generateProfile`: base (serial), parallel, and thread pool. The testcases will evaluate
+your implementation regarding the performance and correctness of the profiling process.
 
 ## Demo
 
@@ -24,27 +25,43 @@ Here's a screencast of the application running:
 - PA0: Initial release, implement the basic functionalities of `ChatManager` and `ChatClient` and `GPT4oClient` class,
   design Task1 test cases
 - PA1:
-  - `ChatManager`: refine REPL, add history and list command
-  - `ChatClient`: add persistence functionalities, add tag and description, add token statistics in Message
-  - Add Interface `Serializable` for `ChatClient` and `Message`
-  - Add annotations for guiding persistence
-  - Add Task2 test cases
-  - Code refactoring and bug fixing
+    - `ChatManager`: refine REPL, add history and list command
+    - `ChatClient`: add persistence functionalities, add tag and description, add token statistics in Message
+    - Add Interface `Serializable` for `ChatClient` and `Message`
+    - Add annotations for guiding persistence
+    - Add Task2 test cases
+    - Code refactoring and bug fixing
 - PA2:
-  - Merge sessions into one database file, which manages all users and their sessions
-  - Add `SessionManager` as the interface between ChatClient and session files.
-  - Add PA2 test cases
-  - Code refactoring and bug fixing
+    - Merge sessions into one database file, which manages all users and their sessions
+    - Add `SessionManager` as the interface between ChatClient and session files.
+    - Add PA2 test cases
+    - Code refactoring and bug fixing
+- PA3:
+    - Add three mode of profiling and a common interface `generateProfile`
+    - Add PA3 test cases
 
 ## Grading
 
-In PA2, you need to implement the following methods, detailed implementation can be searched with "TODO" in the
-codebase.
+In PA3, you need to implement the three main profiling methods along with their utility methods, detailed implementation
+can be searched with "TODO" in the codebase.
 
-- You will be implementing the profile functionality in the `SessionManager` class, which is responsible for
-  generating the profile from the session database. The profile consists of 25 statistics from 6 types.
-- The focus of PA2 is functional programming, you need to convert the Sessions into Streams and perform the statistical analysis on them.
-- You are free to use provided utility methods in the `Utils` class, or implement your own helper methods.
+- `generateProfileBase`: generate the profile for a user using functional programming.
+  - We will use the collect operation to iterate through the sessions and accumulate the statistics. We have already
+  defined the `profileCollector`, which implements the 
+  [Collector](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html) interface
+- `generateProfileParallel`: generate the profile for a user using parallel programming (collect)
+- `generateProfileThreadPool`: generate the profile for a user using thread pool programming
+
+The above three methods rely on some common utility methods:
+
+- `accumulateSessionToProfile`: the [accumulator](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html#accumulator--)
+  accumulate the sessions to the profile
+- `combineTwoProfiles`: the [combiner](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html#combiner--)
+  combine two profiles, only used in parallel and threadpool mode
+- `postProcess`: the [finisher](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html#finisher--)
+  perform avg and topString operations and delete useless fields in the profile
+
+PS: all methods above, except for `generateProfileThreadPool`, could be implemented using one `return` statement!
 
 We will provide public test cases for you to verify the correctness of your implementations. However, passing all the
 public test cases does not mean that you can obtain the full mark for the PA. We also have many additional test cases as
@@ -55,8 +72,7 @@ the hidden ones, which are different from the ones we provided in the skeleton.
 | Having at least three commits on different days | 5%    | You should commit three times during different days in your repository          |
 | Code style                                      | 5%    | You get 5% by default, and every 5 warnings from CheckStyle deducts 1%.         |
 | Public test cases                               | 60%   | Based on the Result of GitHub Action (# of passing tests / # of provided tests) |
-| Private test cases                              | 30%   | Based on TA evaluation (# of passing tests / # of provided tests)               |
-| Bonus                                           | 10%   | Based on TA evaluation                                                          |
+| Performance gain                                | 30%   | Based on the boosting scale of your thread pool version                         |
 
 ## Test
 
@@ -64,11 +80,10 @@ the hidden ones, which are different from the ones we provided in the skeleton.
 
 #### Download sessions database
 
-Download the sessions database (~111MB) is tracked using Git LFS, use the following command to download the database:
+Unzip the database (~128MB) using the following command:
 
-```shell
-git lfs install
-git lfs pull
+```bash
+zstd -d db.json.zst
 ```
 
 #### Generate an API Key (optional)
@@ -90,49 +105,55 @@ To check the code style, run the following commands and make sure no warnings em
 
 ### Public test
 
-To run PA2 public tests:
+We rely on PA2 test cases to test the correctness of your implementation for each mode. To run PA2 public tests:
 
 ```bash
-./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.test*"
+PROFILE_MODE=base ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.test*"
+PROFILE_MODE=parallel ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.test*"
+PROFILE_MODE=threadpool ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.test*"
+# add --rerun-tasks to force rerun the tests
 ```
 
-First you need to implement those methods with "TODO" in the codebase,
+Then we test the profile time of each mode in PA3 test cases. To run PA3 public tests:
 
-- `profile`: interface for the REPL, whether normal user or "admin". If the user is "admin", it will should profile
-  of all sessions, otherwise it will profile sessions of the current user.
-- `generateProfile`: generate the profile for a user using functional programming
-- `createEmptyProfile`: initialize the profile
-- `getSessionsStream`: converts all sessions associated with a user into a stream
+```bash
+./gradlew test --tests "hk.ust.cse.comp3021.PA3Test"
+```
 
 The public test cases and their corresponding statistics are given below:
 
-| Test Name               | Score | Related Methods/Statistics                                                                                                                       |
-|-------------------------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| testSumStatistics       | 10%   | `sumPromptTokens`, `sumCompletionTokens`                                                                                                         |
-| testMaxStatistics       | 10%   | `maxPromptTokens`, `maxCompletionTokens`, `maxTimeLastOpen`, `maxTimeLastExit`, `maxTimeCreated`                                                 |
-| testMinStatistics       | 10%   | `maxPromptTokens`, `maxCompletionTokens`, `maxTimeLastOpen`, `maxTimeLastExit`, `maxTimeCreated`                                                 |
-| testAvgStatistics       | 10%   | `avgPromptTokens`, `avgCompletionTokens`, `avgTimeLastOpen`, `avgTimeLastExit`, `avgTimeCreated`, `avgTimeLastSessionDuration`, `avgTemperature` |
-| testTopStringStatistics | 10%   | updateTopString, limitTopNString, `topTags`, `topModels`, `topWords`                                                                             |
-| testGeneralStatistics   | 10%   | createEmptyProfile                                                                                                                               |
+| Test Name                 | Score | Related Methods/Statistics                                                                     |
+|---------------------------|-------|------------------------------------------------------------------------------------------------|
+| PA2Test (base mode)       | 10%   | `generateProfileBase`, `accumulateSessionToProfile`, `combineTwoProfiles`, `postProcess`       |
+| PA2Test (parallel mode)   | 10%   | `generateProfileParallel`, `accumulateSessionToProfile`, `combineTwoProfiles`, `postProcess`   |
+| PA2Test (threadpool mode) | 10%   | `generateProfileThreadPool`, `accumulateSessionToProfile`, `combineTwoProfiles`, `postProcess` |
+| testParallelProfileTime   | 15%   | `generateProfileParallel`, `accumulateSessionToProfile`, `combineTwoProfiles`, `postProcess`   |
+| testThreadPoolProfileTime | 15%   | `generateProfileThreadPool`, `accumulateSessionToProfile`, `combineTwoProfiles`, `postProcess` |
 
-### Private Test Cases
+### Performance gain
 
-The private test will test a new statistic value in the profile called `sumPrice`. The value is computed as follows:
+We want the threadpool mode profiling can achieve a comparable, even better performance than the parallel mode. Let's 
+denote the ratio of parallelProfileTime and threadPoolProfileTime as s, the performance gain score is computed as:
 
-$$ sumPrice = \sum_{session} (totalPromptTokens \times unitPromptPrice + totalCompletionTokens \times unitCompletionPrice) \times modelSize $$
+- s < 0.8: score = 0
+- s > 0.8: score = 30 * (s - 0.8) / (max(s) - 0.8)
 
-The unit of `modelSize` is 1B parameters. For example, model `wizardlm-13b` has a size of 13.
+If you can pass the `testThreadPoolProfileTime`, which correspond to the baseline value of s (0.8), you can start 
+receiving the performance gain score. The max performance gain will get full score (30) for this part.
 
-Besides, you should also pay attention to some edge cases like dealing with new user.
+For your reference, here's the time running on the TA's machine (M2 Macbook Air):
+
+| Profile Mode | Duration (ms) | Scale |
+|--------------|---------------|-------|
+| base         | 12443         | 1     |
+| parallel     | 3001          | 4.15  |
+| threadpool   | 2736          | 4.55  |
 
 ### Bonus
 
-PA2's bonus task is open-ended and multi-criteria. You can try to implement as more functional as possible. For example, implement with
-less statements, more stream operations. For some function you can even try to implement using only one `return` statement. 
-To make the main implementation more functional, you can add your own helper functions or even create new class for the `Profile`.
-
-The most functional style implementation will get full bonus. If the implementation is purely based on procedural programming, like loops,
-if-else statements, etc., it will get 0 bonus.
+Implement the [CONCURRENT](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.Characteristics.html#CONCURRENT)
+characteristics for `generateProfileParallel`. You need to convert the `accumulateSessionToProfile` method to a 
+thread-safe version since the `CONCURRENT` character will process the accumulator using multi-threads.
 
 ## Project Structure
 
@@ -145,8 +166,8 @@ The project structure is as follows:
 - `ChatManager` manages all `ChatClient`s, `repl()` is the entry point for the command-line REPL (outer REPL).
 - `ChatClient` contains common implementation and specifies abstract methods, `repl()` is the entry point for the chat
   REPL (inner REPL).
-  - Under `client/`, we have two concrete classes `GPT4oClient` and `GPT4ominiClient` that extends `ChatClient`, the
-    `query()` method is used for interacting with the API service.
+    - Under `client/`, we have two concrete classes `GPT4oClient` and `GPT4ominiClient` that extends `ChatClient`, the
+      `query()` method is used for interacting with the API service.
 - `SessionManager` provide read/write/profile interface for the session database
 - `Message` and `Messages` are used for storing chat messages.
 - `Utils` contains some utility functions.
@@ -204,7 +225,7 @@ classDiagram
 
 ## Submission Policy
 
-PA2 submission is similar to PA1 submission, using GitHub Classroom as demonstrated
+PA3 submission is similar to PA1 submission, using GitHub Classroom as demonstrated
 in [lab1](https://hkustconnect-my.sharepoint.com/:p:/g/personal/xchenht_connect_ust_hk/EXr8FR9l1ytKh4LFdQceHDYB9gO-hAc4f-GAYyb0jp7LBA?e=KdDj78).
 Please modify and commit to your own repo. Each commit will trigger a Github Action for autograding, and you can check
 the your public score in latest GitHub Action.

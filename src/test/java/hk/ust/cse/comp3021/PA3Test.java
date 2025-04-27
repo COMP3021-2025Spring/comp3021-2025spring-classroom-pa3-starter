@@ -25,47 +25,48 @@ public class PA3Test {
      */
     static long parallelProfileTime;
 
+    /**
+     * The profile time of admin when using thread pool stream processing
+     */
+    static long threadPoolProfileTime;
+
     @BeforeAll
     public static void setUp() {
         SessionManager.loadDatabase();
-    }
-
-    @Test
-    @Order(1)
-    public void testBaseProfileTime() {
+        // get base profile time
         LocalDateTime startProfile = LocalDateTime.now();
         SessionManager.generateProfileBase("admin");
         LocalDateTime endProfile = LocalDateTime.now();
         baseProfileTime = Duration.between(startProfile, endProfile).toMillis();
         System.out.printf("The base (serial) profiling cost %s ms %n", Utils.toInfo(String.valueOf(baseProfileTime)));
+        // get parallel profile time
+        startProfile = LocalDateTime.now();
+        SessionManager.generateProfileParallel("admin");
+        endProfile = LocalDateTime.now();
+        parallelProfileTime = Duration.between(startProfile, endProfile).toMillis();
+        System.out.printf("The parallel profiling cost %s ms %n", Utils.toInfo(String.valueOf(parallelProfileTime)));
+        System.out.printf("The parallel profiling is %.2f times faster than the base profiling %n",
+                (double) baseProfileTime / parallelProfileTime);
+        // get thread pool profile time
+        startProfile = LocalDateTime.now();
+        SessionManager.generateProfileThreadPool("admin");
+        endProfile = LocalDateTime.now();
+        threadPoolProfileTime = Duration.between(startProfile, endProfile).toMillis();
+        System.out.printf("The thread pool profiling cost %s ms %n",
+                Utils.toInfo(String.valueOf(threadPoolProfileTime)));
+        System.out.printf("The thread pool profiling is %.2f times faster than the base profiling %n",
+                (double) baseProfileTime / threadPoolProfileTime);
+        System.out.printf("The thread pool profiling is %.2f times faster than the parallel profiling %n",
+                (double) parallelProfileTime / threadPoolProfileTime);
     }
 
     @Test
-    @Order(2)
     public void testParallelProfileTime() {
-        LocalDateTime startProfile = LocalDateTime.now();
-        SessionManager.generateProfileParallel("admin");
-        LocalDateTime endProfile = LocalDateTime.now();
-        parallelProfileTime = Duration.between(startProfile, endProfile).toMillis();
-        System.out.printf("The parallel profiling cost %s ms %n", Utils.toInfo(String.valueOf(parallelProfileTime)));
-        System.out.printf("The parallel profiling is %s times faster than the base profiling %n",
-                Utils.toInfo(String.valueOf((double) baseProfileTime / parallelProfileTime)));
         assertTrue(3 * parallelProfileTime <= baseProfileTime);
     }
 
     @Test
-    @Order(3)
     public void testThreadPoolProfileTime() {
-        LocalDateTime startProfile = LocalDateTime.now();
-        SessionManager.generateProfileThreadPool("admin");
-        LocalDateTime endProfile = LocalDateTime.now();
-        long threadPoolProfileTime = Duration.between(startProfile, endProfile).toMillis();
-        System.out.printf("The thread pool profiling cost %s ms %n",
-                Utils.toInfo(String.valueOf(threadPoolProfileTime)));
-        System.out.printf("The thread pool profiling is %s times faster than the base profiling %n",
-                Utils.toInfo(String.valueOf((double) baseProfileTime / threadPoolProfileTime)));
-        System.out.printf("The thread pool profiling is %s times faster than the parallel profiling %n",
-                Utils.toInfo(String.valueOf((double) parallelProfileTime / threadPoolProfileTime)));
         assertTrue(threadPoolProfileTime <= parallelProfileTime * 1.25);
     }
 }
