@@ -46,17 +46,19 @@ In PA3, you need to implement the three main profiling methods along with their 
 can be searched with "TODO" in the codebase.
 
 - `generateProfileBase`: generate the profile for a user using functional programming.
-  - We will use the collect operation to iterate through the sessions and accumulate the statistics. We have already
-  defined the `profileCollector`, which implements the 
-  [Collector](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html) interface
+    - We will use the collect operation to iterate through the sessions and accumulate the statistics. We have already
+      defined the `profileCollector`, which implements the
+      [Collector](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html) interface
 - `generateProfileParallel`: generate the profile for a user using parallel programming (collect)
 - `generateProfileThreadPool`: generate the profile for a user using thread pool programming
 
 The above three methods rely on some common utility methods:
 
-- `accumulateSessionToProfile`: the [accumulator](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html#accumulator--)
+- `accumulateSessionToProfile`:
+  the [accumulator](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html#accumulator--)
   accumulate the sessions to the profile
-- `combineTwoProfiles`: the [combiner](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html#combiner--)
+- `combineTwoProfiles`:
+  the [combiner](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html#combiner--)
   combine two profiles, only used in parallel and threadpool mode
 - `postProcess`: the [finisher](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html#finisher--)
   perform avg and topString operations and delete useless fields in the profile
@@ -73,6 +75,7 @@ the hidden ones, which are different from the ones we provided in the skeleton.
 | Code style                                      | 5%    | You get 5% by default, and every 5 warnings from CheckStyle deducts 1%.         |
 | Public test cases                               | 60%   | Based on the Result of GitHub Action (# of passing tests / # of provided tests) |
 | Performance gain                                | 30%   | Based on the boosting scale of your thread pool version                         |
+| Bonus                                           | 10%   | Based on TA evaluation                                                          |
 
 ## Test
 
@@ -132,13 +135,13 @@ The public test cases and their corresponding statistics are given below:
 
 ### Performance gain
 
-We want the threadpool mode profiling can achieve a comparable, even better performance than the parallel mode. Let's 
+We want the threadpool mode profiling can achieve a comparable, even better performance than the parallel mode. Let's
 denote the ratio of parallelProfileTime and threadPoolProfileTime as s, the performance gain score is computed as:
 
 - s < 0.8: score = 0
-- s > 0.8: score = 30 * (s - 0.8) / (max(s) - 0.8)
+- s >= 0.8: score = 30 * (s - 0.8) / (max(s) - 0.8)
 
-If you can pass the `testThreadPoolProfileTime`, which correspond to the baseline value of s (0.8), you can start 
+If you can pass the `testThreadPoolProfileTime`, which correspond to the baseline value of s (0.8), you can start
 receiving the performance gain score. The max performance gain will get full score (30) for this part.
 
 For your reference, here's the time running on the TA's machine (M2 Macbook Air):
@@ -151,8 +154,9 @@ For your reference, here's the time running on the TA's machine (M2 Macbook Air)
 
 ### Bonus
 
-Implement the [CONCURRENT](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.Characteristics.html#CONCURRENT)
-characteristics for `generateProfileParallel`. You need to convert the `accumulateSessionToProfile` method to a 
+Implement
+the [CONCURRENT](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.Characteristics.html#CONCURRENT)
+characteristics for `generateProfileParallel`. You need to convert the `accumulateSessionToProfile` method to a
 thread-safe version since the `CONCURRENT` character will process the accumulator using multi-threads.
 
 ## Project Structure
