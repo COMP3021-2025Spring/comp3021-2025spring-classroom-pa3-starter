@@ -131,6 +131,9 @@ The public test cases and their corresponding statistics are given below:
 | testParallelProfileTime   | 15%   | `generateProfileParallel`, `accumulateSessionToProfile`, `combineTwoProfiles`, `postProcess`   |
 | testThreadPoolProfileTime | 15%   | `generateProfileThreadPool`, `accumulateSessionToProfile`, `combineTwoProfiles`, `postProcess` |
 
+:warning: Since GitHub Actions has a [2-core CPU limit](https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for--private-repositories)
+for private repo, the result of `testParallelProfileTime` does not count, please submit the screenshot on your local machine :warning:
+
 ### Performance gain
 
 We want the threadpool mode profiling can achieve a comparable, even better performance than the parallel mode. Let's 
@@ -142,7 +145,7 @@ denote the ratio of parallelProfileTime and threadPoolProfileTime as s, the perf
 If you can pass the `testThreadPoolProfileTime`, which correspond to the baseline value of s (0.8), you can start 
 receiving the performance gain score. The max performance gain will get full score (30) for this part.
 
-For your reference, here's the time running on the TA's machine (M2 Macbook Air):
+For your reference, here's the result on the TA's machine (M2 Macbook Air, 8-core CPU, 8GB RAM) for the three modes:
 
 | Profile Mode | Duration (ms) | Scale |
 |--------------|---------------|-------|
