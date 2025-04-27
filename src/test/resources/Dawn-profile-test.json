@@ -1,0 +1,53 @@
+{
+  "topTags": {
+    "test": 7,
+    "useful": 7,
+    "favorite": 5
+  },
+  "sumPromptTokens": 5290,
+  "minTimeCreated": 1740991652,
+  "topModels": {
+    "koala": 1,
+    "vicuna": 19
+  },
+  "numSessions": 20,
+  "maxPromptTokens": 1230,
+  "maxTimeLastExit": 1748543461,
+  "avgTimeLastOpen": 53433,
+  "maxTimeCreated": 1747454376,
+  "minPromptTokens": 16,
+  "sumCompletionTokens": 15135,
+  "minTimeLastExit": 1742821646,
+  "minCompletionTokens": 22,
+  "maxCompletionTokens": 2751,
+  "avgLastSessionDuration": 61,
+  "maxTimeLastOpen": 1748539818,
+  "topWords": {
+    "add": 29,
+    "que": 25,
+    "pain": 34,
+    "social": 52,
+    "balls": 38,
+    "pleasure": 29,
+    "sum": 26,
+    "team": 35,
+    "none": 27,
+    "dp": 37,
+    "content": 39,
+    "target": 62,
+    "security": 30,
+    "indices": 29,
+    "constructivism": 49,
+    "name": 230,
+    "sensor": 28,
+    "time": 33,
+    "nums": 45,
+    "player": 41
+  },
+  "minTimeLastOpen": 1742819088,
+  "avgPromptTokens": 264,
+  "avgCompletionTokens": 756,
+  "avgTimeCreated": 45844,
+  "avgTimeLastExit": 52859,
+  "avgTemperature": 1.1199999999999999
+}

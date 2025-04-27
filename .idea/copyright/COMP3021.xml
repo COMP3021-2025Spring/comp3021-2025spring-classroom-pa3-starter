@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="Copyright (c) &amp;#36;originalComment.match(&quot;Copyright \(c\) (\d+)&quot;, 1, &quot;-&quot;, &quot;&amp;#36;today.year&quot;)&amp;#36;today.year. &#10;Xiang Chen xchenht@connect.ust.hk&#10;This project is developed only for HKUST COMP3021 Programming Assignment" />
+    <option name="myName" value="COMP3021" />
+  </copyright>
+</component>

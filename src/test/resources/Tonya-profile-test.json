@@ -1,0 +1,53 @@
+{
+  "topTags": {
+    "unlike": 3,
+    "favorite": 5,
+    "useful": 3
+  },
+  "sumPromptTokens": 3798,
+  "minTimeCreated": 1740901914,
+  "topModels": {
+    "guanaco": 1,
+    "vicuna": 17
+  },
+  "numSessions": 18,
+  "maxPromptTokens": 1093,
+  "maxTimeLastExit": 1748598831,
+  "avgTimeLastOpen": 45512,
+  "maxTimeCreated": 1748384392,
+  "minPromptTokens": 13,
+  "sumCompletionTokens": 8215,
+  "minTimeLastExit": 1743869932,
+  "minCompletionTokens": 50,
+  "maxCompletionTokens": 991,
+  "avgLastSessionDuration": 59,
+  "maxTimeLastOpen": 1748594098,
+  "topWords": {
+    "ll": 17,
+    "own": 17,
+    "ai": 26,
+    "learning": 18,
+    "language": 18,
+    "message": 17,
+    "sea": 29,
+    "content": 14,
+    "taiwan": 20,
+    "china": 27,
+    "provide": 14,
+    "systems": 37,
+    "management": 17,
+    "machine": 17,
+    "name": 125,
+    "files": 14,
+    "military": 14,
+    "text": 21,
+    "asset": 23,
+    "energy": 33
+  },
+  "minTimeLastOpen": 1743865143,
+  "avgPromptTokens": 211,
+  "avgCompletionTokens": 456,
+  "avgTimeCreated": 37579,
+  "avgTimeLastExit": 49091,
+  "avgTemperature": 1.1444444444444446
+}

@@ -1,0 +1,82 @@
+name: Autograding Tests
+'on':
+  - push
+  - repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Unzip database
+        run: zstd -d db.json.zst
+      - name: testSumStatistics
+        id: testsumstatistics
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: testSumStatistics
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testSumStatistics"
+          timeout: 30
+          max-score: 10
+      - name: testMaxStatistics
+        id: testmaxstatistics
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: testMaxStatistics
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testMaxStatistics"
+          timeout: 30
+          max-score: 10
+      - name: testMinStatistics
+        id: testminstatistics
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: testMinStatistics
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testMinStatistics"
+          timeout: 30
+          max-score: 10
+      - name: testAvgStatistics
+        id: testavgstatistics
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: testAvgStatistics
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testAvgStatistics"
+          timeout: 30
+          max-score: 10
+      - name: testTopStringStatistics
+        id: testtopstringstatistics
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: testTopStringStatistics
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testTopStringStatistics"
+          timeout: 30
+          max-score: 10
+      - name: testGeneralStatistics
+        id: testgeneralstatistics
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: testGeneralStatistics
+          setup-command: ''
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testGeneralStatistics"
+          timeout: 30
+          max-score: 10
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          TESTSUMSTATISTICS_RESULTS: "${{steps.testsumstatistics.outputs.result}}"
+          TESTMAXSTATISTICS_RESULTS: "${{steps.testmaxstatistics.outputs.result}}"
+          TESTMINSTATISTICS_RESULTS: "${{steps.testminstatistics.outputs.result}}"
+          TESTAVGSTATISTICS_RESULTS: "${{steps.testavgstatistics.outputs.result}}"
+          TESTTOPSTRINGSTATISTICS_RESULTS: "${{steps.testtopstringstatistics.outputs.result}}"
+          TESTGENERALSTATISTICS_RESULTS: "${{steps.testgeneralstatistics.outputs.result}}"
+        with:
+          runners: testsumstatistics,testmaxstatistics,testminstatistics,testavgstatistics,testtopstringstatistics,testgeneralstatistics

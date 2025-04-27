@@ -1,0 +1,53 @@
+{
+  "topTags": {
+    "unlike": 3,
+    "done": 5,
+    "favorite": 4
+  },
+  "sumPromptTokens": 1294,
+  "minTimeCreated": 1740895231,
+  "topModels": {
+    "koala": 1,
+    "vicuna": 13
+  },
+  "numSessions": 14,
+  "maxPromptTokens": 590,
+  "maxTimeLastExit": 1748702217,
+  "avgTimeLastOpen": 48220,
+  "maxTimeCreated": 1748242877,
+  "minPromptTokens": 14,
+  "sumCompletionTokens": 8449,
+  "minTimeLastExit": 1743972590,
+  "minCompletionTokens": 35,
+  "maxCompletionTokens": 1459,
+  "avgLastSessionDuration": 53,
+  "maxTimeLastOpen": 1748697517,
+  "topWords": {
+    "sky": 16,
+    "product": 15,
+    "data": 29,
+    "learn": 16,
+    "learning": 24,
+    "experience": 16,
+    "iphone": 36,
+    "food": 17,
+    "et": 21,
+    "network": 17,
+    "stands": 26,
+    "div": 18,
+    "la": 18,
+    "light": 15,
+    "safety": 16,
+    "name": 74,
+    "un": 17,
+    "model": 15,
+    "internet": 27,
+    "connect": 23
+  },
+  "minTimeLastOpen": 1743966352,
+  "avgPromptTokens": 92,
+  "avgCompletionTokens": 603,
+  "avgTimeCreated": 52519,
+  "avgTimeLastExit": 51433,
+  "avgTemperature": 1.0571428571428574
+}

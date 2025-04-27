@@ -1,0 +1,53 @@
+{
+  "topTags": {
+    "test": 8,
+    "unlike": 5,
+    "demo": 10
+  },
+  "sumPromptTokens": 7352,
+  "minTimeCreated": 1740975576,
+  "topModels": {
+    "koala": 3,
+    "vicuna": 21
+  },
+  "numSessions": 24,
+  "maxPromptTokens": 1574,
+  "maxTimeLastExit": 1748678999,
+  "avgTimeLastOpen": 45244,
+  "maxTimeCreated": 1748524276,
+  "minPromptTokens": 20,
+  "sumCompletionTokens": 21541,
+  "minTimeLastExit": 1742982386,
+  "minCompletionTokens": 69,
+  "maxCompletionTokens": 7342,
+  "avgLastSessionDuration": 55,
+  "maxTimeLastOpen": 1748676388,
+  "topWords": {
+    "abuse": 35,
+    "data": 63,
+    "yes": 36,
+    "happy": 46,
+    "feel": 35,
+    "mom": 59,
+    "body": 31,
+    "td": 56,
+    "mother": 45,
+    "file": 32,
+    "bikini": 45,
+    "name": 356,
+    "attention": 33,
+    "create": 32,
+    "keystore": 51,
+    "try": 32,
+    "time": 50,
+    "wild": 33,
+    "key": 39,
+    "tr": 36
+  },
+  "minTimeLastOpen": 1742979818,
+  "avgPromptTokens": 306,
+  "avgCompletionTokens": 897,
+  "avgTimeCreated": 34810,
+  "avgTimeLastExit": 48623,
+  "avgTemperature": 1.1
+}
