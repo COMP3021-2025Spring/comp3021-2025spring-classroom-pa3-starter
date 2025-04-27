@@ -109,12 +109,12 @@ public class SessionManager {
         if (Objects.equals(user, "admin"))
             return db.toMap()
                     .keySet()
-                    .parallelStream()
+                    .stream()
                     .flatMap(SessionManager::getSessionsStream);
         else
             return db.getJSONObject(user).toMap()
                     .keySet()
-                    .parallelStream()
+                    .stream()
                     .map(uid -> getSession(user, uid));
     }
 
@@ -193,6 +193,7 @@ public class SessionManager {
 
     /**
      * Initialize an empty profile
+     * Supplier in the collect method
      *
      * @return the empty profile
      */
@@ -299,75 +300,82 @@ public class SessionManager {
     }
 
     /**
-     * Generate a profile for the user and save as json file using reduce
-     * Casting the epoch time from Long to Integer is safe because we will not encounter the
-     * <a href="https://en.wikipedia.org/wiki/Year_2038_problem">Year 2038 problem</a>.
+     * Accumulate the session to the profile
      *
-     * @param user the user to generate profile for
+     * @param profile the profile to accumulate to
+     * @param session the session to accumulate
      */
-    static JSONObject generateProfile(String user) {
-        // iterate through all sessions and collect statistics
-        JSONObject profile = getSessionsStream(user).collect(
-                // Supplier: create an empty profile
-                SessionManager::createEmptyProfile,
-                (p, s) -> {
-                    // Accumulator: update the profile with session data
-                    p.increment("numSessions")
-                            .put("sumPromptTokens", p.getInt("sumPromptTokens") + s.getInt("totalPromptTokens"))
-                            .put("sumCompletionTokens", p.getInt("sumCompletionTokens") + s.getInt("totalCompletionTokens"))
-                            .put("sumTemperature", p.getDouble("sumTemperature") + s.getDouble("temperature"))
-                            .put("sumTimeCreated", p.getInt("sumTimeCreated") + s.getInt("timeCreated") % Utils.SoD)
-                            .put("sumTimeLastOpen", p.getInt("sumTimeLastOpen") + s.getInt("timeLastOpen") % Utils.SoD)
-                            .put("sumTimeLastExit", p.getInt("sumTimeLastExit") + s.getInt("timeLastExit") % Utils.SoD)
-                            .put("sumLastSessionDuration", p.getInt("sumLastSessionDuration")
-                                    + Utils.getDuration(s.getInt("timeLastOpen"), s.getInt("timeLastExit")))
-                            .put("sumPrice", p.getDouble("sumPrice")
-                                    + (s.getInt("totalPromptTokens") * unitPromptPrice
-                                    + s.getInt("totalCompletionTokens") * unitCompletionPrice)
-                                    * Integer.parseInt(s.getString("clientName").split("[-b]")[1]))
-                            .put("maxPromptTokens", Math.max(p.getInt("maxPromptTokens"), s.getInt("totalPromptTokens")))
-                            .put("maxCompletionTokens", Math.max(p.getInt("maxCompletionTokens"), s.getInt("totalCompletionTokens")))
-                            .put("maxTimeCreated", Math.max(p.getInt("maxTimeCreated"), s.getInt("timeCreated")))
-                            .put("maxTimeLastOpen", Math.max(p.getInt("maxTimeLastOpen"), s.getInt("timeLastOpen")))
-                            .put("maxTimeLastExit", Math.max(p.getInt("maxTimeLastExit"), s.getInt("timeLastExit")))
-                            .put("minPromptTokens", Math.min(p.getInt("minPromptTokens"), s.getInt("totalPromptTokens")))
-                            .put("minCompletionTokens", Math.min(p.getInt("minCompletionTokens"), s.getInt("totalCompletionTokens")))
-                            .put("minTimeCreated", Math.min(p.getInt("minTimeCreated"), s.getInt("timeCreated")))
-                            .put("minTimeLastOpen", Math.min(p.getInt("minTimeLastOpen"), s.getInt("timeLastOpen")))
-                            .put("minTimeLastExit", Math.min(p.getInt("minTimeLastExit"), s.getInt("timeLastExit")))
-                            .put("topTags", updateTopString(p.getJSONObject("topTags"),
-                                    s.getJSONArray("tags").toList().stream().map(String::valueOf)))
-                            .put("topWords", updateTopString(p.getJSONObject("topWords"),
-                                    tokenizeMessages(s).filter(word -> !ignoredWords.contains(word))))
-                            .put("topModels", updateTopString(p.getJSONObject("topModels"),
-                                    Stream.of(s.getString("clientName").split("-")[0])));
-                },
-                (p1, p2) -> {
-                    // Combiner: merge two profiles (used in parallel streams)
-                    p1.put("numSessions", p1.getInt("numSessions") + p2.getInt("numSessions"))
-                            .put("sumPromptTokens", p1.getInt("sumPromptTokens") + p2.getInt("sumPromptTokens"))
-                            .put("sumCompletionTokens", p1.getInt("sumCompletionTokens") + p2.getInt("sumCompletionTokens"))
-                            .put("sumTemperature", p1.getDouble("sumTemperature") + p2.getDouble("sumTemperature"))
-                            .put("sumTimeCreated", p1.getInt("sumTimeCreated") + p2.getInt("sumTimeCreated"))
-                            .put("sumTimeLastOpen", p1.getInt("sumTimeLastOpen") + p2.getInt("sumTimeLastOpen"))
-                            .put("sumTimeLastExit", p1.getInt("sumTimeLastExit") + p2.getInt("sumTimeLastExit"))
-                            .put("sumLastSessionDuration", p1.getInt("sumLastSessionDuration") + p2.getInt("sumLastSessionDuration"))
-                            .put("sumPrice", p1.getDouble("sumPrice") + p2.getDouble("sumPrice"))
-                            .put("maxPromptTokens", Math.max(p1.getInt("maxPromptTokens"), p2.getInt("maxPromptTokens")))
-                            .put("maxCompletionTokens", Math.max(p1.getInt("maxCompletionTokens"), p2.getInt("maxCompletionTokens")))
-                            .put("maxTimeCreated", Math.max(p1.getInt("maxTimeCreated"), p2.getInt("maxTimeCreated")))
-                            .put("maxTimeLastOpen", Math.max(p1.getInt("maxTimeLastOpen"), p2.getInt("maxTimeLastOpen")))
-                            .put("maxTimeLastExit", Math.max(p1.getInt("maxTimeLastExit"), p2.getInt("maxTimeLastExit")))
-                            .put("minPromptTokens", Math.min(p1.getInt("minPromptTokens"), p2.getInt("minPromptTokens")))
-                            .put("minCompletionTokens", Math.min(p1.getInt("minCompletionTokens"), p2.getInt("minCompletionTokens")))
-                            .put("minTimeCreated", Math.min(p1.getInt("minTimeCreated"), p2.getInt("minTimeCreated")))
-                            .put("minTimeLastOpen", Math.min(p1.getInt("minTimeLastOpen"), p2.getInt("minTimeLastOpen")))
-                            .put("minTimeLastExit", Math.min(p1.getInt("minTimeLastExit"), p2.getInt("minTimeLastExit")))
-                            .put("topTags", mergeTopString(p1.getJSONObject("topTags"), p2.getJSONObject("topTags")))
-                            .put("topWords", mergeTopString(p1.getJSONObject("topWords"), p2.getJSONObject("topWords")))
-                            .put("topModels", mergeTopString(p1.getJSONObject("topModels"), p2.getJSONObject("topModels")));
-                }
-        );
+    static void accumulateSessionToProfile(JSONObject profile, JSONObject session) {
+        profile.increment("numSessions")
+                .put("sumPromptTokens", profile.getInt("sumPromptTokens") + session.getInt("totalPromptTokens"))
+                .put("sumCompletionTokens", profile.getInt("sumCompletionTokens") + session.getInt("totalCompletionTokens"))
+                .put("sumTemperature", profile.getDouble("sumTemperature") + session.getDouble("temperature"))
+                .put("sumTimeCreated", profile.getInt("sumTimeCreated") + session.getInt("timeCreated") % Utils.SoD)
+                .put("sumTimeLastOpen", profile.getInt("sumTimeLastOpen") + session.getInt("timeLastOpen") % Utils.SoD)
+                .put("sumTimeLastExit", profile.getInt("sumTimeLastExit") + session.getInt("timeLastExit") % Utils.SoD)
+                .put("sumLastSessionDuration", profile.getInt("sumLastSessionDuration")
+                        + Utils.getDuration(session.getInt("timeLastOpen"), session.getInt("timeLastExit")))
+                .put("sumPrice", profile.getDouble("sumPrice")
+                        + (session.getInt("totalPromptTokens") * unitPromptPrice
+                        + session.getInt("totalCompletionTokens") * unitCompletionPrice)
+                        * Integer.parseInt(session.getString("clientName").split("[-b]")[1]))
+                .put("maxPromptTokens", Math.max(profile.getInt("maxPromptTokens"), session.getInt("totalPromptTokens")))
+                .put("maxCompletionTokens", Math.max(profile.getInt("maxCompletionTokens"), session.getInt("totalCompletionTokens")))
+                .put("maxTimeCreated", Math.max(profile.getInt("maxTimeCreated"), session.getInt("timeCreated")))
+                .put("maxTimeLastOpen", Math.max(profile.getInt("maxTimeLastOpen"), session.getInt("timeLastOpen")))
+                .put("maxTimeLastExit", Math.max(profile.getInt("maxTimeLastExit"), session.getInt("timeLastExit")))
+                .put("minPromptTokens", Math.min(profile.getInt("minPromptTokens"), session.getInt("totalPromptTokens")))
+                .put("minCompletionTokens", Math.min(profile.getInt("minCompletionTokens"), session.getInt("totalCompletionTokens")))
+                .put("minTimeCreated", Math.min(profile.getInt("minTimeCreated"), session.getInt("timeCreated")))
+                .put("minTimeLastOpen", Math.min(profile.getInt("minTimeLastOpen"), session.getInt("timeLastOpen")))
+                .put("minTimeLastExit", Math.min(profile.getInt("minTimeLastExit"), session.getInt("timeLastExit")))
+                .put("topTags", updateTopString(profile.getJSONObject("topTags"),
+                        session.getJSONArray("tags").toList().stream().map(String::valueOf)))
+                .put("topWords", updateTopString(profile.getJSONObject("topWords"),
+                        tokenizeMessages(session).filter(word -> !ignoredWords.contains(word))))
+                .put("topModels", updateTopString(profile.getJSONObject("topModels"),
+                        Stream.of(session.getString("clientName").split("-")[0])));
+    }
+
+    /**
+     * Combine two profiles into one
+     *
+     * @param profile1 the accumulated profile from one stream group
+     * @param profile2 the accumulated profile from another stream group
+     */
+    static void combineTwoProfiles(JSONObject profile1, JSONObject profile2) {
+        profile1.put("numSessions", profile1.getInt("numSessions") + profile2.getInt("numSessions"))
+                .put("sumPromptTokens", profile1.getInt("sumPromptTokens") + profile2.getInt("sumPromptTokens"))
+                .put("sumCompletionTokens", profile1.getInt("sumCompletionTokens") + profile2.getInt("sumCompletionTokens"))
+                .put("sumTemperature", profile1.getDouble("sumTemperature") + profile2.getDouble("sumTemperature"))
+                .put("sumTimeCreated", profile1.getInt("sumTimeCreated") + profile2.getInt("sumTimeCreated"))
+                .put("sumTimeLastOpen", profile1.getInt("sumTimeLastOpen") + profile2.getInt("sumTimeLastOpen"))
+                .put("sumTimeLastExit", profile1.getInt("sumTimeLastExit") + profile2.getInt("sumTimeLastExit"))
+                .put("sumLastSessionDuration", profile1.getInt("sumLastSessionDuration") + profile2.getInt("sumLastSessionDuration"))
+                .put("sumPrice", profile1.getDouble("sumPrice") + profile2.getDouble("sumPrice"))
+                .put("maxPromptTokens", Math.max(profile1.getInt("maxPromptTokens"), profile2.getInt("maxPromptTokens")))
+                .put("maxCompletionTokens", Math.max(profile1.getInt("maxCompletionTokens"), profile2.getInt("maxCompletionTokens")))
+                .put("maxTimeCreated", Math.max(profile1.getInt("maxTimeCreated"), profile2.getInt("maxTimeCreated")))
+                .put("maxTimeLastOpen", Math.max(profile1.getInt("maxTimeLastOpen"), profile2.getInt("maxTimeLastOpen")))
+                .put("maxTimeLastExit", Math.max(profile1.getInt("maxTimeLastExit"), profile2.getInt("maxTimeLastExit")))
+                .put("minPromptTokens", Math.min(profile1.getInt("minPromptTokens"), profile2.getInt("minPromptTokens")))
+                .put("minCompletionTokens", Math.min(profile1.getInt("minCompletionTokens"), profile2.getInt("minCompletionTokens")))
+                .put("minTimeCreated", Math.min(profile1.getInt("minTimeCreated"), profile2.getInt("minTimeCreated")))
+                .put("minTimeLastOpen", Math.min(profile1.getInt("minTimeLastOpen"), profile2.getInt("minTimeLastOpen")))
+                .put("minTimeLastExit", Math.min(profile1.getInt("minTimeLastExit"), profile2.getInt("minTimeLastExit")))
+                .put("topTags", mergeTopString(profile1.getJSONObject("topTags"), profile2.getJSONObject("topTags")))
+                .put("topWords", mergeTopString(profile1.getJSONObject("topWords"), profile2.getJSONObject("topWords")))
+                .put("topModels", mergeTopString(profile1.getJSONObject("topModels"), profile2.getJSONObject("topModels")));
+    }
+
+    /**
+     * Post process the profile, compute admin, average, top N statistics and remove useless statistics
+     *
+     * @param profile the profile to post process
+     * @param user the user to post process for
+     * @return the post processed profile
+     */
+    static JSONObject postProcess(JSONObject profile, String user) {
         // post process
         int numSessions = profile.getInt("numSessions");
         // admin only statistics
@@ -394,6 +402,51 @@ public class SessionManager {
                 .put("topTags", limitTopNString(profile.getJSONObject("topTags"), 3))
                 .put("topWords", limitTopNString(profile.getJSONObject("topWords"), 20))
                 .put("topModels", limitTopNString(profile.getJSONObject("topModels"), 5));
+    }
+
+    /**
+     * Generate the profile using collect + stream
+     *
+     * @param user the user to generate profile for
+     * @return the profile
+     */
+    static JSONObject generateProfileBase(String user) {
+        // iterate through all sessions and collect statistics
+        JSONObject profile = getSessionsStream(user).collect(
+                SessionManager::createEmptyProfile,
+                SessionManager::accumulateSessionToProfile,
+                SessionManager::combineTwoProfiles
+        );
+       return postProcess(profile, user);
+    }
+
+    /**
+     * Generate the profile using collect + parallel stream
+     *
+     * @param user the user to generate profile for
+     * @return the profile
+     */
+    static JSONObject generateProfileParallel(String user) {
+        // iterate through all sessions and collect statistics
+        JSONObject profile = getSessionsStream(user).parallel().collect(
+                // Supplier: create an empty profile
+                SessionManager::createEmptyProfile,
+                SessionManager::accumulateSessionToProfile,
+                SessionManager::combineTwoProfiles
+        );
+        return postProcess(profile, user);
+    }
+
+    /**
+     * Common interface for generating profile, by default using parallel version
+     * Casting the epoch time from Long to Integer is safe because we will not encounter the
+     * <a href="https://en.wikipedia.org/wiki/Year_2038_problem">Year 2038 problem</a>.
+     *
+     * @param user the user to generate profile for
+     * @return the profile
+     */
+    static JSONObject generateProfile(String user) {
+        return generateProfileParallel(user);
     }
 
     /**
