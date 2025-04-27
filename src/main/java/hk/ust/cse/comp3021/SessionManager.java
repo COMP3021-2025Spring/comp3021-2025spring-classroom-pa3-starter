@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 /**
@@ -343,8 +344,8 @@ public class SessionManager {
      * @param profile1 the accumulated profile from one stream group
      * @param profile2 the accumulated profile from another stream group
      */
-    static void combineTwoProfiles(JSONObject profile1, JSONObject profile2) {
-        profile1.put("numSessions", profile1.getInt("numSessions") + profile2.getInt("numSessions"))
+    static JSONObject combineTwoProfiles(JSONObject profile1, JSONObject profile2) {
+        return profile1.put("numSessions", profile1.getInt("numSessions") + profile2.getInt("numSessions"))
                 .put("sumPromptTokens", profile1.getInt("sumPromptTokens") + profile2.getInt("sumPromptTokens"))
                 .put("sumCompletionTokens", profile1.getInt("sumCompletionTokens") + profile2.getInt("sumCompletionTokens"))
                 .put("sumTemperature", profile1.getDouble("sumTemperature") + profile2.getDouble("sumTemperature"))
@@ -372,17 +373,10 @@ public class SessionManager {
      * Post process the profile, compute admin, average, top N statistics and remove useless statistics
      *
      * @param profile the profile to post process
-     * @param user the user to post process for
      * @return the post processed profile
      */
-    static JSONObject postProcess(JSONObject profile, String user) {
-        // post process
+    static JSONObject postProcess(JSONObject profile) {
         int numSessions = profile.getInt("numSessions");
-        // admin only statistics
-        if (user.equals("admin")) {
-            profile.put("numUsers", getNumUsers());
-            profile.put("avgSessions", numSessions / getNumUsers());
-        }
         return profile
                 // get average statistics
                 .put("avgTemperature", numSessions == 0 ? 0.0 : profile.getDouble("sumTemperature") / numSessions)
@@ -405,19 +399,27 @@ public class SessionManager {
     }
 
     /**
+     * The collector to collect the profile
+     * The accumulator is accumulateSessionToProfile
+     * The combiner is combineTwoProfiles
+     * The finisher is postProcess
+     * <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html">...</a>
+     */
+    static Collector<JSONObject, JSONObject, JSONObject> profileCollector = Collector.of(
+            SessionManager::createEmptyProfile,
+            SessionManager::accumulateSessionToProfile,
+            SessionManager::combineTwoProfiles,
+            SessionManager::postProcess
+    );
+
+    /**
      * Generate the profile using collect + stream
      *
      * @param user the user to generate profile for
      * @return the profile
      */
     static JSONObject generateProfileBase(String user) {
-        // iterate through all sessions and collect statistics
-        JSONObject profile = getSessionsStream(user).collect(
-                SessionManager::createEmptyProfile,
-                SessionManager::accumulateSessionToProfile,
-                SessionManager::combineTwoProfiles
-        );
-       return postProcess(profile, user);
+        return getSessionsStream(user).collect(profileCollector);
     }
 
     /**
@@ -427,18 +429,22 @@ public class SessionManager {
      * @return the profile
      */
     static JSONObject generateProfileParallel(String user) {
-        // iterate through all sessions and collect statistics
-        JSONObject profile = getSessionsStream(user).parallel().collect(
-                // Supplier: create an empty profile
-                SessionManager::createEmptyProfile,
-                SessionManager::accumulateSessionToProfile,
-                SessionManager::combineTwoProfiles
-        );
-        return postProcess(profile, user);
+        return getSessionsStream(user).parallel().collect(profileCollector);
     }
 
     /**
-     * Common interface for generating profile, by default using parallel version
+     * Generate the profile using Fork & Join Pool
+     * The goal is to implement a better parallel profiling
+     *
+     * @param user the user to generate profile for
+     * @return the profile
+     */
+    static JSONObject generateProfileForkJoin(String user) {
+        return getSessionsStream(user).parallel().collect(profileCollector);
+    }
+
+    /**
+     * Common interface for generating profile, by default using the parallel version
      * Casting the epoch time from Long to Integer is safe because we will not encounter the
      * <a href="https://en.wikipedia.org/wiki/Year_2038_problem">Year 2038 problem</a>.
      *
@@ -446,7 +452,13 @@ public class SessionManager {
      * @return the profile
      */
     static JSONObject generateProfile(String user) {
-        return generateProfileParallel(user);
+        JSONObject profile = generateProfileParallel(user);
+        // admin only statistics
+        if (user.equals("admin")) {
+            profile.put("numUsers", getNumUsers());
+            profile.put("avgSessions", profile.getInt("numSessions") / getNumUsers());
+        }
+        return profile;
     }
 
     /**
