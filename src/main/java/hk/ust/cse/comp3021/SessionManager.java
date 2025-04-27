@@ -461,30 +461,42 @@ public class SessionManager {
         // get the number of available processors
         int numProcessors = Runtime.getRuntime().availableProcessors();
         // create a thread pool of numProcessors threads
-        ExecutorService executor = Executors.newFixedThreadPool(4 * numProcessors);
+        ExecutorService executor = Executors.newFixedThreadPool(numProcessors);
         List<Future<?>> futures = new ArrayList<>();
-        // submit the tasks to the thread pool
-        JSONObject profile = createEmptyProfile();
-        // start the tasks
+        // split stream into groups
+        List<JSONObject> sessions = getSessionsStream(user).toList();
+        int numGroups = Optional.ofNullable(System.getenv("NUM_GROUPS"))
+                .map(Integer::parseInt)
+                .orElse(numProcessors);
+        int groupSize = sessions.size() / numGroups;
+        JSONObject sharedProfile = createEmptyProfile();
+        // submit each group to thread pool
+        for (int i = 0; i < numGroups; i++) {
+            int start = i * groupSize;
+            int end = i == numGroups - 1 ? sessions.size() : start + groupSize;
+            List<JSONObject> group = sessions.subList(start, end);
+            // submit each session in the group to the thread pool
+            futures.add(executor.submit(() -> {
+                JSONObject groupProfile = createEmptyProfile();
+                for (JSONObject session : group) {
+                    accumulateSessionToProfile(groupProfile, session);
+                }
+                return groupProfile;
+            }));
+        }
         try {
-            // get the sessions stream and submit each session to the thread pool
-            getSessionsStream(user).forEach(session -> futures.add(
-                    executor.submit(() -> {
-                        synchronized (profile) {
-                            accumulateSessionToProfile(profile, session);
-                        }
-                    })));
             // wait for all tasks to complete
             for (Future<?> future : futures) {
-                future.get();
+                // merge the profile result from each group to the shared result
+                sharedProfile = combineTwoProfiles(sharedProfile, (JSONObject) future.get());
             }
-            // shutdown the executor
-            executor.shutdown();
-        } catch (Exception e) {
+        } catch (ExecutionException | InterruptedException e) {
             Utils.printlnError("Failed to generate profile: " + e.getMessage());
         }
+        // shutdown the executor
+        executor.shutdown();
         // post process the profile
-        return postProcess(profile);
+        return postProcess(sharedProfile);
     }
 
     /**
@@ -497,8 +509,7 @@ public class SessionManager {
      */
     static JSONObject generateProfile(String user) {
         // read from env variable
-        String profileMode = System.getenv("PROFILE_MODE");
-        profileMode = profileMode == null ? "parallel" : profileMode;
+        String profileMode = Optional.ofNullable(System.getenv("PROFILE_MODE")).orElse("parallel");
         JSONObject profile = switch (profileMode) {
             case "base" -> generateProfileBase(user);
             case "threadpool" -> generateProfileThreadPool(user);
