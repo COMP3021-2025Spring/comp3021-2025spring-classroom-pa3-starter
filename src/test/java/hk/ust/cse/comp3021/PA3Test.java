@@ -29,18 +29,19 @@ public class PA3Test {
         SessionManager.loadDatabase();
     }
 
-    public void getBaseProfileTime() {
+    @Test
+    @Order(1)
+    public void testBaseProfileTime() {
         LocalDateTime startProfile = LocalDateTime.now();
         SessionManager.generateProfileBase("admin");
         LocalDateTime endProfile = LocalDateTime.now();
         baseProfileTime = Duration.between(startProfile, endProfile).toMillis();
-        System.out.printf("The serial profiling cost %s ms %n", Utils.toInfo(String.valueOf(baseProfileTime)));
+        System.out.printf("The base (serial) profiling cost %s ms %n", Utils.toInfo(String.valueOf(baseProfileTime)));
     }
 
     @Test
-    @Order(1)
+    @Order(2)
     public void testParallelProfileTime() {
-        getBaseProfileTime();
         LocalDateTime startProfile = LocalDateTime.now();
         SessionManager.generateProfileParallel("admin");
         LocalDateTime endProfile = LocalDateTime.now();
@@ -50,13 +51,13 @@ public class PA3Test {
     }
 
     @Test
-    @Order(2)
-    public void testForkJoinProfileTime() {
+    @Order(3)
+    public void testThreadPoolProfileTime() {
         LocalDateTime startProfile = LocalDateTime.now();
-        SessionManager.generateProfileParallel("admin");
+        SessionManager.generateProfileThreadPool("admin");
         LocalDateTime endProfile = LocalDateTime.now();
-        long forkJoinProfileTime = Duration.between(startProfile, endProfile).toMillis();
-        System.out.printf("The fork & join profiling cost %s ms %n", Utils.toInfo(String.valueOf(forkJoinProfileTime)));
-        assertTrue(forkJoinProfileTime <= parallelProfileTime);
+        long threadPoolProfileTime = Duration.between(startProfile, endProfile).toMillis();
+        System.out.printf("The thread pool profiling cost %s ms %n", Utils.toInfo(String.valueOf(threadPoolProfileTime)));
+        assertTrue(threadPoolProfileTime <= parallelProfileTime);
     }
 }
