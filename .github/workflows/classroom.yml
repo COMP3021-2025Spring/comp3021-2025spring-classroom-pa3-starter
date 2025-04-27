@@ -15,68 +15,58 @@ jobs:
         uses: actions/checkout@v4
       - name: Unzip database
         run: zstd -d db.json.zst
-      - name: testSumStatistics
-        id: testsumstatistics
+      - name: testBaseProfile
+        id: testbaseprofile
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: testSumStatistics
+          test-name: testBaseProfile
           setup-command: ''
-          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testSumStatistics"
-          timeout: 30
+          command: PROFILE_MODE=base ./gradlew test --rerun-tasks --tests "hk.ust.cse.comp3021.PA2Test.test*"
+          timeout: 10
           max-score: 10
-      - name: testMaxStatistics
-        id: testmaxstatistics
+      - name: testParallelProfile
+        id: testparallelprofile
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: testMaxStatistics
+          test-name: testParallelProfile
           setup-command: ''
-          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testMaxStatistics"
+          command: PROFILE_MODE=parallel ./gradlew test --rerun-tasks --tests "hk.ust.cse.comp3021.PA2Test.test*"
           timeout: 30
           max-score: 10
-      - name: testMinStatistics
-        id: testminstatistics
+      - name: testThreadPoolProfile
+        id: testthreadpoolprofile
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: testMinStatistics
+          test-name: testThreadPoolProfile
           setup-command: ''
-          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testMinStatistics"
+          command: PROFILE_MODE=threadpool ./gradlew test --rerun-tasks --tests "hk.ust.cse.comp3021.PA2Test.test*"
           timeout: 30
           max-score: 10
-      - name: testAvgStatistics
-        id: testavgstatistics
+      - name: testParallelProfileTime
+        id: testparallelprofiletime
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: testAvgStatistics
+          test-name: testParallelProfileTime
           setup-command: ''
-          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testAvgStatistics"
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA3Test.testParallelProfileTime"
           timeout: 30
-          max-score: 10
-      - name: testTopStringStatistics
-        id: testtopstringstatistics
+          max-score: 15
+      - name: testThreadPoolProfileTime
+        id: testthreadpoolprofiletime
         uses: classroom-resources/autograding-command-grader@v1
         with:
-          test-name: testTopStringStatistics
+          test-name: testThreadPoolProfileTime
           setup-command: ''
-          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testTopStringStatistics"
-          timeout: 30
-          max-score: 10
-      - name: testGeneralStatistics
-        id: testgeneralstatistics
-        uses: classroom-resources/autograding-command-grader@v1
-        with:
-          test-name: testGeneralStatistics
-          setup-command: ''
-          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA2Test.testGeneralStatistics"
-          timeout: 30
-          max-score: 10
+          command: ./gradlew test --tests "hk.ust.cse.comp3021.PA3Test.testThreadPoolProfileTime"
+          timeout: 10
+          max-score: 15
       - name: Autograding Reporter
         uses: classroom-resources/autograding-grading-reporter@v1
         env:
-          TESTSUMSTATISTICS_RESULTS: "${{steps.testsumstatistics.outputs.result}}"
-          TESTMAXSTATISTICS_RESULTS: "${{steps.testmaxstatistics.outputs.result}}"
-          TESTMINSTATISTICS_RESULTS: "${{steps.testminstatistics.outputs.result}}"
-          TESTAVGSTATISTICS_RESULTS: "${{steps.testavgstatistics.outputs.result}}"
-          TESTTOPSTRINGSTATISTICS_RESULTS: "${{steps.testtopstringstatistics.outputs.result}}"
-          TESTGENERALSTATISTICS_RESULTS: "${{steps.testgeneralstatistics.outputs.result}}"
+          TESTBASEPROFILE_RESULTS: "${{steps.testbaseprofile.outputs.result}}"
+          TESTPARALLELPROFILE_RESULTS: "${{steps.testparallelprofile.outputs.result}}"
+          TESTTHREADPOOLPROFILE_RESULTS: "${{steps.testthreadpoolprofile.outputs.result}}"
+          TESTPARALLELPROFILETIME_RESULTS: "${{steps.testparallelprofiletime.outputs.result}}"
+          TESTTHREADPOOLPROFILETIME_RESULTS: "${{steps.testthreadpoolprofiletime.outputs.result}}"
         with:
-          runners: testsumstatistics,testmaxstatistics,testminstatistics,testavgstatistics,testtopstringstatistics,testgeneralstatistics
+          runners: testbaseprofile,testparallelprofile,testthreadpoolprofile,testparallelprofiletime,testthreadpoolprofiletime
