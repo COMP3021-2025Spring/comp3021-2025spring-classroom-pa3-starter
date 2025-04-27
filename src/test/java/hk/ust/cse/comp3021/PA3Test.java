@@ -62,7 +62,9 @@ public class PA3Test {
 
     @Test
     public void testParallelProfileTime() {
-        assertTrue(3 * parallelProfileTime <= baseProfileTime);
+        int numProcessors = Runtime.getRuntime().availableProcessors();
+        System.out.println("Number of processors: " + Utils.toInfo(String.valueOf(numProcessors)));
+        assertTrue(parallelProfileTime * (numProcessors / 2 - 1) <= baseProfileTime);
     }
 
     @Test
