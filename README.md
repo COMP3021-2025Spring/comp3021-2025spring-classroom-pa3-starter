@@ -132,20 +132,29 @@ The public test cases and their corresponding statistics are given below:
 | testThreadPoolProfileTime | 15%   | `generateProfileThreadPool`, `accumulateSessionToProfile`, `combineTwoProfiles`, `postProcess` |
 
 :warning: Since GitHub Actions has a [2-core CPU limit](https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for--private-repositories)
-for private repo, the result of `testParallelProfileTime` does not count, please submit the screenshot on your local machine :warning:
+for private repo, the results of `testParallelProfileTime` and `testThreadPoolProfileTime` from GitHub Actions are not meaningful. The TA will run every student's code under the same 8-core machine :warning:
 
 ### Performance gain
 
 We want the threadpool mode profiling can achieve a comparable, even better performance than the parallel mode. Let's 
-denote the ratio of parallelProfileTime and threadPoolProfileTime as s, the performance gain score is computed as:
+denote the ratio of `parallelProfileTime` and `threadPoolProfileTime` as s, the performance gain score is computed as:
 
 - s < 0.8: score = 0
 - s > 0.8: score = 30 * (s - 0.8) / (max(s) - 0.8)
 
 If you can pass the `testThreadPoolProfileTime`, which correspond to the baseline value of s (0.8), you can start 
-receiving the performance gain score. The max performance gain will get full score (30) for this part.
+receiving the performance gain score. The max performance gain will get full score (30) for this part. For each student, 
+the s value will be evaluated 3 times, and the average will be used in computing the score.
 
-For your reference, here's the result on the TA's machine (M2 Macbook Air, 8-core CPU, 8GB RAM) for the three modes:
+We have two hints for you to increase the performance of the threadpool mode:
+
+- The database file is fixed. You can do some pre-analysis on the db.json or observe the threadpool's process, better split
+  the workload for each thread, finally reducing the idle wait time.
+- The parallel stream uses full available core by default. Since thread create/destory also incurs overhead, bigger thread pool
+  does not always mean better performance. You can study on the size of thread pool.
+
+For your reference, here's the result on the TA's machine (M2 Macbook Air, 8-core CPU, 8GB RAM) for the three modes. For the threadpool
+mode, we split the sessions equally to each thread.
 
 | Profile Mode | Duration (ms) | Scale |
 |--------------|---------------|-------|
@@ -153,11 +162,15 @@ For your reference, here's the result on the TA's machine (M2 Macbook Air, 8-cor
 | parallel     | 3001          | 4.15  |
 | threadpool   | 2736          | 4.55  |
 
+⚠️ Again, the scale might be affected by the # of CPU cores, the scale score will be evaluated on the same 8-core machine ⚠️  
+
 ### Bonus
 
 Implement the [CONCURRENT](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.Characteristics.html#CONCURRENT)
 characteristics for `generateProfileParallel`. You need to convert the `accumulateSessionToProfile` method to a 
-thread-safe version since the `CONCURRENT` character will process the accumulator using multi-threads.
+thread-safe version since the `CONCURRENT` character will process the accumulator using multi-threads. Specifically, since the 
+`JSONObject` is not thread-safe ([it uses HashMap rather than ConcurrentHashMap](https://github.com/stleary/JSON-java/blob/master/src/main/java/org/json/JSONObject.java#L165),
+you have to resolve the write conflicts when accumulating and combining the profile.
 
 ## Project Structure
 
