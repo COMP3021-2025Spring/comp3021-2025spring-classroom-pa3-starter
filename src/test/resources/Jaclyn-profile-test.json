@@ -5,6 +5,7 @@
     "favorite": 15
   },
   "sumPromptTokens": 14784,
+  "sumPrice": 0.01799196666,
   "minTimeCreated": 1740889660,
   "topModels": {
     "llama": 3,

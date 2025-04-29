@@ -5,6 +5,7 @@
     "demo": 10
   },
   "sumPromptTokens": 7164,
+  "sumPrice": 0.0156699283,
   "minTimeCreated": 1740789300,
   "topModels": {
     "guanaco": 3,

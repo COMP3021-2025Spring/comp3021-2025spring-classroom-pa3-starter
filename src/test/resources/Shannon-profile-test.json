@@ -5,6 +5,7 @@
     "demo": 10
   },
   "sumPromptTokens": 11875,
+  "sumPrice": 0.0210833682,
   "minTimeCreated": 1740804660,
   "topModels": {
     "guanaco": 1,
@@ -52,5 +53,5 @@
   "avgCompletionTokens": 842,
   "avgTimeCreated": 44744,
   "avgTimeLastExit": 38940,
-  "avgTemperature": 1.055
+  "avgTemperature": 1.0550000000000002
 }

@@ -5,6 +5,7 @@
     "done": 13
   },
   "sumPromptTokens": 6276,
+  "sumPrice": 0.01752943442,
   "minTimeCreated": 1741264979,
   "topModels": {
     "llama": 3,

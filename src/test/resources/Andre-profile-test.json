@@ -5,6 +5,7 @@
     "demo": 11
   },
   "sumPromptTokens": 11753,
+  "sumPrice": 0.021666766739999996,
   "minTimeCreated": 1740797929,
   "topModels": {
     "koala": 3,
@@ -52,5 +53,5 @@
   "avgCompletionTokens": 882,
   "avgTimeCreated": 39532,
   "avgTimeLastExit": 44532,
-  "avgTemperature": 1.0170212765957445
+  "avgTemperature": 1.0170212765957447
 }

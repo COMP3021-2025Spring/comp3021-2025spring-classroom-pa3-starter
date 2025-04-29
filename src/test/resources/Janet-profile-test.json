@@ -5,6 +5,7 @@
     "useful": 4
   },
   "sumPromptTokens": 3732,
+  "sumPrice": 0.00815824028,
   "minTimeCreated": 1741110472,
   "topModels": {"vicuna": 18},
   "numSessions": 18,
@@ -46,5 +47,5 @@
   "avgCompletionTokens": 934,
   "avgTimeCreated": 42536,
   "avgTimeLastExit": 44374,
-  "avgTemperature": 0.7166666666666667
+  "avgTemperature": 0.7166666666666668
 }
