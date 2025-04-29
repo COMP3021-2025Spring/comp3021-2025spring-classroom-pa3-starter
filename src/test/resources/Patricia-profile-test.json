@@ -5,6 +5,7 @@
     "done": 13
   },
   "sumPromptTokens": 9919,
+  "sumPrice": 0.027018965,
   "minTimeCreated": 1740811507,
   "topModels": {
     "llama": 1,
@@ -52,5 +53,5 @@
   "avgCompletionTokens": 758,
   "avgTimeCreated": 36843,
   "avgTimeLastExit": 38332,
-  "avgTemperature": 1.0887096774193543
+  "avgTemperature": 1.0887096774193548
 }

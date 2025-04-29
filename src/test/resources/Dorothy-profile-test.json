@@ -5,6 +5,7 @@
     "favorite": 6
   },
   "sumPromptTokens": 2722,
+  "sumPrice": 0.0074816781,
   "minTimeCreated": 1741178080,
   "topModels": {
     "vicuna": 16,

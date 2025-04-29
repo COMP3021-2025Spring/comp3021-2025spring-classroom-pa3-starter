@@ -5,6 +5,7 @@
     "demo": 4
   },
   "sumPromptTokens": 4102,
+  "sumPrice": 0.0083776758,
   "minTimeCreated": 1741800085,
   "topModels": {
     "alpaca": 2,
